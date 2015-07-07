@@ -10,6 +10,8 @@
 
 @interface Document : NSDocument
 
+@property NSMutableArray *data;
+
 
 @end
 
