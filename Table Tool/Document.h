@@ -12,6 +12,7 @@
 
 @property NSMutableArray *data;
 
+@property (unsafe_unretained) IBOutlet NSTableView *tableView;
 
 @end
 

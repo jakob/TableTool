@@ -25,6 +25,8 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
+    
+    
 }
 
 + (BOOL)autosavesInPlace {
@@ -43,9 +45,16 @@
     
     NSMutableString *dataString = [[NSMutableString alloc]init];
     
-    for(NSMutableArray *rowArray in _data) {
-        for(NSString *singleDataString in rowArray) {
-            [dataString appendString: singleDataString];
+    for(int i = 0; i < [_data count]; ++i) {
+        NSMutableArray *rowArray = _data[i];
+        for(NSTableColumn *col in _tableView.tableColumns.copy) {
+            NSInteger columnIndex = col.identifier.integerValue;
+            
+            if(columnIndex >= [rowArray count]) {
+                [dataString appendString:@""];
+            } else {
+                [dataString appendString:rowArray[columnIndex]];
+            }
             [dataString appendString:@","];
         }
         [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
