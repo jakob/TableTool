@@ -60,4 +60,23 @@
     return YES;
 }
 
+#pragma mark - tableViewDataSource, delegate
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    return [_data count];
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex {
+    
+    if(_data.count >= rowIndex+1) {
+        NSArray *rowArray = _data[rowIndex];
+        if(rowArray.count >= tableColumn.identifier.integerValue+1){
+            return rowArray[tableColumn.identifier.integerValue];
+        }
+    }
+    return nil;
+}
+
+
+
 @end
