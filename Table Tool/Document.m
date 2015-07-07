@@ -40,8 +40,22 @@
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
     // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-    [NSException raise:@"UnimplementedMethod" format:@"%@ is unimplemented", NSStringFromSelector(_cmd)];
-    return nil;
+    
+    NSMutableString *dataString = [[NSMutableString alloc]init];
+    
+    for(NSMutableArray *rowArray in _data) {
+        for(NSString *singleDataString in rowArray) {
+            [dataString appendString: singleDataString];
+            [dataString appendString:@","];
+        }
+        [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
+        [dataString appendString:@"\n"];
+    }
+    [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
+    
+    NSData *finalData = [dataString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    return finalData;
 }
 
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
@@ -77,6 +91,17 @@
     return nil;
 }
 
+-(void)tableView:(NSTableView *)tableView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex {
+    
+    NSMutableArray *rowArray = _data[rowIndex];
+    if([rowArray count] < tableColumn.identifier.integerValue) {
+        for(NSUInteger i = [rowArray count]; i <= tableColumn.identifier.integerValue; ++i){
+            [rowArray addObject:@""];
+        }
+    }
+    rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
+    _data[rowIndex] = rowArray;
+}
 
 
 @end
