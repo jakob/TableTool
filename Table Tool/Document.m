@@ -18,14 +18,14 @@
     self = [super init];
     if (self) {
         _data = [[NSMutableArray alloc]init];
+        _maxColumnNumber = 0;
     }
     return self;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
-    // Add any code here that needs to be executed once the windowController has loaded the document's window.
-    
+    [self updateTableColumns];
     
 }
 
@@ -78,6 +78,12 @@
     for(int i = 0; i < [tempData count]; ++i) {
         NSArray *rowData = [((NSString *)tempData[i]) componentsSeparatedByString:@","];
         [_data addObject:rowData.mutableCopy];
+        
+        if(_maxColumnNumber < [rowData count]) {
+            _maxColumnNumber = [rowData count];
+        }
+        
+        [self updateTableColumns];
     }
     
     return YES;
@@ -112,5 +118,15 @@
     _data[rowIndex] = rowArray;
 }
 
+#pragma mark - organizeTableView
+
+-(void)updateTableColumns {
+    for(NSTableColumn *col in self.tableView.tableColumns.mutableCopy) {
+        [self.tableView removeTableColumn:col];
+    }
+    for(int i = 0; i < _maxColumnNumber; ++i) {
+        [self.tableView addTableColumn: [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]]];
+    }
+}
 
 @end
