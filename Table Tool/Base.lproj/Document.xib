@@ -16,20 +16,20 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="133" y="235" width="507" height="413"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <value key="minSize" type="size" width="94" height="86"/>
             <view key="contentView" id="gIp-Ho-8D9">
                 <rect key="frame" x="0.0" y="0.0" width="507" height="413"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HMT-zz-891">
+                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" translatesAutoresizingMaskIntoConstraints="NO" id="HMT-zz-891">
                         <rect key="frame" x="0.0" y="0.0" width="507" height="413"/>
                         <clipView key="contentView" id="GkF-y6-0qi">
                             <rect key="frame" x="1" y="17" width="238" height="117"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="81d-2U-CFl" id="bLT-tG-Zln">
-                                    <rect key="frame" x="0.0" y="0.0" width="238" height="117"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="507" height="19"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -104,6 +104,86 @@
                     <constraint firstItem="HMT-zz-891" firstAttribute="leading" secondItem="gIp-Ho-8D9" secondAttribute="leading" id="U32-Ac-Nun"/>
                 </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="18B5EE13-D3C8-40D1-9F95-931F582C0224" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="YhY-Cm-jWG">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="7eN-dA-ROL"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="blf-jy-szP"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="njR-H5-0m6"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="H3h-jI-Spc"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="U88-dC-DZu"/>
+                    <toolbarItem implicitItemIdentifier="4025DB13-6DCF-42D9-A856-0FF89B6660FF" label="left" paletteLabel="left" id="QdY-Xj-8dX">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="54" height="19"/>
+                        <size key="maxSize" width="122" height="19"/>
+                        <button key="view" verticalHuggingPriority="750" id="zcM-y1-M1J">
+                            <rect key="frame" x="0.0" y="14" width="85" height="19"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundRect" title="add col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wcf-g8-9gg">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="cellTitle"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="addColumnLeft:" target="-2" id="ZXy-D0-Sa3"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="B19FF15A-AAF5-432C-A6B7-D9B5A3556DB4" label="right" paletteLabel="right" id="ROU-ce-fUf">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="89" height="19"/>
+                        <size key="maxSize" width="122" height="19"/>
+                        <button key="view" verticalHuggingPriority="750" id="bQp-0h-41W">
+                            <rect key="frame" x="0.0" y="14" width="89" height="19"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundRect" title="add col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EAo-F7-Lpi">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="cellTitle"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="addColumnRight:" target="-2" id="8eO-21-WjR"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="4A310BD7-BBE2-4EC8-A93D-01C19894170A" label="above" paletteLabel="above" id="6q1-lK-hgL">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="89" height="19"/>
+                        <size key="maxSize" width="122" height="19"/>
+                        <button key="view" verticalHuggingPriority="750" id="6Zh-eC-EkR">
+                            <rect key="frame" x="0.0" y="14" width="89" height="19"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundRect" title="add line" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WKS-D6-twp">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="cellTitle"/>
+                                <connections>
+                                    <action selector="addLineAbove:" target="-2" id="Jvz-FL-A7Y"/>
+                                </connections>
+                            </buttonCell>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="98ECFE10-5A52-44F8-80C5-8E779189A44C" label="below" paletteLabel="below" id="5z5-RX-Nr2">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="87" height="19"/>
+                        <size key="maxSize" width="122" height="19"/>
+                        <button key="view" verticalHuggingPriority="750" id="fuZ-k2-pbp">
+                            <rect key="frame" x="0.0" y="14" width="89" height="19"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundRect" title="add line" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qbr-A1-qd5">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="cellTitle"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="addLineBelow:" target="-2" id="UEr-7M-e91"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="U88-dC-DZu"/>
+                    <toolbarItem reference="QdY-Xj-8dX"/>
+                    <toolbarItem reference="ROU-ce-fUf"/>
+                    <toolbarItem reference="6q1-lK-hgL"/>
+                    <toolbarItem reference="5z5-RX-Nr2"/>
+                </defaultToolbarItems>
+            </toolbar>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-x8E"/>
             </connections>

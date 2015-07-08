@@ -18,7 +18,7 @@
     self = [super init];
     if (self) {
         _data = [[NSMutableArray alloc]init];
-        _maxColumnNumber = 0;
+        _maxColumnNumber = 1;
     }
     return self;
 }
@@ -26,7 +26,6 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     [self updateTableColumns];
-    
 }
 
 + (BOOL)autosavesInPlace {
@@ -74,6 +73,8 @@
     
     NSString *csvData = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
     NSArray *tempData = [csvData componentsSeparatedByString:@"\n"];
+    _maxColumnNumber = 1;
+    [_data removeAllObjects];
     
     for(int i = 0; i < [tempData count]; ++i) {
         NSArray *rowData = [((NSString *)tempData[i]) componentsSeparatedByString:@","];
@@ -83,9 +84,10 @@
             _maxColumnNumber = [rowData count];
         }
         
-        [self updateTableColumns];
     }
     
+    [self updateTableColumns];
+    [self.tableView reloadData];
     return YES;
 }
 
@@ -127,6 +129,94 @@
     for(int i = 0; i < _maxColumnNumber; ++i) {
         [self.tableView addTableColumn: [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]]];
     }
+}
+
+-(void)setNewColumn:(long) columnIndex {
+    
+    if(![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    long columnIdentifier = _maxColumnNumber;
+    NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
+
+    [self.tableView addTableColumn:col];
+    [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:columnIndex];
+    
+    for(NSMutableArray *rowArray in _data) {
+        [rowArray addObject:@""];
+    }
+    
+    _maxColumnNumber++;
+}
+
+-(IBAction)addLineAbove:(id)sender {
+    
+    if(![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    long rowIndex = [self.tableView selectedRow];
+    
+    [self.tableView beginUpdates];
+    if([self.tableView selectedRow] == -1){
+        [_data insertObject:[[NSMutableArray alloc] init] atIndex:0];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:0] withAnimation:NSTableViewAnimationSlideDown];
+    }else{
+        [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+    }
+    
+    [self.tableView endUpdates];
+    [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+}
+
+-(IBAction)addLineBelow:(id)sender {
+    
+    if(![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    long rowIndex = [self.tableView selectedRow]+1;
+    
+    [self.tableView beginUpdates];
+    if([self.tableView selectedRow] == -1){
+        [_data insertObject:[[NSMutableArray alloc] init] atIndex:[self.tableView numberOfRows]];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:[self.tableView numberOfRows]] withAnimation:NSTableViewAnimationSlideDown];
+    }else{
+        [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+    }
+    [self.tableView endUpdates];
+    [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+}
+
+-(IBAction)addColumnLeft:(id)sender {
+    
+    long columnIndex;
+    
+    if([self.tableView selectedColumn] == -1){
+        columnIndex = 0;
+    } else {
+        columnIndex = [self.tableView selectedColumn];
+    }
+    [self setNewColumn:columnIndex];
+    
+}
+
+-(IBAction)addColumnRight:(id)sender {
+   
+    long columnIndex;
+
+    if([self.tableView selectedColumn] == -1){
+        columnIndex = _maxColumnNumber;
+    } else {
+        columnIndex = [self.tableView selectedColumn]+1;
+    }
+    [self setNewColumn:columnIndex];
 }
 
 @end

@@ -11,12 +11,17 @@
 @interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate>
 
 @property NSMutableArray *data;
-@property NSInteger maxColumnNumber;
+@property long maxColumnNumber;
 
 @property (unsafe_unretained) IBOutlet NSTableView *tableView;
 
-
 -(void)updateTableColumns;
+-(void)setNewColumn:(long)columnIndex;
+
+-(IBAction)addLineAbove:(id)sender;
+-(IBAction)addLineBelow:(id)sender;
+-(IBAction)addColumnLeft:(id)sender;
+-(IBAction)addColumnRight:(id)sender;
 
 @end
 
