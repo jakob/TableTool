@@ -22,6 +22,8 @@
 -(IBAction)addLineBelow:(id)sender;
 -(IBAction)addColumnLeft:(id)sender;
 -(IBAction)addColumnRight:(id)sender;
+-(IBAction)deleteRow:(id)sender;
+-(IBAction)deleteColumn:(id)sender;
 
 @end
 

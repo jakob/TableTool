@@ -175,6 +175,38 @@
                             </connections>
                         </button>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F1C98A2E-2043-4E86-8DBB-9103AAB3F296" label="Custom View" paletteLabel="Custom View" id="RIC-u2-0Xr">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="76" height="19"/>
+                        <size key="maxSize" width="122" height="19"/>
+                        <button key="view" verticalHuggingPriority="750" id="HOS-Pg-Psj">
+                            <rect key="frame" x="0.0" y="14" width="83" height="19"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundRect" title="delete col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wdw-cD-Cxt">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="controlContent"/>
+                                <connections>
+                                    <action selector="deleteColumn:" target="-2" id="fyR-50-QfC"/>
+                                </connections>
+                            </buttonCell>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="15AFEA8F-1205-4891-A036-56F49D966167" label="Custom View" paletteLabel="Custom View" id="yQy-V2-Gkq">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="83" height="19"/>
+                        <size key="maxSize" width="122" height="19"/>
+                        <button key="view" verticalHuggingPriority="750" id="2Bq-oO-aB0">
+                            <rect key="frame" x="0.0" y="14" width="83" height="19"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundRect" title="delete row" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="z47-HM-ILo">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="controlContent"/>
+                                <connections>
+                                    <action selector="deleteRow:" target="-2" id="ae1-MZ-Kr8"/>
+                                </connections>
+                            </buttonCell>
+                        </button>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="U88-dC-DZu"/>
@@ -182,6 +214,8 @@
                     <toolbarItem reference="ROU-ce-fUf"/>
                     <toolbarItem reference="6q1-lK-hgL"/>
                     <toolbarItem reference="5z5-RX-Nr2"/>
+                    <toolbarItem reference="RIC-u2-0Xr"/>
+                    <toolbarItem reference="yQy-V2-Gkq"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>

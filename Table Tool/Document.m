@@ -164,13 +164,14 @@
     if([self.tableView selectedRow] == -1){
         [_data insertObject:[[NSMutableArray alloc] init] atIndex:0];
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:0] withAnimation:NSTableViewAnimationSlideDown];
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
     }else{
         [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
     }
     
     [self.tableView endUpdates];
-    [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
 }
 
 -(IBAction)addLineBelow:(id)sender {
@@ -186,12 +187,14 @@
     if([self.tableView selectedRow] == -1){
         [_data insertObject:[[NSMutableArray alloc] init] atIndex:[self.tableView numberOfRows]];
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:[self.tableView numberOfRows]] withAnimation:NSTableViewAnimationSlideDown];
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.tableView numberOfRows]-1] byExtendingSelection:NO];
     }else{
         [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
     }
+    
     [self.tableView endUpdates];
-    [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
 }
 
 -(IBAction)addColumnLeft:(id)sender {
@@ -199,12 +202,16 @@
     long columnIndex;
     
     if([self.tableView selectedColumn] == -1){
-        columnIndex = 0;
+        if([self.tableView editedColumn] == -1){
+            columnIndex = 0;
+        } else {
+            columnIndex = [self.tableView editedColumn];
+        }
     } else {
         columnIndex = [self.tableView selectedColumn];
     }
     [self setNewColumn:columnIndex];
-    
+    [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
 }
 
 -(IBAction)addColumnRight:(id)sender {
@@ -212,11 +219,16 @@
     long columnIndex;
 
     if([self.tableView selectedColumn] == -1){
-        columnIndex = _maxColumnNumber;
+        if([self.tableView editedColumn] == -1){
+            columnIndex = _maxColumnNumber;
+        } else {
+            columnIndex = [self.tableView editedColumn]+1;
+        }
     } else {
         columnIndex = [self.tableView selectedColumn]+1;
     }
     [self setNewColumn:columnIndex];
+    [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
 }
 
 @end
