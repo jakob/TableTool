@@ -139,7 +139,7 @@
     
     long columnIdentifier = _maxColumnNumber;
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
-
+    col.dataCell = dataCell;
     [self.tableView addTableColumn:col];
     [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:columnIndex];
     
@@ -150,6 +150,7 @@
     _maxColumnNumber++;
     
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
+    [self.tableView scrollColumnToVisible:columnIndex];
 }
 
 -(IBAction)addLineAbove:(id)sender {
@@ -163,20 +164,32 @@
         [self setNewColumn:0];
     }
     
-    long rowIndex = [self.tableView selectedRow];
+    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    long rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
     
-    [self.tableView beginUpdates];
+    
     if([self.tableView selectedRow] == -1){
-        [_data insertObject:[[NSMutableArray alloc] init] atIndex:0];
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:0] withAnimation:NSTableViewAnimationSlideDown];
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+        rowIndex = 0;
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            [self.tableView beginUpdates];
+            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+            [self.tableView endUpdates];
+        } completionHandler:^{
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+            [self.tableView scrollRowToVisible:rowIndex];
+        }];
     }else{
-        [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            [self.tableView beginUpdates];
+            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+            [self.tableView endUpdates];
+        } completionHandler:^{
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+            [self.tableView scrollRowToVisible:rowIndex];
+        }];
     }
-    
-    [self.tableView endUpdates];
 }
 
 -(IBAction)addLineBelow:(id)sender {
@@ -190,20 +203,31 @@
         [self setNewColumn:0];
     }
     
-    long rowIndex = [self.tableView selectedRow]+1;
+    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    long rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes firstIndex]+1 : [rowIndexes lastIndex]+1;
     
-    [self.tableView beginUpdates];
     if([self.tableView selectedRow] == -1){
-        [_data insertObject:[[NSMutableArray alloc] init] atIndex:[self.tableView numberOfRows]];
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:[self.tableView numberOfRows]] withAnimation:NSTableViewAnimationSlideDown];
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:[self.tableView numberOfRows]-1] byExtendingSelection:NO];
+        rowIndex = [self.tableView numberOfRows];
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            [self.tableView beginUpdates];
+            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+            [self.tableView endUpdates];
+        } completionHandler:^{
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+            [self.tableView scrollRowToVisible:rowIndex];
+        }];
     }else{
-        [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+            [self.tableView beginUpdates];
+            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+            [self.tableView endUpdates];
+        } completionHandler:^{
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+            [self.tableView scrollRowToVisible:rowIndex];
+        }];
     }
-    
-    [self.tableView endUpdates];
 }
 
 -(IBAction)addColumnLeft:(id)sender {
@@ -217,7 +241,8 @@
             columnIndex = [self.tableView editedColumn];
         }
     } else {
-        columnIndex = [self.tableView selectedColumn];
+        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+        columnIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
     }
     [self setNewColumn:columnIndex];
 }
@@ -233,7 +258,8 @@
             columnIndex = [self.tableView editedColumn]+1;
         }
     } else {
-        columnIndex = [self.tableView selectedColumn]+1;
+        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+        columnIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes firstIndex]+1 : [columnIndexes lastIndex]+1;
     }
     [self setNewColumn:columnIndex];
 }
