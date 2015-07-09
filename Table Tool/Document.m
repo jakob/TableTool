@@ -8,7 +8,9 @@
 
 #import "Document.h"
 
-@interface Document ()
+@interface Document () {
+    NSCell *dataCell;
+}
 
 @end
 
