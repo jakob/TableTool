@@ -27,6 +27,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
+    dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
 }
 
@@ -121,6 +122,10 @@
     _data[rowIndex] = rowArray;
 }
 
+-(void)tableViewColumnDidMove:(NSNotification *)aNotification {
+    [self updateTableColumnsNames];
+}
+
 #pragma mark - organizeTableView
 
 -(void)updateTableColumns {
@@ -134,6 +139,13 @@
         tableColumn.dataCell = dataCell;
         tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
         [self.tableView addTableColumn: tableColumn];
+    }
+}
+
+-(void)updateTableColumnsNames {
+    for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
+        NSTableColumn *tableColumn = self.tableView.tableColumns[i];
+        tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
     }
 }
 
@@ -157,6 +169,7 @@
     _maxColumnNumber++;
     
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
+    [self updateTableColumnsNames];
     [self.tableView scrollColumnToVisible:columnIndex];
 }
 
@@ -284,6 +297,7 @@
         NSTableColumn *col = tableColumns[idx];
         [self.tableView removeTableColumn:col];
     }];
+    [self updateTableColumnsNames];
     selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
     
     if(selectedIndex == [self.tableView numberOfColumns]){

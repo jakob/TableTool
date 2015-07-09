@@ -17,6 +17,7 @@
 
 -(void)updateTableColumns;
 -(void)setNewColumn:(long)columnIndex;
+-(void)updateTableColumnsNames;
 
 -(IBAction)addLineAbove:(id)sender;
 -(IBAction)addLineBelow:(id)sender;
