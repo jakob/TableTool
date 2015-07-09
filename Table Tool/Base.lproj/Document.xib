@@ -129,10 +129,10 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="B19FF15A-AAF5-432C-A6B7-D9B5A3556DB4" label="right" paletteLabel="right" id="ROU-ce-fUf">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="89" height="19"/>
+                        <size key="minSize" width="54" height="19"/>
                         <size key="maxSize" width="122" height="19"/>
                         <button key="view" verticalHuggingPriority="750" id="bQp-0h-41W">
-                            <rect key="frame" x="0.0" y="14" width="89" height="19"/>
+                            <rect key="frame" x="-15" y="14" width="60" height="19"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <buttonCell key="cell" type="roundRect" title="add col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EAo-F7-Lpi">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -145,10 +145,10 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="4A310BD7-BBE2-4EC8-A93D-01C19894170A" label="above" paletteLabel="above" id="6q1-lK-hgL">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="89" height="19"/>
+                        <size key="minSize" width="64" height="19"/>
                         <size key="maxSize" width="122" height="19"/>
                         <button key="view" verticalHuggingPriority="750" id="6Zh-eC-EkR">
-                            <rect key="frame" x="0.0" y="14" width="89" height="19"/>
+                            <rect key="frame" x="-12" y="14" width="64" height="19"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <buttonCell key="cell" type="roundRect" title="add line" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WKS-D6-twp">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -161,10 +161,10 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="98ECFE10-5A52-44F8-80C5-8E779189A44C" label="below" paletteLabel="below" id="5z5-RX-Nr2">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="87" height="19"/>
+                        <size key="minSize" width="65" height="19"/>
                         <size key="maxSize" width="122" height="19"/>
                         <button key="view" verticalHuggingPriority="750" id="fuZ-k2-pbp">
-                            <rect key="frame" x="0.0" y="14" width="89" height="19"/>
+                            <rect key="frame" x="-11" y="14" width="65" height="19"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <buttonCell key="cell" type="roundRect" title="add line" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qbr-A1-qd5">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -214,8 +214,8 @@
                     <toolbarItem reference="ROU-ce-fUf"/>
                     <toolbarItem reference="6q1-lK-hgL"/>
                     <toolbarItem reference="5z5-RX-Nr2"/>
-                    <toolbarItem reference="RIC-u2-0Xr"/>
                     <toolbarItem reference="yQy-V2-Gkq"/>
+                    <toolbarItem reference="RIC-u2-0Xr"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>

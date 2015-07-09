@@ -83,7 +83,6 @@
         if(_maxColumnNumber < [rowData count]) {
             _maxColumnNumber = [rowData count];
         }
-        
     }
     
     [self updateTableColumns];
@@ -149,6 +148,8 @@
     }
     
     _maxColumnNumber++;
+    
+    [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
 }
 
 -(IBAction)addLineAbove:(id)sender {
@@ -156,6 +157,10 @@
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
+    }
+    
+    if([self.tableView numberOfColumns] == 0){
+        [self setNewColumn:0];
     }
     
     long rowIndex = [self.tableView selectedRow];
@@ -179,6 +184,10 @@
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
+    }
+    
+    if([self.tableView numberOfColumns] == 0){
+        [self setNewColumn:0];
     }
     
     long rowIndex = [self.tableView selectedRow]+1;
@@ -211,7 +220,6 @@
         columnIndex = [self.tableView selectedColumn];
     }
     [self setNewColumn:columnIndex];
-    [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
 }
 
 -(IBAction)addColumnRight:(id)sender {
@@ -220,7 +228,7 @@
 
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
-            columnIndex = _maxColumnNumber;
+            columnIndex = [self.tableView numberOfColumns];
         } else {
             columnIndex = [self.tableView editedColumn]+1;
         }
@@ -228,7 +236,43 @@
         columnIndex = [self.tableView selectedColumn]+1;
     }
     [self setNewColumn:columnIndex];
-    [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
 }
+
+-(IBAction)deleteColumn:(id)sender {
+    long selectedIndex = [self.tableView selectedColumn];
+    if(selectedIndex == -1 || ![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    NSTableColumn *col = self.tableView.tableColumns[selectedIndex];
+    [self.tableView removeTableColumn:col];
+    
+    if(selectedIndex == [self.tableView numberOfColumns]){
+        [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfColumns]-1] byExtendingSelection:NO];
+    }else{
+        [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: selectedIndex] byExtendingSelection:NO];
+    }
+}
+
+-(IBAction)deleteRow:(id)sender {
+    long selectedIndex = [self.tableView selectedRow];
+    if(selectedIndex == -1 || ![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    [_data removeObjectAtIndex:selectedIndex];
+    [self.tableView beginUpdates];
+    [self.tableView removeRowsAtIndexes:[NSIndexSet indexSetWithIndex:selectedIndex ] withAnimation:NSTableViewAnimationSlideUp];
+    [self.tableView endUpdates];
+    
+    if(selectedIndex == [self.tableView numberOfRows]){
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
+    } else {
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
+    }
+}
+
 
 @end
