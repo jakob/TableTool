@@ -124,11 +124,16 @@
 #pragma mark - organizeTableView
 
 -(void)updateTableColumns {
+    if (!self.tableView) return;
+    
     for(NSTableColumn *col in self.tableView.tableColumns.mutableCopy) {
         [self.tableView removeTableColumn:col];
     }
     for(int i = 0; i < _maxColumnNumber; ++i) {
-        [self.tableView addTableColumn: [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]]];
+        NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]];
+        tableColumn.dataCell = dataCell;
+        tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
+        [self.tableView addTableColumn: tableColumn];
     }
 }
 
@@ -273,8 +278,13 @@
         return;
     }
     
-    NSTableColumn *col = self.tableView.tableColumns[selectedIndex];
-    [self.tableView removeTableColumn:col];
+    NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+    NSArray *tableColumns = self.tableView.tableColumns.copy;
+    [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSTableColumn *col = tableColumns[idx];
+        [self.tableView removeTableColumn:col];
+    }];
+    selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
     
     if(selectedIndex == [self.tableView numberOfColumns]){
         [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfColumns]-1] byExtendingSelection:NO];
@@ -290,10 +300,13 @@
         return;
     }
     
-    [_data removeObjectAtIndex:selectedIndex];
+    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    
+    [_data removeObjectsAtIndexes:rowIndexes];
     [self.tableView beginUpdates];
-    [self.tableView removeRowsAtIndexes:[NSIndexSet indexSetWithIndex:selectedIndex ] withAnimation:NSTableViewAnimationSlideUp];
+    [self.tableView removeRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideUp];
     [self.tableView endUpdates];
+    selectedIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
     
     if(selectedIndex == [self.tableView numberOfRows]){
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
