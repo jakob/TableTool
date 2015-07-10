@@ -8,6 +8,7 @@
 
 #import "Document.h"
 #import "CSVReader.h"
+#import "CSVWriter.h"
 
 @interface Document () {
     NSCell *dataCell;
@@ -46,26 +47,8 @@
     // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
     // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
     
-    NSMutableString *dataString = [[NSMutableString alloc]init];
-    
-    for(int i = 0; i < [_data count]; ++i) {
-        NSMutableArray *rowArray = _data[i];
-        for(NSTableColumn *col in _tableView.tableColumns.copy) {
-            NSInteger columnIndex = col.identifier.integerValue;
-            
-            if(columnIndex >= [rowArray count]) {
-                [dataString appendString:@""];
-            } else {
-                [dataString appendString:rowArray[columnIndex]];
-            }
-            [dataString appendString:@","];
-        }
-        [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
-        [dataString appendString:@"\n"];
-    }
-    [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
-    
-    NSData *finalData = [dataString dataUsingEncoding:NSUTF8StringEncoding];
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data];
+    NSData *finalData = [writer writeData:NULL];
     
     return finalData;
 }
