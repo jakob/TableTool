@@ -7,6 +7,7 @@
 //
 
 #import "Document.h"
+#import "CSVReader.h"
 
 @interface Document () {
     NSCell *dataCell;
@@ -74,17 +75,18 @@
     // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
     // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
     
-    NSString *csvData = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    NSArray *tempData = [csvData componentsSeparatedByString:@"\n"];
     _maxColumnNumber = 1;
     [_data removeAllObjects];
     
-    for(int i = 0; i < [tempData count]; ++i) {
-        NSArray *rowData = [((NSString *)tempData[i]) componentsSeparatedByString:@","];
-        [_data addObject:rowData.mutableCopy];
-        
-        if(_maxColumnNumber < [rowData count]) {
-            _maxColumnNumber = [rowData count];
+    CSVReader *reader = [[CSVReader alloc ]initWithData:data];
+    while(![reader isAtEnd]) {
+        NSArray *oneReadLine = [reader readLineWithError:outError];
+        if(oneReadLine == nil) {
+            return NO;
+        }
+        [_data addObject:oneReadLine];
+        if(_maxColumnNumber < [[_data lastObject] count]){
+            _maxColumnNumber = [[_data lastObject] count];
         }
     }
     
