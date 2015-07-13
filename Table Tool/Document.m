@@ -97,14 +97,23 @@
 
 -(void)tableView:(NSTableView *)tableView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex {
     
+    [self restoreObjectValue:object forTableColumn:tableColumn row:rowIndex reload:NO];
+    [self.undoManager setActionName:@"Edit Cell"];
+    
+}
+
+-(void)restoreObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex reload:(BOOL)shouldReload {
+    
     NSMutableArray *rowArray = _data[rowIndex];
     if([rowArray count] < tableColumn.identifier.integerValue) {
         for(NSUInteger i = [rowArray count]; i <= tableColumn.identifier.integerValue; ++i){
             [rowArray addObject:@""];
         }
     }
+    [[self.undoManager prepareWithInvocationTarget:self] restoreObjectValue:rowArray[tableColumn.identifier.integerValue] forTableColumn:tableColumn row:rowIndex reload:YES];
     rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
     _data[rowIndex] = rowArray;
+    if (shouldReload) [self.tableView reloadData];
 }
 
 -(void)tableViewColumnDidMove:(NSNotification *)aNotification {
