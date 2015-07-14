@@ -30,24 +30,28 @@
     
     NSMutableString *dataString = [[NSMutableString alloc]init];
     
-    for(NSArray *lineArray in _dataArray) {
+    for(NSMutableArray *lineArray in _dataArray) {
         
         for(NSString *columndIdentifier in _columnsOrder) {
             
+            for(NSUInteger i = lineArray.count; i <= columndIdentifier.integerValue;i++){
+                [lineArray addObject:@""];
+            }
             NSString *cellString = lineArray[columndIdentifier.integerValue];
             NSMutableString *temporaryCellValue = [[NSMutableString alloc]init];
             BOOL shouldSetQuotes = [cellString rangeOfString:_columnSeparator ].location == NSNotFound ? NO : YES;
-            
-            if([_escapeCharacter isEqualToString: _quoteCharacter]) {
-                shouldSetQuotes |= [cellString rangeOfString:_quoteCharacter ].location == NSNotFound ? NO : YES;
-            }else{
-                shouldSetQuotes |= [cellString rangeOfString:@"\\"].location == NSNotFound ? NO : YES;
-            }
+            shouldSetQuotes |= [cellString rangeOfString:_quoteCharacter ].location == NSNotFound ? NO : YES;
+            shouldSetQuotes |= [cellString rangeOfString:@"\\"].location == NSNotFound ? NO : YES;
             
             if(shouldSetQuotes) {
                 [temporaryCellValue appendString:cellString];
-                [temporaryCellValue replaceOccurrencesOfString:_quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
-                [temporaryCellValue replaceOccurrencesOfString:@"\\" withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,@"\\"] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                if([_escapeCharacter isEqualToString:_quoteCharacter]){
+                    [temporaryCellValue replaceOccurrencesOfString:_quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                    [temporaryCellValue replaceOccurrencesOfString:@"\\" withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,@"\\"] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                }else{
+                    [temporaryCellValue replaceOccurrencesOfString:@"\\" withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,@"\\"] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                    [temporaryCellValue replaceOccurrencesOfString:_quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                }
                 [temporaryCellValue insertString:@"\"" atIndex:0];
                 [temporaryCellValue appendString:_quoteCharacter];
                 [dataString appendString:temporaryCellValue];
