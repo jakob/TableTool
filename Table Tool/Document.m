@@ -111,10 +111,14 @@
     
     NSMutableArray *rowArray = _data[rowIndex];
     if([rowArray count] < tableColumn.identifier.integerValue) {
-        for(NSUInteger i = [rowArray count]; i <= tableColumn.identifier.integerValue; ++i){
+        for(NSUInteger i = rowArray.count; i <= tableColumn.identifier.integerValue+1; ++i){
             [rowArray addObject:@""];
         }
     }
+    
+    //For debugging only:
+    //NSLog(@"rowIndex:%d, rowArray length:%d, tablecolumn identifier:%d",rowIndex,rowArray.count,tableColumn.identifier.integerValue);
+    
     [[self.undoManager prepareWithInvocationTarget:self] restoreObjectValue:rowArray[tableColumn.identifier.integerValue] forTableColumn:tableColumn row:rowIndex reload:YES];
     rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
     _data[rowIndex] = rowArray;
@@ -187,13 +191,16 @@
     
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     long rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
-    
+    NSMutableArray *toInsertArray = [[NSMutableArray alloc]init];
+    for (int i = 0; i < _maxColumnNumber; ++i) {
+        [toInsertArray addObject:@""];
+    }
     
     if([self.tableView selectedRow] == -1){
         rowIndex = 0;
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             [self.tableView beginUpdates];
-            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [_data insertObject:toInsertArray atIndex:rowIndex];
             [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
             [self.tableView endUpdates];
         } completionHandler:^{
@@ -203,7 +210,7 @@
     }else{
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             [self.tableView beginUpdates];
-            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [_data insertObject:toInsertArray atIndex:rowIndex];
             [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
             [self.tableView endUpdates];
         } completionHandler:^{
@@ -226,12 +233,16 @@
     
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     long rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes firstIndex]+1 : [rowIndexes lastIndex]+1;
+    NSMutableArray *toInsertArray = [[NSMutableArray alloc]init];
+    for (int i = 0; i < _maxColumnNumber; ++i) {
+        [toInsertArray addObject:@""];
+    }
     
     if([self.tableView selectedRow] == -1){
         rowIndex = [self.tableView numberOfRows];
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             [self.tableView beginUpdates];
-            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [_data insertObject:toInsertArray atIndex:rowIndex];
             [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
             [self.tableView endUpdates];
         } completionHandler:^{
@@ -241,7 +252,7 @@
     }else{
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             [self.tableView beginUpdates];
-            [_data insertObject:[[NSMutableArray alloc] init] atIndex:rowIndex];
+            [_data insertObject:toInsertArray atIndex:rowIndex];
             [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
             [self.tableView endUpdates];
         } completionHandler:^{
