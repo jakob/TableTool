@@ -12,6 +12,7 @@
 
 @interface Document () {
     NSCell *dataCell;
+    NSMutableArray *columnsOrder;
 }
 
 @end
@@ -23,6 +24,7 @@
     if (self) {
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
+        columnsOrder = [[NSMutableArray alloc]init];
     }
     return self;
 }
@@ -31,6 +33,7 @@
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
+    [self updateTableColumnsOrder];
 }
 
 + (BOOL)autosavesInPlace {
@@ -48,7 +51,8 @@
     // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
     
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data];
-    NSData *finalData = [writer writeData:NULL];
+    writer.columnsOrder = columnsOrder;
+    NSData *finalData = [writer writeDataWithError:NULL];
     
     return finalData;
 }
@@ -74,6 +78,7 @@
     }
     
     [self updateTableColumns];
+    [self updateTableColumnsOrder];
     [self.tableView reloadData];
     return YES;
 }
@@ -118,6 +123,7 @@
 
 -(void)tableViewColumnDidMove:(NSNotification *)aNotification {
     [self updateTableColumnsNames];
+    [self updateTableColumnsOrder];
 }
 
 #pragma mark - organizeTableView
@@ -164,6 +170,7 @@
     
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
     [self updateTableColumnsNames];
+    [self updateTableColumnsOrder];
     [self.tableView scrollColumnToVisible:columnIndex];
 }
 
@@ -262,9 +269,9 @@
 }
 
 -(IBAction)addColumnRight:(id)sender {
-   
+    
     long columnIndex;
-
+    
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
             columnIndex = [self.tableView numberOfColumns];
@@ -292,6 +299,8 @@
         [self.tableView removeTableColumn:col];
     }];
     [self updateTableColumnsNames];
+    [self updateTableColumnsOrder];
+    
     selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
     
     if(selectedIndex == [self.tableView numberOfColumns]){
@@ -320,6 +329,13 @@
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
     } else {
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
+    }
+}
+
+-(void)updateTableColumnsOrder {
+    [columnsOrder removeAllObjects];
+    for(NSTableColumn *col in self.tableView.tableColumns) {
+        [columnsOrder addObject:col.identifier];
     }
 }
 

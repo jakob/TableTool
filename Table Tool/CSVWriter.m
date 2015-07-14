@@ -10,6 +10,7 @@
 
 @implementation CSVWriter {
     NSCharacterSet *quoteOrColumnSeparator;
+    NSMutableArray *tableColumnsToWrite;
 }
 
 
@@ -20,25 +21,39 @@
         _quoteCharacter = @"\"";
         _columnSeparator = @",";
         _encoding = NSUTF8StringEncoding;
-        _escapeCharacter = @"\\";
-        quoteOrColumnSeparator = [NSCharacterSet characterSetWithCharactersInString:[NSString stringWithFormat:@"%@%@",_quoteCharacter,_columnSeparator]];
+        _escapeCharacter = @"\"";
     }
     return self;
 }
 
--(NSData *)writeData:(NSError *__autoreleasing *)outError {
+-(NSData *)writeDataWithError:(NSError *__autoreleasing *)outError {
     
     NSMutableString *dataString = [[NSMutableString alloc]init];
     
     for(NSArray *lineArray in _dataArray) {
-        for(NSString *cellString in lineArray) {
-            BOOL shouldSetQuotes = [cellString rangeOfCharacterFromSet:quoteOrColumnSeparator].location == NSNotFound ? NO : YES;
-            if(shouldSetQuotes) {
-                [dataString appendString:_quoteCharacter];
+        
+        for(NSString *columndIdentifier in _columnsOrder) {
+            
+            NSString *cellString = lineArray[columndIdentifier.integerValue];
+            NSMutableString *temporaryCellValue = [[NSMutableString alloc]init];
+            BOOL shouldSetQuotes = [cellString rangeOfString:_columnSeparator ].location == NSNotFound ? NO : YES;
+            
+            if([_escapeCharacter isEqualToString: _quoteCharacter]) {
+                shouldSetQuotes |= [cellString rangeOfString:_quoteCharacter ].location == NSNotFound ? NO : YES;
+            }else{
+                shouldSetQuotes |= [cellString rangeOfString:@"\\"].location == NSNotFound ? NO : YES;
             }
-            [dataString appendString:cellString];
+            
             if(shouldSetQuotes) {
-                [dataString appendString:_quoteCharacter];
+                [temporaryCellValue appendString:cellString];
+                [temporaryCellValue replaceOccurrencesOfString:_quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                [temporaryCellValue replaceOccurrencesOfString:@"\\" withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,@"\\"] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                [temporaryCellValue insertString:@"\"" atIndex:0];
+                [temporaryCellValue appendString:_quoteCharacter];
+                [dataString appendString:temporaryCellValue];
+                
+            } else {
+                [dataString appendString:cellString];
             }
             [dataString appendString:_columnSeparator];
         }

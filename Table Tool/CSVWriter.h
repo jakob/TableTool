@@ -11,6 +11,7 @@
 @interface CSVWriter : NSObject
 
 @property (readonly) NSArray *dataArray;
+@property NSArray *columnsOrder;
 @property NSStringEncoding encoding;
 @property NSString *columnSeparator;
 @property NSString *quoteCharacter;
@@ -18,6 +19,6 @@
 
 -(instancetype)initWithDataArray:(NSArray *) dataArray;
 
--(NSData *)writeData:(NSError **) outError;
+-(NSData *)writeDataWithError:(NSError **) outError;
 
 @end
