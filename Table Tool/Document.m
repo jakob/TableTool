@@ -47,20 +47,17 @@
 }
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
-    // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
-    // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
     
-    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data];
-    writer.columnsOrder = columnsOrder;
-    NSData *finalData = [writer writeDataWithError:NULL];
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data andColumnsOrder:columnsOrder];
+    NSData *finalData = [writer writeDataWithError:outError];
+    if(finalData == nil){
+        return NO;
+    }
     
     return finalData;
 }
 
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
-    // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
-    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
-    // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
     
     _maxColumnNumber = 1;
     [_data removeAllObjects];
@@ -150,6 +147,13 @@
     for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
         NSTableColumn *tableColumn = self.tableView.tableColumns[i];
         tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
+    }
+}
+
+-(void)updateTableColumnsOrder {
+    [columnsOrder removeAllObjects];
+    for(NSTableColumn *col in self.tableView.tableColumns) {
+        [columnsOrder addObject:col.identifier];
     }
 }
 
@@ -342,13 +346,5 @@
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
     }
 }
-
--(void)updateTableColumnsOrder {
-    [columnsOrder removeAllObjects];
-    for(NSTableColumn *col in self.tableView.tableColumns) {
-        [columnsOrder addObject:col.identifier];
-    }
-}
-
 
 @end

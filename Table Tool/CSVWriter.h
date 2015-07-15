@@ -17,7 +17,7 @@
 @property NSString *quoteCharacter;
 @property NSString *escapeCharacter;
 
--(instancetype)initWithDataArray:(NSArray *) dataArray;
+-(instancetype)initWithDataArray:(NSArray *) dataArray andColumnsOrder:(NSArray *)columnsOrder;
 
 -(NSData *)writeDataWithError:(NSError **) outError;
 
