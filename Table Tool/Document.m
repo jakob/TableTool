@@ -122,6 +122,12 @@
 }
 
 -(void)tableViewColumnDidMove:(NSNotification *)aNotification {
+    [self.undoManager setActionName:@"Move Column"];
+    
+    NSNumber *oldIndex = [aNotification.userInfo valueForKey:@"NSOldColumn"];
+    NSNumber *newIndex = [aNotification.userInfo valueForKey:@"NSNewColumn"];
+    [[self.undoManager prepareWithInvocationTarget:self] moveColumnFrom:newIndex.longValue toIndex:oldIndex.longValue];
+    
     [self updateTableColumnsNames];
     [self updateTableColumnsOrder];
 }
@@ -389,6 +395,9 @@
     
 }
 
-
+-(void)moveColumnFrom:(long)oldIndex toIndex:(long)newIndex {
+    [self.tableView moveColumn:oldIndex toColumn:newIndex];
+    [self updateTableColumnsNames];
+}
 
 @end
