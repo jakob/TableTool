@@ -28,7 +28,7 @@
         _columnSeparator = @",";
         _quoteCharacter = @"\"";
         _encoding = NSUTF8StringEncoding;
-        _escapeCharacter = @"\\";
+        _escapeCharacter = @"\"";
         atEnd = NO;
     }
     return self;
@@ -108,8 +108,6 @@
         
         if([_escapeCharacter isEqualToString:_quoteCharacter]){
             while(!dataScanner.atEnd) {
-                BOOL didScan = 1;
-                /*
                 char charAtScannerIndex = [dataScanner.string characterAtIndex:dataScanner.scanLocation];
                 if([_quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",charAtScannerIndex]]){
                     [dataScanner scanString:_quoteCharacter intoString:NULL];
@@ -136,7 +134,7 @@
                 }else{
                     BOOL didScan = [dataScanner scanUpToString:_quoteCharacter intoString:&partialString];
                     if(didScan){
-                        if(dataScanner.atEnd || !('"' == [dataScanner.string characterAtIndex:dataScanner.scanLocation])){
+                        if(dataScanner.atEnd || ![_quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",[dataScanner.string characterAtIndex:dataScanner.scanLocation]]]){
                             if(outError != NULL) {
                                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
                             }
@@ -146,7 +144,7 @@
                     }else{
                         [temporaryString appendString:@""];
                     }
-                }*/
+                }
             }
         }else{
             while(!dataScanner.atEnd){

@@ -40,9 +40,8 @@
     return YES;
 }
 
+
 - (NSString *)windowNibName {
-    // Override returning the nib file name of the document
-    // If you need to use a subclass of NSWindowController or if your document supports multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
     return @"Document";
 }
 
@@ -58,6 +57,8 @@
 }
 
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
+    
+    [self.undoManager removeAllActions];
     
     _maxColumnNumber = 1;
     [_data removeAllObjects];
@@ -113,10 +114,8 @@
         }
     }
     
-    //For debugging only:
-    //NSLog(@"rowIndex:%d, rowArray length:%d, tablecolumn identifier:%d",rowIndex,rowArray.count,tableColumn.identifier.integerValue);
-    
     [[self.undoManager prepareWithInvocationTarget:self] restoreObjectValue:rowArray[tableColumn.identifier.integerValue] forTableColumn:tableColumn row:rowIndex reload:YES];
+    
     rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
     _data[rowIndex] = rowArray;
     if (shouldReload) [self.tableView reloadData];
@@ -127,7 +126,7 @@
     [self updateTableColumnsOrder];
 }
 
-#pragma mark - organizeTableView
+#pragma mark - updateTableView
 
 -(void)updateTableColumns {
     if (!self.tableView) return;
@@ -157,12 +156,175 @@
     }
 }
 
--(void)setNewColumn:(long) columnIndex {
+#pragma mark - buttonActions
+
+-(IBAction)addLineAbove:(id)sender {
     
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
     }
+    
+    long rowIndex;
+    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    if(rowIndexes.count != 0){
+        rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
+    }else{
+        rowIndex = 0;
+    }
+    
+    [self addRowAtIndex:rowIndex];
+    [self.undoManager setActionName:@"Add Line Above"];
+}
+
+-(IBAction)addLineBelow:(id)sender {
+    
+    if(![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    long rowIndex;
+    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    if(rowIndexes.count != 0){
+        rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes firstIndex]+1 : [rowIndexes lastIndex]+1;
+    }else{
+        rowIndex = [self.tableView numberOfRows];
+    }
+    
+    [self addRowAtIndex:rowIndex];
+    [self.undoManager setActionName:@"Add Line below"];
+}
+
+-(IBAction)addColumnLeft:(id)sender {
+    
+    if(![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    long columnIndex;
+    if([self.tableView selectedColumn] == -1){
+        if([self.tableView editedColumn] == -1){
+            columnIndex = 0;
+        } else {
+            columnIndex = [self.tableView editedColumn];
+        }
+    } else {
+        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+        columnIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
+    }
+    [self addColumnAtIndex:columnIndex];
+    [self.undoManager setActionName:@"Add Column left"];
+}
+
+-(IBAction)addColumnRight:(id)sender {
+    
+    if(![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    long columnIndex;
+    if([self.tableView selectedColumn] == -1){
+        if([self.tableView editedColumn] == -1){
+            columnIndex = [self.tableView numberOfColumns];
+        } else {
+            columnIndex = [self.tableView editedColumn]+1;
+        }
+    } else {
+        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+        columnIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes firstIndex]+1 : [columnIndexes lastIndex]+1;
+    }
+    [self addColumnAtIndex:columnIndex];
+    [self.undoManager setActionName:@"Add Column right"];
+}
+
+-(IBAction)deleteColumn:(id)sender {
+    
+    long selectedIndex = [self.tableView selectedColumn];
+    if(selectedIndex == -1 || ![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+    [self deleteColumnsAtIndexes:columnIndexes];
+    [self.undoManager setActionName:@"Delete Column(s)"];
+}
+
+-(IBAction)deleteRow:(id)sender {
+    
+    long selectedIndex = [self.tableView selectedRow];
+    if(selectedIndex == -1 || ![self.tableView.window makeFirstResponder:self.tableView]) {
+        NSBeep();
+        return;
+    }
+    
+    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    [self deleteRowsAtIndexes:rowIndexes];
+    [self.undoManager setActionName:@"Delete Row(s)"];
+}
+
+#pragma mark - buttonActionImplementations
+
+-(void)deleteRowsAtIndexes:(NSIndexSet *)rowIndexes{
+    
+    NSMutableArray *toDeleteRows = [[NSMutableArray alloc]initWithArray:[_data objectsAtIndexes:rowIndexes]];
+    [[self.undoManager prepareWithInvocationTarget:self] restoreRowsWithContent:toDeleteRows atIndexes:rowIndexes];
+    
+    [_data removeObjectsAtIndexes:rowIndexes];
+    [self.tableView beginUpdates];
+    [self.tableView removeRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideUp];
+    [self.tableView endUpdates];
+    long selectedIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
+    
+    if(selectedIndex == [self.tableView numberOfRows]){
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
+    } else {
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
+    }
+}
+
+-(void)restoreRowsWithContent:(NSMutableArray *)rowContents atIndexes:(NSIndexSet *)rowIndexes {
+    
+    [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:rowIndexes];
+    
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexes:rowIndexes withAnimation:0];
+    [_data insertObjects:rowContents atIndexes:rowIndexes];
+    [self.tableView endUpdates];
+    
+    [self.tableView selectRowIndexes:rowIndexes byExtendingSelection:NO];
+}
+
+-(void)addRowAtIndex:(long)rowIndex {
+    
+    if([self.tableView numberOfColumns] == 0){
+        [self addColumnAtIndex:0];
+    }
+    
+    NSMutableArray *toInsertArray = [[NSMutableArray alloc]init];
+    for (int i = 0; i < _maxColumnNumber; ++i) {
+        [toInsertArray addObject:@""];
+    }
+    
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        [self.tableView beginUpdates];
+        [_data insertObject:toInsertArray atIndex:rowIndex];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+        [self.tableView endUpdates];
+    } completionHandler:^{
+        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+        [self.tableView scrollRowToVisible:rowIndex];
+        
+    }];
+    
+    NSIndexSet *toRedoIndexSet = [NSIndexSet indexSetWithIndex:rowIndex];
+    [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:toRedoIndexSet];
+}
+
+-(void)addColumnAtIndex:(long) columnIndex {
     
     long columnIdentifier = _maxColumnNumber;
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
@@ -180,171 +342,53 @@
     [self updateTableColumnsNames];
     [self updateTableColumnsOrder];
     [self.tableView scrollColumnToVisible:columnIndex];
+    
+    [[self.undoManager prepareWithInvocationTarget:self] deleteColumnsAtIndexes:[NSIndexSet indexSetWithIndex:columnIndex]];
 }
 
--(IBAction)addLineAbove:(id)sender {
+-(void)deleteColumnsAtIndexes:(NSIndexSet *) columnIndexes{
     
-    if(![self.tableView.window makeFirstResponder:self.tableView]) {
-        NSBeep();
-        return;
-    }
-    
-    if([self.tableView numberOfColumns] == 0){
-        [self setNewColumn:0];
-    }
-    
-    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
-    long rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
-    NSMutableArray *toInsertArray = [[NSMutableArray alloc]init];
-    for (int i = 0; i < _maxColumnNumber; ++i) {
-        [toInsertArray addObject:@""];
-    }
-    
-    if([self.tableView selectedRow] == -1){
-        rowIndex = 0;
-        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-            [self.tableView beginUpdates];
-            [_data insertObject:toInsertArray atIndex:rowIndex];
-            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
-            [self.tableView endUpdates];
-        } completionHandler:^{
-            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
-            [self.tableView scrollRowToVisible:rowIndex];
-        }];
-    }else{
-        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-            [self.tableView beginUpdates];
-            [_data insertObject:toInsertArray atIndex:rowIndex];
-            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
-            [self.tableView endUpdates];
-        } completionHandler:^{
-            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
-            [self.tableView scrollRowToVisible:rowIndex];
-        }];
-    }
-}
-
--(IBAction)addLineBelow:(id)sender {
-    
-    if(![self.tableView.window makeFirstResponder:self.tableView]) {
-        NSBeep();
-        return;
-    }
-    
-    if([self.tableView numberOfColumns] == 0){
-        [self setNewColumn:0];
-    }
-    
-    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
-    long rowIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes firstIndex]+1 : [rowIndexes lastIndex]+1;
-    NSMutableArray *toInsertArray = [[NSMutableArray alloc]init];
-    for (int i = 0; i < _maxColumnNumber; ++i) {
-        [toInsertArray addObject:@""];
-    }
-    
-    if([self.tableView selectedRow] == -1){
-        rowIndex = [self.tableView numberOfRows];
-        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-            [self.tableView beginUpdates];
-            [_data insertObject:toInsertArray atIndex:rowIndex];
-            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
-            [self.tableView endUpdates];
-        } completionHandler:^{
-            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
-            [self.tableView scrollRowToVisible:rowIndex];
-        }];
-    }else{
-        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-            [self.tableView beginUpdates];
-            [_data insertObject:toInsertArray atIndex:rowIndex];
-            [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
-            [self.tableView endUpdates];
-        } completionHandler:^{
-            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
-            [self.tableView scrollRowToVisible:rowIndex];
-        }];
-    }
-}
-
--(IBAction)addColumnLeft:(id)sender {
-    
-    long columnIndex;
-    
-    if([self.tableView selectedColumn] == -1){
-        if([self.tableView editedColumn] == -1){
-            columnIndex = 0;
-        } else {
-            columnIndex = [self.tableView editedColumn];
-        }
-    } else {
-        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
-        columnIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
-    }
-    [self setNewColumn:columnIndex];
-}
-
--(IBAction)addColumnRight:(id)sender {
-    
-    long columnIndex;
-    
-    if([self.tableView selectedColumn] == -1){
-        if([self.tableView editedColumn] == -1){
-            columnIndex = [self.tableView numberOfColumns];
-        } else {
-            columnIndex = [self.tableView editedColumn]+1;
-        }
-    } else {
-        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
-        columnIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes firstIndex]+1 : [columnIndexes lastIndex]+1;
-    }
-    [self setNewColumn:columnIndex];
-}
-
--(IBAction)deleteColumn:(id)sender {
-    long selectedIndex = [self.tableView selectedColumn];
-    if(selectedIndex == -1 || ![self.tableView.window makeFirstResponder:self.tableView]) {
-        NSBeep();
-        return;
-    }
-    
-    NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+    NSMutableArray *columnIds = [[NSMutableArray alloc]init];
     NSArray *tableColumns = self.tableView.tableColumns.copy;
     [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         NSTableColumn *col = tableColumns[idx];
+        [columnIds addObject:col.identifier];
         [self.tableView removeTableColumn:col];
     }];
     [self updateTableColumnsNames];
     [self updateTableColumnsOrder];
     
-    selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
+    long selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
     
     if(selectedIndex == [self.tableView numberOfColumns]){
         [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfColumns]-1] byExtendingSelection:NO];
     }else{
         [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: selectedIndex] byExtendingSelection:NO];
     }
+    
+    [[self.undoManager prepareWithInvocationTarget:self] restoreColumns:columnIds atIndexes:columnIndexes];
+    
 }
 
--(IBAction)deleteRow:(id)sender {
-    long selectedIndex = [self.tableView selectedRow];
-    if(selectedIndex == -1 || ![self.tableView.window makeFirstResponder:self.tableView]) {
-        NSBeep();
-        return;
+-(void)restoreColumns:(NSMutableArray *)columnIds atIndexes:(NSIndexSet *)columnIndexes{
+    
+    NSMutableIndexSet *columnIndexesCopy = columnIndexes.mutableCopy;
+    for(int i = 0; i < columnIds.count; i++){
+        NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
+        col.dataCell = dataCell;
+        [self.tableView addTableColumn:col];
+        NSUInteger index = [columnIndexesCopy firstIndex];
+        [columnIndexesCopy removeIndex:0];
+        [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:index];
     }
+    [self updateTableColumnsNames];
+    [self updateTableColumnsOrder];
     
-    NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+    [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
+    [[self.undoManager prepareWithInvocationTarget:self]deleteColumnsAtIndexes:columnIndexes];
     
-    [_data removeObjectsAtIndexes:rowIndexes];
-    [self.tableView beginUpdates];
-    [self.tableView removeRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideUp];
-    [self.tableView endUpdates];
-    selectedIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
-    
-    if(selectedIndex == [self.tableView numberOfRows]){
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
-    } else {
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
-    }
 }
+
+
 
 @end

@@ -20,7 +20,7 @@
         _quoteCharacter = @"\"";
         _columnSeparator = @",";
         _encoding = NSUTF8StringEncoding;
-        _escapeCharacter = @"\\";
+        _escapeCharacter = @"\"";
         _columnsOrder = columnsOrder;
     }
     return self;
@@ -42,13 +42,13 @@
             BOOL shouldSetQuotes = [cellString rangeOfString:_columnSeparator ].location == NSNotFound ? NO : YES;
             shouldSetQuotes |= [cellString rangeOfString:_quoteCharacter ].location == NSNotFound ? NO : YES;
             if(![_escapeCharacter isEqualToString:_quoteCharacter]){
-                shouldSetQuotes |= [cellString rangeOfString:@"\\"].location == NSNotFound ? NO : YES;
+                shouldSetQuotes |= [cellString rangeOfString:[NSString stringWithFormat:@"%@",_escapeCharacter]].location == NSNotFound ? NO : YES;
             }
             
             if(shouldSetQuotes) {
                 [temporaryCellValue appendString:cellString];
                 if(![_escapeCharacter isEqualToString:_quoteCharacter]){
-                    [temporaryCellValue replaceOccurrencesOfString:@"\\" withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,@"\\"] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                    [temporaryCellValue replaceOccurrencesOfString:_escapeCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_escapeCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
                 }
                 [temporaryCellValue replaceOccurrencesOfString:_quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
                 [temporaryCellValue insertString:@"\"" atIndex:0];
@@ -63,9 +63,13 @@
         [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
         [dataString appendString:@"\n"];
     }
-    [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
     
-    //TODO: Error-handling
+    if(dataString.length != 0){
+        [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
+    }else{
+        [dataString appendString:@""];
+    }
+    
     NSData *finalData = [dataString dataUsingEncoding:_encoding];
     if(finalData == nil){
         if(outError != NULL) {

@@ -13,11 +13,9 @@
 @property NSMutableArray *data;
 @property long maxColumnNumber;
 
-@property (unsafe_unretained) IBOutlet NSTableView *tableView;
+@property IBOutlet NSTableView *tableView;
 
 -(void)updateTableColumns;
--(void)setNewColumn:(long)columnIndex;
--(void)updateTableColumnsNames;
 
 -(IBAction)addLineAbove:(id)sender;
 -(IBAction)addLineBelow:(id)sender;
