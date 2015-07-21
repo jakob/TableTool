@@ -12,7 +12,6 @@
 
 @interface Document () {
     NSCell *dataCell;
-    NSMutableArray *columnsOrder;
 }
 
 @end
@@ -33,7 +32,6 @@
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
-    [self updateTableColumnsOrder];
 }
 
 + (BOOL)autosavesInPlace {
@@ -46,6 +44,11 @@
 }
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
+    
+    NSMutableArray *columnsOrder = [[NSMutableArray alloc] init];
+    for(NSTableColumn *col in self.tableView.tableColumns) {
+        [columnsOrder addObject:col.identifier];
+    }
     
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data andColumnsOrder:columnsOrder];
     NSData *finalData = [writer writeDataWithError:outError];
@@ -76,7 +79,6 @@
     }
     
     [self updateTableColumns];
-    [self updateTableColumnsOrder];
     [self.tableView reloadData];
     return YES;
 }
@@ -129,7 +131,6 @@
     [[self.undoManager prepareWithInvocationTarget:self] moveColumnFrom:newIndex.longValue toIndex:oldIndex.longValue];
     
     [self updateTableColumnsNames];
-    [self updateTableColumnsOrder];
 }
 
 #pragma mark - updateTableView
@@ -152,13 +153,6 @@
     for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
         NSTableColumn *tableColumn = self.tableView.tableColumns[i];
         tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
-    }
-}
-
--(void)updateTableColumnsOrder {
-    [columnsOrder removeAllObjects];
-    for(NSTableColumn *col in self.tableView.tableColumns) {
-        [columnsOrder addObject:col.identifier];
     }
 }
 
@@ -346,7 +340,6 @@
     
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
     [self updateTableColumnsNames];
-    [self updateTableColumnsOrder];
     [self.tableView scrollColumnToVisible:columnIndex];
     
     [[self.undoManager prepareWithInvocationTarget:self] deleteColumnsAtIndexes:[NSIndexSet indexSetWithIndex:columnIndex]];
@@ -362,7 +355,6 @@
         [self.tableView removeTableColumn:col];
     }];
     [self updateTableColumnsNames];
-    [self updateTableColumnsOrder];
     
     long selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
     
@@ -388,7 +380,6 @@
         [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:index];
     }
     [self updateTableColumnsNames];
-    [self updateTableColumnsOrder];
     
     [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
     [[self.undoManager prepareWithInvocationTarget:self]deleteColumnsAtIndexes:columnIndexes];
