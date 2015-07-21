@@ -21,14 +21,11 @@
 
 @implementation CSVReader
 
--(instancetype)initWithData:(NSData *)data {
+-(instancetype)initWithData:(NSData *)data configuration:(CSVConfiguration *)config{
     self = [super init];
     if(self) {
         _data = data;
-        _columnSeparator = @",";
-        _quoteCharacter = @"\"";
-        _encoding = NSUTF8StringEncoding;
-        _escapeCharacter = @"\"";
+        _config = config.copy;
         atEnd = NO;
     }
     return self;
@@ -37,7 +34,7 @@
 
 -(NSArray *)readLineWithError:(NSError *__autoreleasing *)outError {
     if(!dataScanner){
-        NSString *dataString = [[NSString alloc] initWithData:_data encoding:_encoding];
+        NSString *dataString = [[NSString alloc] initWithData:_data encoding:_config.encoding];
         if(dataString == nil) {
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifiying a different encoding"}];
@@ -49,11 +46,11 @@
         dataScanner.charactersToBeSkipped = nil;
         
         quoteEndedCharacterSet = [NSCharacterSet newlineCharacterSet].mutableCopy;
-        [quoteEndedCharacterSet addCharactersInString:_columnSeparator];
+        [quoteEndedCharacterSet addCharactersInString:_config.columnSeparator];
         valueCharacterSet = [quoteEndedCharacterSet invertedSet].mutableCopy;
         quoteAndEscapeSet = [[NSMutableCharacterSet alloc]init];
-        [quoteAndEscapeSet addCharactersInString:_quoteCharacter];
-        [quoteAndEscapeSet addCharactersInString:_escapeCharacter];
+        [quoteAndEscapeSet addCharactersInString:_config.quoteCharacter];
+        [quoteAndEscapeSet addCharactersInString:_config.escapeCharacter];
     }
     
     NSMutableArray *rowArray = [[NSMutableArray alloc]init];
@@ -83,7 +80,7 @@
             }
         }
         
-        BOOL didScanColumnSeparator = [dataScanner scanString:_columnSeparator intoString:NULL];
+        BOOL didScanColumnSeparator = [dataScanner scanString:_config.columnSeparator intoString:NULL];
         if(!didScanColumnSeparator){
             atEnd = YES;
             break;
@@ -101,19 +98,19 @@
     
     if (outError) *outError = nil;
     
-    if([dataScanner scanString:_quoteCharacter intoString:NULL]) {
+    if([dataScanner scanString:_config.quoteCharacter intoString:NULL]) {
         
         NSString *partialString;
         NSMutableString *temporaryString = [[NSMutableString alloc] init];
         
-        if([_escapeCharacter isEqualToString:_quoteCharacter]){
+        if([_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
             while(!dataScanner.atEnd) {
                 char charAtScannerIndex = [dataScanner.string characterAtIndex:dataScanner.scanLocation];
-                if([_quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",charAtScannerIndex]]){
-                    [dataScanner scanString:_quoteCharacter intoString:NULL];
+                if([_config.quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",charAtScannerIndex]]){
+                    [dataScanner scanString:_config.quoteCharacter intoString:NULL];
                     if(!dataScanner.atEnd){
                         charAtScannerIndex = [dataScanner.string characterAtIndex:dataScanner.scanLocation];
-                        if([_quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",charAtScannerIndex]]){
+                        if([_config.quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",charAtScannerIndex]]){
                             [temporaryString appendString:@"\""];
                             dataScanner.scanLocation++;
                             if(dataScanner.atEnd){
@@ -132,9 +129,9 @@
                         }
                     }
                 }else{
-                    BOOL didScan = [dataScanner scanUpToString:_quoteCharacter intoString:&partialString];
+                    BOOL didScan = [dataScanner scanUpToString:_config.quoteCharacter intoString:&partialString];
                     if(didScan){
-                        if(dataScanner.atEnd || ![_quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",[dataScanner.string characterAtIndex:dataScanner.scanLocation]]]){
+                        if(dataScanner.atEnd || ![_config.quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",[dataScanner.string characterAtIndex:dataScanner.scanLocation]]]){
                             if(outError != NULL) {
                                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
                             }
@@ -152,7 +149,7 @@
                 if(didScan){
                     [temporaryString appendString:partialString];
                 }
-                didScan = [dataScanner scanString:_escapeCharacter intoString:NULL];
+                didScan = [dataScanner scanString:_config.escapeCharacter intoString:NULL];
                 if(didScan){
                     if(dataScanner.atEnd){
                         if(outError != NULL) {
@@ -163,7 +160,7 @@
                     [temporaryString appendString:[dataScanner.string substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
                     dataScanner.scanLocation++;
                 }
-                didScan = [dataScanner scanString:_quoteCharacter intoString:NULL];
+                didScan = [dataScanner scanString:_config.quoteCharacter intoString:NULL];
                 if(didScan){
                     if(dataScanner.atEnd || [quoteEndedCharacterSet characterIsMember:[dataScanner.string characterAtIndex:dataScanner.scanLocation]]){
                         *scannedString = temporaryString;
@@ -193,7 +190,7 @@
     NSString *temporaryString;
     BOOL didScanValue = [dataScanner scanCharactersFromSet:valueCharacterSet intoString:&temporaryString];
     if(didScanValue){
-        if([temporaryString.copy rangeOfString:_quoteCharacter].location != NSNotFound){
+        if([temporaryString.copy rangeOfString:_config.quoteCharacter].location != NSNotFound){
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"A non-quote value is unacceptable due to at least one quote character in it"}];
             }
@@ -208,6 +205,7 @@
 
 -(void)updateData:(NSData *)data {
     _data = data;
+    dataScanner = nil;
 }
 
 @end

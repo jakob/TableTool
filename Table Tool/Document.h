@@ -7,11 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "CSVMutableConfiguration.h"
 
 @interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate>
 
 @property NSMutableArray *data;
 @property long maxColumnNumber;
+@property CSVMutableConfiguration *config;
 
 @property IBOutlet NSTableView *tableView;
 
@@ -23,6 +25,7 @@
 -(IBAction)addColumnRight:(id)sender;
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
+-(IBAction)updateConfiguration:(id)sender;
 
 @end
 

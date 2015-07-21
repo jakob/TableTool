@@ -7,18 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CSVConfiguration.h"
 
 @interface CSVReader : NSObject
 
 @property (readonly) NSData *data;
-@property NSStringEncoding encoding;
-@property NSString *columnSeparator;
-@property NSString *quoteCharacter;
-@property NSString *escapeCharacter;
+@property CSVConfiguration *config;
 
--(instancetype)initWithData:(NSData *) data;
+-(instancetype)initWithData:(NSData *) data configuration:(CSVConfiguration *) config;
 
 -(NSArray *)readLineWithError:(NSError **) outError;
+-(void)updateData:(NSData *)data;
 -(BOOL)isAtEnd;
 
 @end

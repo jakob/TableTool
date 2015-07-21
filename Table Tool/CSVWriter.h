@@ -7,17 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CSVConfiguration.h"
 
 @interface CSVWriter : NSObject
 
 @property (readonly) NSArray *dataArray;
 @property NSArray *columnsOrder;
-@property NSStringEncoding encoding;
-@property NSString *columnSeparator;
-@property NSString *quoteCharacter;
-@property NSString *escapeCharacter;
+@property CSVConfiguration *config;
 
--(instancetype)initWithDataArray:(NSArray *) dataArray andColumnsOrder:(NSArray *)columnsOrder;
+-(instancetype)initWithDataArray:(NSArray *) dataArray columnsOrder:(NSArray *)columnsOrder configuration:(CSVConfiguration *)config;
 
 -(NSData *)writeDataWithError:(NSError **) outError;
 

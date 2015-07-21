@@ -13,14 +13,11 @@
 }
 
 
--(instancetype)initWithDataArray:(NSArray *)dataArray andColumnsOrder:(NSArray *)columnsOrder{
+-(instancetype)initWithDataArray:(NSArray *)dataArray columnsOrder:(NSArray *)columnsOrder configuration:(CSVConfiguration *)config{
     self = [super init];
     if(self) {
         _dataArray = dataArray;
-        _quoteCharacter = @"\"";
-        _columnSeparator = @",";
-        _encoding = NSUTF8StringEncoding;
-        _escapeCharacter = @"\"";
+        _config = config.copy;
         _columnsOrder = columnsOrder;
     }
     return self;
@@ -39,26 +36,26 @@
             }
             NSString *cellString = lineArray[columndIdentifier.integerValue];
             NSMutableString *temporaryCellValue = [[NSMutableString alloc]init];
-            BOOL shouldSetQuotes = [cellString rangeOfString:_columnSeparator ].location == NSNotFound ? NO : YES;
-            shouldSetQuotes |= [cellString rangeOfString:_quoteCharacter ].location == NSNotFound ? NO : YES;
-            if(![_escapeCharacter isEqualToString:_quoteCharacter]){
-                shouldSetQuotes |= [cellString rangeOfString:[NSString stringWithFormat:@"%@",_escapeCharacter]].location == NSNotFound ? NO : YES;
+            BOOL shouldSetQuotes = [cellString rangeOfString:_config.columnSeparator ].location == NSNotFound ? NO : YES;
+            shouldSetQuotes |= [cellString rangeOfString:_config.quoteCharacter ].location == NSNotFound ? NO : YES;
+            if(![_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
+                shouldSetQuotes |= [cellString rangeOfString:[NSString stringWithFormat:@"%@",_config.escapeCharacter]].location == NSNotFound ? NO : YES;
             }
             
             if(shouldSetQuotes) {
                 [temporaryCellValue appendString:cellString];
-                if(![_escapeCharacter isEqualToString:_quoteCharacter]){
-                    [temporaryCellValue replaceOccurrencesOfString:_escapeCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_escapeCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                if(![_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
+                    [temporaryCellValue replaceOccurrencesOfString:_config.escapeCharacter withString:[NSString stringWithFormat:@"%@%@",_config.escapeCharacter,_config.escapeCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
                 }
-                [temporaryCellValue replaceOccurrencesOfString:_quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_escapeCharacter,_quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
+                [temporaryCellValue replaceOccurrencesOfString:_config.quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_config.escapeCharacter,_config.quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
                 [temporaryCellValue insertString:@"\"" atIndex:0];
-                [temporaryCellValue appendString:_quoteCharacter];
+                [temporaryCellValue appendString:_config.quoteCharacter];
                 [dataString appendString:temporaryCellValue];
                 
             } else {
                 [dataString appendString:cellString];
             }
-            [dataString appendString:_columnSeparator];
+            [dataString appendString:_config.columnSeparator];
         }
         [dataString deleteCharactersInRange:NSMakeRange([dataString length] -1,1)];
         [dataString appendString:@"\n"];
@@ -70,7 +67,7 @@
         [dataString appendString:@""];
     }
     
-    NSData *finalData = [dataString dataUsingEncoding:_encoding];
+    NSData *finalData = [dataString dataUsingEncoding:_config.encoding];
     if(finalData == nil){
         if(outError != NULL) {
             *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:4 userInfo:@{NSLocalizedDescriptionKey: @"Could not write data", NSLocalizedRecoverySuggestionErrorKey:@"Try to specifiy another encoding to export data"}];

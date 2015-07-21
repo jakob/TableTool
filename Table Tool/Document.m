@@ -9,6 +9,7 @@
 #import "Document.h"
 #import "CSVReader.h"
 #import "CSVWriter.h"
+#import "CSVMutableConfiguration.h"
 
 @interface Document () {
     NSCell *dataCell;
@@ -23,7 +24,7 @@
     if (self) {
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
-        columnsOrder = [[NSMutableArray alloc]init];
+        _config = [[CSVMutableConfiguration alloc]init];
     }
     return self;
 }
@@ -50,7 +51,7 @@
         [columnsOrder addObject:col.identifier];
     }
     
-    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data andColumnsOrder:columnsOrder];
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:columnsOrder configuration:_config];
     NSData *finalData = [writer writeDataWithError:outError];
     if(finalData == nil){
         return NO;
@@ -66,7 +67,7 @@
     _maxColumnNumber = 1;
     [_data removeAllObjects];
     
-    CSVReader *reader = [[CSVReader alloc ]initWithData:data];
+    CSVReader *reader = [[CSVReader alloc ]initWithData:data configuration: _config];
     while(![reader isAtEnd]) {
         NSArray *oneReadLine = [reader readLineWithError:outError];
         if(oneReadLine == nil) {
@@ -389,6 +390,12 @@
 -(void)moveColumnFrom:(long)oldIndex toIndex:(long)newIndex {
     [self.tableView moveColumn:oldIndex toColumn:newIndex];
     [self updateTableColumnsNames];
+}
+
+#pragma mark - configuration
+
+-(IBAction)updateConfiguration:(id)sender {
+    
 }
 
 @end
