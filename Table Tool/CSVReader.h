@@ -17,7 +17,6 @@
 -(instancetype)initWithData:(NSData *) data configuration:(CSVConfiguration *) config;
 
 -(NSArray *)readLineWithError:(NSError **) outError;
--(void)updateData:(NSData *)data;
 -(BOOL)isAtEnd;
 
 @end

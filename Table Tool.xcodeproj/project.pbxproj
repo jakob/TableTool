@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
-		E109B48E1B5E4997005B4959 /* CSVMutableConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48D1B5E4997005B4959 /* CSVMutableConfiguration.m */; };
 		E16BDFCE1B4E74960024F0BD /* CSVReader.m in Sources */ = {isa = PBXBuildFile; fileRef = E16BDFCD1B4E74960024F0BD /* CSVReader.m */; };
 		E16BDFD11B4FA1B90024F0BD /* CSVWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = E16BDFD01B4FA1B90024F0BD /* CSVWriter.m */; };
 		E1CC84E21B4A5F2A00ED8314 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E1CC84E11B4A5F2A00ED8314 /* AppDelegate.m */; };
@@ -33,8 +32,6 @@
 /* Begin PBXFileReference section */
 		E109B4891B5E4598005B4959 /* CSVConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVConfiguration.h; sourceTree = "<group>"; };
 		E109B48A1B5E4598005B4959 /* CSVConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVConfiguration.m; sourceTree = "<group>"; };
-		E109B48C1B5E4997005B4959 /* CSVMutableConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVMutableConfiguration.h; sourceTree = "<group>"; };
-		E109B48D1B5E4997005B4959 /* CSVMutableConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVMutableConfiguration.m; sourceTree = "<group>"; };
 		E16BDFCC1B4E74960024F0BD /* CSVReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVReader.h; sourceTree = "<group>"; };
 		E16BDFCD1B4E74960024F0BD /* CSVReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVReader.m; sourceTree = "<group>"; };
 		E16BDFCF1B4FA1B90024F0BD /* CSVWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVWriter.h; sourceTree = "<group>"; };
@@ -107,8 +104,6 @@
 				E16BDFD01B4FA1B90024F0BD /* CSVWriter.m */,
 				E109B4891B5E4598005B4959 /* CSVConfiguration.h */,
 				E109B48A1B5E4598005B4959 /* CSVConfiguration.m */,
-				E109B48C1B5E4997005B4959 /* CSVMutableConfiguration.h */,
-				E109B48D1B5E4997005B4959 /* CSVMutableConfiguration.m */,
 			);
 			path = "Table Tool";
 			sourceTree = "<group>";
@@ -243,7 +238,6 @@
 				E16BDFCE1B4E74960024F0BD /* CSVReader.m in Sources */,
 				E1CC84E41B4A5F2A00ED8314 /* main.m in Sources */,
 				E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */,
-				E109B48E1B5E4997005B4959 /* CSVMutableConfiguration.m in Sources */,
 				E1CC84E21B4A5F2A00ED8314 /* AppDelegate.m in Sources */,
 				E16BDFD11B4FA1B90024F0BD /* CSVWriter.m in Sources */,
 			);

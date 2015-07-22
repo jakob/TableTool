@@ -7,17 +7,22 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "CSVMutableConfiguration.h"
+#import "CSVConfiguration.h"
 
 @interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate>
 
 @property NSMutableArray *data;
 @property long maxColumnNumber;
-@property CSVMutableConfiguration *config;
+@property CSVConfiguration *config;
 
 @property IBOutlet NSTableView *tableView;
-
--(void)updateTableColumns;
+@property IBOutlet NSSegmentedControl *quoteControl;
+@property IBOutlet NSSegmentedControl *escapeControl;
+@property IBOutlet NSSegmentedControl *separatorControl;
+@property IBOutlet NSSegmentedControl *decimalControl;
+@property IBOutlet NSPopUpButton *encodingMenu;
+@property IBOutlet NSBox *errorBox;
+@property IBOutlet NSTextField *errorLabel;
 
 -(IBAction)addLineAbove:(id)sender;
 -(IBAction)addLineBelow:(id)sender;

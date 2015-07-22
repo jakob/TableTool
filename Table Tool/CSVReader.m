@@ -203,10 +203,5 @@
     return YES;
 }
 
--(void)updateData:(NSData *)data {
-    _data = data;
-    dataScanner = nil;
-}
-
 @end
 

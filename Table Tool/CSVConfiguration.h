@@ -10,12 +10,10 @@
 
 @interface CSVConfiguration : NSObject <NSCopying>
 
-@property(readonly) NSStringEncoding encoding;
-@property(readonly) NSString *columnSeparator;
-@property(readonly) NSString *quoteCharacter;
-@property(readonly) NSString *escapeCharacter;
-@property(readonly) NSString *decimalMark;
-
--(instancetype)init;
+@property NSStringEncoding encoding;
+@property NSString *columnSeparator;
+@property NSString *quoteCharacter;
+@property NSString *escapeCharacter;
+@property NSString *decimalMark;
 
 @end

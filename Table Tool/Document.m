@@ -9,10 +9,13 @@
 #import "Document.h"
 #import "CSVReader.h"
 #import "CSVWriter.h"
-#import "CSVMutableConfiguration.h"
+#import "CSVConfiguration.h"
 
 @interface Document () {
     NSCell *dataCell;
+    NSData *savedData;
+    BOOL edited;
+    BOOL addedColumn;
 }
 
 @end
@@ -24,7 +27,7 @@
     if (self) {
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
-        _config = [[CSVMutableConfiguration alloc]init];
+        _config = [[CSVConfiguration alloc]init];
     }
     return self;
 }
@@ -63,15 +66,19 @@
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
     
     [self.undoManager removeAllActions];
+    savedData = data;
     
     _maxColumnNumber = 1;
     [_data removeAllObjects];
     
     CSVReader *reader = [[CSVReader alloc ]initWithData:data configuration: _config];
     while(![reader isAtEnd]) {
-        NSArray *oneReadLine = [reader readLineWithError:outError];
+        NSError *error = nil;
+        NSArray *oneReadLine = [reader readLineWithError:&error];
         if(oneReadLine == nil) {
-            return NO;
+            self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",error.localizedDescription,error.localizedRecoverySuggestion];
+            self.errorBox.hidden = NO;
+            break;
         }
         [_data addObject:oneReadLine];
         if(_maxColumnNumber < [[_data lastObject] count]){
@@ -119,17 +126,26 @@
     
     [[self.undoManager prepareWithInvocationTarget:self] restoreObjectValue:rowArray[tableColumn.identifier.integerValue] forTableColumn:tableColumn row:rowIndex reload:YES];
     
+    if(![(NSString *)object isEqualToString:rowArray[tableColumn.identifier.integerValue]]){
+        [self dataGotEdited];
+    }
     rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
     _data[rowIndex] = rowArray;
     if (shouldReload) [self.tableView reloadData];
 }
 
 -(void)tableViewColumnDidMove:(NSNotification *)aNotification {
-    [self.undoManager setActionName:@"Move Column"];
     
-    NSNumber *oldIndex = [aNotification.userInfo valueForKey:@"NSOldColumn"];
-    NSNumber *newIndex = [aNotification.userInfo valueForKey:@"NSNewColumn"];
-    [[self.undoManager prepareWithInvocationTarget:self] moveColumnFrom:newIndex.longValue toIndex:oldIndex.longValue];
+    [self dataGotEdited];
+    
+    if(!addedColumn){
+        
+        [self.undoManager setActionName:@"Move Column"];
+        
+        NSNumber *oldIndex = [aNotification.userInfo valueForKey:@"NSOldColumn"];
+        NSNumber *newIndex = [aNotification.userInfo valueForKey:@"NSNewColumn"];
+        [[self.undoManager prepareWithInvocationTarget:self] moveColumnFrom:newIndex.longValue toIndex:oldIndex.longValue];
+    }
     
     [self updateTableColumnsNames];
 }
@@ -166,6 +182,7 @@
         return;
     }
     
+    [self dataGotEdited];
     long rowIndex;
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     if(rowIndexes.count != 0){
@@ -185,6 +202,7 @@
         return;
     }
     
+    [self dataGotEdited];
     long rowIndex;
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     if(rowIndexes.count != 0){
@@ -204,6 +222,7 @@
         return;
     }
     
+    [self dataGotEdited];
     long columnIndex;
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
@@ -226,6 +245,7 @@
         return;
     }
     
+    [self dataGotEdited];
     long columnIndex;
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
@@ -249,6 +269,8 @@
         return;
     }
     
+    [self dataGotEdited];
+    
     NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
     [self deleteColumnsAtIndexes:columnIndexes];
     [self.undoManager setActionName:@"Delete Column(s)"];
@@ -261,6 +283,8 @@
         NSBeep();
         return;
     }
+    
+    [self dataGotEdited];
     
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     [self deleteRowsAtIndexes:rowIndexes];
@@ -327,6 +351,7 @@
 
 -(void)addColumnAtIndex:(long) columnIndex {
     
+    addedColumn = YES;
     long columnIdentifier = _maxColumnNumber;
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
     col.dataCell = dataCell;
@@ -342,6 +367,7 @@
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
     [self updateTableColumnsNames];
     [self.tableView scrollColumnToVisible:columnIndex];
+    addedColumn = NO;
     
     [[self.undoManager prepareWithInvocationTarget:self] deleteColumnsAtIndexes:[NSIndexSet indexSetWithIndex:columnIndex]];
 }
@@ -396,6 +422,60 @@
 
 -(IBAction)updateConfiguration:(id)sender {
     
+    _config.encoding = [self.encodingMenu selectedTag];
+    if([self.separatorControl selectedSegment] == 2) {
+        _config.columnSeparator = @"\t";
+    }else{
+        _config.columnSeparator = [self.separatorControl labelForSegment:[self.separatorControl selectedSegment] ];
+    }
+    _config.decimalMark = [self.decimalControl labelForSegment:[self.decimalControl selectedSegment]];
+    _config.quoteCharacter = [self.quoteControl labelForSegment:[self.quoteControl selectedSegment]];
+    [self.escapeControl setLabel:_config.quoteCharacter forSegment:1];
+    _config.escapeCharacter = [self.escapeControl labelForSegment:[self.escapeControl selectedSegment]];
+    
+    NSError *outError;
+    BOOL didReload = [self reloadDataWithError:&outError];
+    if (!didReload) {
+        self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",outError.localizedDescription,outError.localizedRecoverySuggestion];
+        self.errorBox.hidden = NO;
+    } else {
+        self.errorBox.hidden = YES;
+    }
+    
+}
+
+-(BOOL)reloadDataWithError:(NSError**)error {
+    _maxColumnNumber = 1;
+    [_data removeAllObjects];
+    
+    NSError *outError;
+    CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: _config];
+    while(![reader isAtEnd]) {
+        NSArray *oneReadLine = [reader readLineWithError:&outError];
+        if(oneReadLine == nil) {
+            if (error) *error = outError;
+            [self updateTableColumns];
+            [self.tableView reloadData];
+            return NO;
+        }
+        [_data addObject:oneReadLine];
+        if(_maxColumnNumber < [[_data lastObject] count]){
+            _maxColumnNumber = [[_data lastObject] count];
+        }
+    }
+    
+    [self updateTableColumns];
+    [self.tableView reloadData];
+    return YES;
+}
+
+-(void)dataGotEdited {
+    edited = YES;
+    self.encodingMenu.enabled = NO;
+    self.separatorControl.enabled = NO;
+    self.decimalControl.enabled = NO;
+    self.quoteControl.enabled = NO;
+    self.escapeControl.enabled = NO;
 }
 
 @end
