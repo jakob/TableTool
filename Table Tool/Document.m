@@ -55,12 +55,7 @@
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     
-    NSMutableArray *columnsOrder = [[NSMutableArray alloc] init];
-    for(NSTableColumn *col in self.tableView.tableColumns) {
-        [columnsOrder addObject:col.identifier];
-    }
-    
-    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:columnsOrder configuration:_config];
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_config];
     NSData *finalData = [writer writeDataWithError:outError];
     if(finalData == nil){
         return NO;
@@ -157,6 +152,14 @@
     }
     
     [self updateTableColumnsNames];
+}
+
+-(NSArray *)getColumnsOrder{
+    NSMutableArray *columnsOrder = [[NSMutableArray alloc] init];
+    for(NSTableColumn *col in self.tableView.tableColumns) {
+        [columnsOrder addObject:col.identifier];
+    }
+    return columnsOrder.copy;
 }
 
 #pragma mark - updateTableView
@@ -496,5 +499,70 @@
         self.escapeControl.enabled = NO;
     }
 }
+
+#pragma mark - copy&paste
+
+-(IBAction)copy:(id)sender {
+    if([self.tableView selectedRow] != -1){
+        [self copyRowIndexes:[self.tableView selectedRowIndexes]];
+    }else if([self.tableView selectedColumn] != -1){
+        [self copyColumnIndexes:[self.tableView selectedColumnIndexes]];
+    }else{
+        NSBeep();
+    }
+    return;
+}
+
+-(void)copyRowIndexes:(NSIndexSet *)rowIndexes {
+    NSMutableString *copyString = [NSMutableString string];
+    
+    [rowIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        NSMutableString *rowString = [NSMutableString string];
+        NSArray *row = _data[idx];
+        for(NSString *columnId in [self getColumnsOrder]) {
+            NSMutableString *cellValue = [NSMutableString string];
+            [cellValue appendString:row[columnId.integerValue]];
+            [cellValue replaceOccurrencesOfString:@"\t" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
+            [cellValue replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
+            [rowString appendString:cellValue];
+            [rowString appendString:@"\t"];
+        }
+        [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
+        [copyString appendString:rowString];
+        [copyString appendString:@"\n"];
+    }];
+    [copyString deleteCharactersInRange:NSMakeRange(copyString.length-1, 1)];
+    
+    NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
+    [generalPasteboard clearContents];
+    [generalPasteboard writeObjects:@[copyString]];
+}
+
+-(void)copyColumnIndexes:(NSIndexSet *)columnIndexes {
+    NSMutableString *copyString = [NSMutableString string];
+    
+    for(int i = 0; i < [self.tableView numberOfRows];i++){
+        NSMutableString *rowString = [NSMutableString string];
+        NSArray *row = _data[i];
+        [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            NSUInteger columnIndex = ((NSTableColumn *)self.tableView.tableColumns[idx]).identifier.integerValue;
+            NSMutableString *cellValue = [NSMutableString string];
+            [cellValue appendString:row[columnIndex]];
+            [cellValue replaceOccurrencesOfString:@"\t" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
+            [cellValue replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
+            [rowString appendString:cellValue];
+            [rowString appendString:@"\t"];
+        }];
+        [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
+        [copyString appendString:rowString];
+        [copyString appendString:@"\n"];
+    }
+    [copyString deleteCharactersInRange:NSMakeRange(copyString.length-1, 1)];
+    
+    NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
+    [generalPasteboard clearContents];
+    [generalPasteboard writeObjects:@[copyString]];
+}
+
 
 @end

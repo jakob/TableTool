@@ -32,6 +32,7 @@
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
 -(IBAction)updateConfiguration:(id)sender;
+-(IBAction)copy:(id)sender;
 
 @end
 
