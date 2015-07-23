@@ -14,6 +14,7 @@
 @property NSMutableArray *data;
 @property long maxColumnNumber;
 @property CSVConfiguration *config;
+@property NSString *errorMessage;
 
 @property IBOutlet NSTableView *tableView;
 @property IBOutlet NSSegmentedControl *quoteControl;

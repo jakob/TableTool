@@ -48,7 +48,7 @@
                     [temporaryCellValue replaceOccurrencesOfString:_config.escapeCharacter withString:[NSString stringWithFormat:@"%@%@",_config.escapeCharacter,_config.escapeCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
                 }
                 [temporaryCellValue replaceOccurrencesOfString:_config.quoteCharacter withString:[NSString stringWithFormat:@"%@%@",_config.escapeCharacter,_config.quoteCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
-                [temporaryCellValue insertString:@"\"" atIndex:0];
+                [temporaryCellValue insertString:[NSString stringWithFormat:@"%@",_config.quoteCharacter] atIndex:0];
                 [temporaryCellValue appendString:_config.quoteCharacter];
                 [dataString appendString:temporaryCellValue];
                 

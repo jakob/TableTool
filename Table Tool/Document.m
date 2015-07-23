@@ -15,7 +15,8 @@
     NSCell *dataCell;
     NSData *savedData;
     BOOL edited;
-    BOOL addedColumn;
+    BOOL didNotMoveColumn;
+    BOOL newFile;
 }
 
 @end
@@ -28,6 +29,7 @@
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
         _config = [[CSVConfiguration alloc]init];
+        newFile = YES;
     }
     return self;
 }
@@ -36,6 +38,10 @@
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
+    if(_errorMessage){
+        self.errorLabel.stringValue = _errorMessage;
+        self.errorBox.hidden = NO;
+    }
 }
 
 + (BOOL)autosavesInPlace {
@@ -60,12 +66,15 @@
         return NO;
     }
     
+    newFile = NO;
+    [self dataGotEdited];
     return finalData;
 }
 
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
     
     [self.undoManager removeAllActions];
+    newFile = NO;
     savedData = data;
     
     _maxColumnNumber = 1;
@@ -76,7 +85,8 @@
         NSError *error = nil;
         NSArray *oneReadLine = [reader readLineWithError:&error];
         if(oneReadLine == nil) {
-            self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",error.localizedDescription,error.localizedRecoverySuggestion];
+            _errorMessage = [NSString stringWithFormat:@"%@\n%@",error.localizedDescription,error.localizedRecoverySuggestion];
+            self.errorLabel.stringValue = _errorMessage;
             self.errorBox.hidden = NO;
             break;
         }
@@ -138,8 +148,7 @@
     
     [self dataGotEdited];
     
-    if(!addedColumn){
-        
+    if(!didNotMoveColumn){
         [self.undoManager setActionName:@"Move Column"];
         
         NSNumber *oldIndex = [aNotification.userInfo valueForKey:@"NSOldColumn"];
@@ -351,7 +360,7 @@
 
 -(void)addColumnAtIndex:(long) columnIndex {
     
-    addedColumn = YES;
+    didNotMoveColumn = YES;
     long columnIdentifier = _maxColumnNumber;
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
     col.dataCell = dataCell;
@@ -367,13 +376,14 @@
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
     [self updateTableColumnsNames];
     [self.tableView scrollColumnToVisible:columnIndex];
-    addedColumn = NO;
+    didNotMoveColumn = NO;
     
     [[self.undoManager prepareWithInvocationTarget:self] deleteColumnsAtIndexes:[NSIndexSet indexSetWithIndex:columnIndex]];
 }
 
 -(void)deleteColumnsAtIndexes:(NSIndexSet *) columnIndexes{
     
+    didNotMoveColumn = YES;
     NSMutableArray *columnIds = [[NSMutableArray alloc]init];
     NSArray *tableColumns = self.tableView.tableColumns.copy;
     [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -381,6 +391,8 @@
         [columnIds addObject:col.identifier];
         [self.tableView removeTableColumn:col];
     }];
+    didNotMoveColumn = NO;
+    
     [self updateTableColumnsNames];
     
     long selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
@@ -397,6 +409,7 @@
 
 -(void)restoreColumns:(NSMutableArray *)columnIds atIndexes:(NSIndexSet *)columnIndexes{
     
+    didNotMoveColumn = YES;
     NSMutableIndexSet *columnIndexesCopy = columnIndexes.mutableCopy;
     for(int i = 0; i < columnIds.count; i++){
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
@@ -406,6 +419,8 @@
         [columnIndexesCopy removeIndex:0];
         [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:index];
     }
+    didNotMoveColumn = NO;
+    
     [self updateTableColumnsNames];
     
     [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
@@ -433,13 +448,15 @@
     [self.escapeControl setLabel:_config.quoteCharacter forSegment:1];
     _config.escapeCharacter = [self.escapeControl labelForSegment:[self.escapeControl selectedSegment]];
     
-    NSError *outError;
-    BOOL didReload = [self reloadDataWithError:&outError];
-    if (!didReload) {
-        self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",outError.localizedDescription,outError.localizedRecoverySuggestion];
-        self.errorBox.hidden = NO;
-    } else {
-        self.errorBox.hidden = YES;
+    if(!newFile) {
+        NSError *outError;
+        BOOL didReload = [self reloadDataWithError:&outError];
+        if (!didReload) {
+            self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",outError.localizedDescription,outError.localizedRecoverySuggestion];
+            self.errorBox.hidden = NO;
+        } else {
+            self.errorBox.hidden = YES;
+        }
     }
     
 }
@@ -470,12 +487,14 @@
 }
 
 -(void)dataGotEdited {
-    edited = YES;
-    self.encodingMenu.enabled = NO;
-    self.separatorControl.enabled = NO;
-    self.decimalControl.enabled = NO;
-    self.quoteControl.enabled = NO;
-    self.escapeControl.enabled = NO;
+    if(!newFile){
+        edited = YES;
+        self.encodingMenu.enabled = NO;
+        self.separatorControl.enabled = NO;
+        self.decimalControl.enabled = NO;
+        self.quoteControl.enabled = NO;
+        self.escapeControl.enabled = NO;
+    }
 }
 
 @end
