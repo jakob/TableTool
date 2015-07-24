@@ -12,11 +12,14 @@
 @interface CSVReader : NSObject
 
 @property (readonly) NSData *data;
+@property NSString *dataString;
 @property CSVConfiguration *config;
 
--(instancetype)initWithData:(NSData *) data configuration:(CSVConfiguration *) config;
+-(instancetype)initWithData:(NSData *)data configuration:(CSVConfiguration *)config;
+-(instancetype)initWithString:(NSString *)dataString configuration:(CSVConfiguration *)config;
 
--(NSArray *)readLineWithError:(NSError **) outError;
+-(NSArray *)readLineWithError:(NSError **)outError;
+-(NSArray *)readLineForPastingTo:(NSArray *)columnsOrder maxColumnIndex:(long)maxColumnNumber;
 -(BOOL)isAtEnd;
 
 @end

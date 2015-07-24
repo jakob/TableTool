@@ -461,7 +461,6 @@
             self.errorBox.hidden = YES;
         }
     }
-    
 }
 
 -(BOOL)reloadDataWithError:(NSError**)error {
@@ -500,7 +499,7 @@
     }
 }
 
-#pragma mark - copy&paste
+#pragma mark - copy,paste,delete
 
 -(IBAction)copy:(id)sender {
     if([self.tableView selectedRow] != -1){
@@ -520,12 +519,8 @@
         NSMutableString *rowString = [NSMutableString string];
         NSArray *row = _data[idx];
         for(NSString *columnId in [self getColumnsOrder]) {
-            NSMutableString *cellValue = [NSMutableString string];
-            [cellValue appendString:row[columnId.integerValue]];
-            [cellValue replaceOccurrencesOfString:@"\t" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
-            [cellValue replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
-            [rowString appendString:cellValue];
-            [rowString appendString:@"\t"];
+            NSString *cellValue = [[NSString alloc]initWithString:row[columnId.integerValue]];
+            [self appendCell:cellValue toString:rowString];
         }
         [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
         [copyString appendString:rowString];
@@ -542,16 +537,12 @@
     NSMutableString *copyString = [NSMutableString string];
     
     for(int i = 0; i < [self.tableView numberOfRows];i++){
-        NSMutableString *rowString = [NSMutableString string];
+        NSMutableString *rowString = [[NSMutableString alloc]init];
         NSArray *row = _data[i];
         [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
             NSUInteger columnIndex = ((NSTableColumn *)self.tableView.tableColumns[idx]).identifier.integerValue;
-            NSMutableString *cellValue = [NSMutableString string];
-            [cellValue appendString:row[columnIndex]];
-            [cellValue replaceOccurrencesOfString:@"\t" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
-            [cellValue replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
-            [rowString appendString:cellValue];
-            [rowString appendString:@"\t"];
+            NSString *cellValue = [[NSString alloc]initWithString:row[columnIndex]];
+            [self appendCell:cellValue toString:rowString];
         }];
         [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
         [copyString appendString:rowString];
@@ -562,6 +553,69 @@
     NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
     [generalPasteboard clearContents];
     [generalPasteboard writeObjects:@[copyString]];
+}
+
+-(void)appendCell:(NSString *)cell toString:(NSMutableString *)rowString {
+    NSMutableString *cellValue = cell.mutableCopy;
+    [cellValue replaceOccurrencesOfString:@"\t" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
+    [cellValue replaceOccurrencesOfString:@"\n" withString:@" " options:0 range:NSMakeRange(0,cellValue.length)];
+    [rowString appendString:cellValue];
+    [rowString appendString:@"\t"];
+}
+
+-(IBAction)paste:(id)sender {
+    long toInsertIndex;
+    if([self.tableView selectedRow] == -1){
+        toInsertIndex = [self.tableView numberOfRows];
+    } else {
+        NSIndexSet *selectedRowIndexes = [self.tableView selectedRowIndexes];
+        toInsertIndex = [selectedRowIndexes lastIndex] > [selectedRowIndexes firstIndex] ? [selectedRowIndexes lastIndex] + 1 : [selectedRowIndexes firstIndex] + 1;
+    }
+    long firstIndex = toInsertIndex;
+    
+    NSArray *classes = [[NSArray alloc]initWithObjects:[NSString class], nil];
+    NSDictionary *options = [NSDictionary dictionary];
+    NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
+    NSArray *toInsert = [generalPasteboard readObjectsForClasses:classes options:options];
+    CSVReader *reader = [[CSVReader alloc]initWithString:[toInsert lastObject] configuration:_config];
+    
+    while(![reader isAtEnd]) {
+        NSArray *oneReadLine = [reader readLineForPastingTo:[self getColumnsOrder] maxColumnIndex:_maxColumnNumber];
+        
+        for(long i = _maxColumnNumber; i < oneReadLine.count;i++){
+            [self addColumnAtIndex:self.tableView.tableColumns.count];
+        }
+        
+        [_data insertObject:oneReadLine atIndex:toInsertIndex];
+        toInsertIndex++;
+    }
+    
+    [self.tableView reloadData];
+    
+    NSIndexSet *toSelectRowIndexes = [[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(firstIndex, toInsertIndex-firstIndex)];
+    [self.tableView selectRowIndexes:toSelectRowIndexes byExtendingSelection:NO];
+    [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:toSelectRowIndexes];
+    [self.undoManager setActionName:@"Paste String(s)"];
+}
+
+-(IBAction)delete:(id)sender {
+    long selectedIndex = [self.tableView selectedRow];
+    if(selectedIndex == -1){
+        selectedIndex = [self.tableView selectedColumn];
+        if(selectedIndex == -1) {
+            NSBeep();
+            return;
+        }
+        [self dataGotEdited];
+        NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
+        [self deleteColumnsAtIndexes:columnIndexes];
+        [self.undoManager setActionName:@"Delete Column(s)"];
+    }else{
+        [self dataGotEdited];
+        NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
+        [self deleteRowsAtIndexes:rowIndexes];
+        [self.undoManager setActionName:@"Delete Row(s)"];
+    }
 }
 
 
