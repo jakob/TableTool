@@ -9,7 +9,6 @@
 #import "Document.h"
 #import "CSVReader.h"
 #import "CSVWriter.h"
-#import "CSVConfiguration.h"
 
 @interface Document () {
     NSCell *dataCell;
@@ -17,6 +16,8 @@
     BOOL edited;
     BOOL didNotMoveColumn;
     BOOL newFile;
+    TTFormatViewController *inputController;
+    TTFormatViewController *outputController;
 }
 
 @end
@@ -28,7 +29,8 @@
     if (self) {
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
-        _config = [[CSVConfiguration alloc]init];
+        _inputConfig = [[CSVConfiguration alloc]init];
+        _outputConfig = _inputConfig.copy;
         newFile = YES;
     }
     return self;
@@ -41,6 +43,23 @@
     if(_errorMessage){
         self.errorLabel.stringValue = _errorMessage;
         self.errorBox.hidden = NO;
+    }
+    
+    outputController = [[TTFormatViewController alloc]init];
+    [self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
+    if(!newFile){
+        [outputController setControlTitle:@"Output File Format"];
+        [outputController setCheckButton];
+    }else{
+        [outputController setControlTitle:@"File Format"];
+    }
+    outputController.delegate = self;
+    
+    if(!newFile){
+        inputController = [[TTFormatViewController alloc]init];
+        [self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
+        [inputController setControlTitle:@"Input File Format"];
+        inputController.delegate = self;
     }
 }
 
@@ -55,14 +74,12 @@
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     
-    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_config];
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
     NSData *finalData = [writer writeDataWithError:outError];
     if(finalData == nil){
         return NO;
     }
     
-    newFile = NO;
-    [self dataGotEdited];
     return finalData;
 }
 
@@ -75,7 +92,7 @@
     _maxColumnNumber = 1;
     [_data removeAllObjects];
     
-    CSVReader *reader = [[CSVReader alloc ]initWithData:data configuration: _config];
+    CSVReader *reader = [[CSVReader alloc ]initWithData:data configuration: _inputConfig];
     while(![reader isAtEnd]) {
         NSError *error = nil;
         NSArray *oneReadLine = [reader readLineWithError:&error];
@@ -438,20 +455,26 @@
 
 #pragma mark - configuration
 
--(IBAction)updateConfiguration:(id)sender {
-    
-    _config.encoding = [self.encodingMenu selectedTag];
-    if([self.separatorControl selectedSegment] == 2) {
-        _config.columnSeparator = @"\t";
-    }else{
-        _config.columnSeparator = [self.separatorControl labelForSegment:[self.separatorControl selectedSegment] ];
+- (IBAction)toggleFormatView:(id)sender {
+    if(inputController){
+        if(inputController.view.hidden){
+            inputController.view.hidden = NO;
+        }else{
+            inputController.view.hidden = YES;
+        }
     }
-    _config.decimalMark = [self.decimalControl labelForSegment:[self.decimalControl selectedSegment]];
-    _config.quoteCharacter = [self.quoteControl labelForSegment:[self.quoteControl selectedSegment]];
-    [self.escapeControl setLabel:_config.quoteCharacter forSegment:1];
-    _config.escapeCharacter = [self.escapeControl labelForSegment:[self.escapeControl selectedSegment]];
     
-    if(!newFile) {
+    if(outputController.view.hidden){
+        outputController.view.hidden = NO;
+    } else {
+        outputController.view.hidden = YES;
+    }
+}
+
+-(void)configurationChangedForFormatViewController:(TTFormatViewController*)formatViewController {
+    
+    if([formatViewController.viewTitle.stringValue isEqualToString:@"Input File Format"]) {
+        _inputConfig = formatViewController.config;
         NSError *outError;
         BOOL didReload = [self reloadDataWithError:&outError];
         if (!didReload) {
@@ -460,7 +483,26 @@
         } else {
             self.errorBox.hidden = YES;
         }
+        if(outputController.sameAsInput){
+            _outputConfig = _inputConfig;
+            outputController.config = _outputConfig;
+            [outputController selectFormatByConfig];
+        }
+    }else{
+        _outputConfig = formatViewController.config;
     }
+}
+
+-(void)useInputConfig:(TTFormatViewController *)formatViewController {
+    formatViewController.config = _inputConfig;
+}
+
+-(void)revertEditing{
+    while([self.undoManager canUndo]){
+        [self.undoManager undo];
+    }
+    [self.undoManager removeAllActions];
+    edited = NO;
 }
 
 -(BOOL)reloadDataWithError:(NSError**)error {
@@ -468,7 +510,7 @@
     [_data removeAllObjects];
     
     NSError *outError;
-    CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: _config];
+    CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: _inputConfig];
     while(![reader isAtEnd]) {
         NSArray *oneReadLine = [reader readLineWithError:&outError];
         if(oneReadLine == nil) {
@@ -491,11 +533,7 @@
 -(void)dataGotEdited {
     if(!newFile){
         edited = YES;
-        self.encodingMenu.enabled = NO;
-        self.separatorControl.enabled = NO;
-        self.decimalControl.enabled = NO;
-        self.quoteControl.enabled = NO;
-        self.escapeControl.enabled = NO;
+        [inputController showRevertMessage];
     }
 }
 
@@ -577,7 +615,7 @@
     NSDictionary *options = [NSDictionary dictionary];
     NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
     NSArray *toInsert = [generalPasteboard readObjectsForClasses:classes options:options];
-    CSVReader *reader = [[CSVReader alloc]initWithString:[toInsert lastObject] configuration:_config];
+    CSVReader *reader = [[CSVReader alloc]initWithString:[toInsert lastObject] configuration:_inputConfig];
     
     while(![reader isAtEnd]) {
         NSArray *oneReadLine = [reader readLineForPastingTo:[self getColumnsOrder] maxColumnIndex:_maxColumnNumber];
@@ -596,6 +634,7 @@
     [self.tableView selectRowIndexes:toSelectRowIndexes byExtendingSelection:NO];
     [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:toSelectRowIndexes];
     [self.undoManager setActionName:@"Paste String(s)"];
+    [self dataGotEdited];
 }
 
 -(IBAction)delete:(id)sender {
@@ -606,16 +645,15 @@
             NSBeep();
             return;
         }
-        [self dataGotEdited];
         NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
         [self deleteColumnsAtIndexes:columnIndexes];
         [self.undoManager setActionName:@"Delete Column(s)"];
     }else{
-        [self dataGotEdited];
         NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
         [self deleteRowsAtIndexes:rowIndexes];
         [self.undoManager setActionName:@"Delete Row(s)"];
     }
+    [self dataGotEdited];
 }
 
 

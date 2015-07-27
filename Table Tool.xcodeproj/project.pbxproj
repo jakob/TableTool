@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
+		E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B4901B623924005B4959 /* TTFormatViewController.m */; };
+		E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E109B4911B623924005B4959 /* TTFormatViewController.xib */; };
 		E16BDFCE1B4E74960024F0BD /* CSVReader.m in Sources */ = {isa = PBXBuildFile; fileRef = E16BDFCD1B4E74960024F0BD /* CSVReader.m */; };
 		E16BDFD11B4FA1B90024F0BD /* CSVWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = E16BDFD01B4FA1B90024F0BD /* CSVWriter.m */; };
 		E1CC84E21B4A5F2A00ED8314 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E1CC84E11B4A5F2A00ED8314 /* AppDelegate.m */; };
@@ -32,6 +34,9 @@
 /* Begin PBXFileReference section */
 		E109B4891B5E4598005B4959 /* CSVConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVConfiguration.h; sourceTree = "<group>"; };
 		E109B48A1B5E4598005B4959 /* CSVConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVConfiguration.m; sourceTree = "<group>"; };
+		E109B48F1B623924005B4959 /* TTFormatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTFormatViewController.h; sourceTree = "<group>"; };
+		E109B4901B623924005B4959 /* TTFormatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTFormatViewController.m; sourceTree = "<group>"; };
+		E109B4911B623924005B4959 /* TTFormatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewController.xib; sourceTree = "<group>"; };
 		E16BDFCC1B4E74960024F0BD /* CSVReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVReader.h; sourceTree = "<group>"; };
 		E16BDFCD1B4E74960024F0BD /* CSVReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVReader.m; sourceTree = "<group>"; };
 		E16BDFCF1B4FA1B90024F0BD /* CSVWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVWriter.h; sourceTree = "<group>"; };
@@ -104,6 +109,9 @@
 				E16BDFD01B4FA1B90024F0BD /* CSVWriter.m */,
 				E109B4891B5E4598005B4959 /* CSVConfiguration.h */,
 				E109B48A1B5E4598005B4959 /* CSVConfiguration.m */,
+				E109B48F1B623924005B4959 /* TTFormatViewController.h */,
+				E109B4901B623924005B4959 /* TTFormatViewController.m */,
+				E109B4911B623924005B4959 /* TTFormatViewController.xib */,
 			);
 			path = "Table Tool";
 			sourceTree = "<group>";
@@ -217,6 +225,7 @@
 				E1CC84EA1B4A5F2A00ED8314 /* Document.xib in Resources */,
 				E1CC84EC1B4A5F2A00ED8314 /* Images.xcassets in Resources */,
 				E1CC84EF1B4A5F2A00ED8314 /* MainMenu.xib in Resources */,
+				E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +248,7 @@
 				E1CC84E41B4A5F2A00ED8314 /* main.m in Sources */,
 				E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */,
 				E1CC84E21B4A5F2A00ED8314 /* AppDelegate.m in Sources */,
+				E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */,
 				E16BDFD11B4FA1B90024F0BD /* CSVWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

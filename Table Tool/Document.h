@@ -8,22 +8,20 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CSVConfiguration.h"
+#import "TTFormatViewController.h"
 
 @interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate>
 
 @property NSMutableArray *data;
 @property long maxColumnNumber;
-@property CSVConfiguration *config;
+@property CSVConfiguration *inputConfig;
+@property CSVConfiguration *outputConfig;
 @property NSString *errorMessage;
 
 @property IBOutlet NSTableView *tableView;
-@property IBOutlet NSSegmentedControl *quoteControl;
-@property IBOutlet NSSegmentedControl *escapeControl;
-@property IBOutlet NSSegmentedControl *separatorControl;
-@property IBOutlet NSSegmentedControl *decimalControl;
-@property IBOutlet NSPopUpButton *encodingMenu;
 @property IBOutlet NSBox *errorBox;
 @property IBOutlet NSTextField *errorLabel;
+@property IBOutlet NSSplitView *splitView;
 
 -(IBAction)addLineAbove:(id)sender;
 -(IBAction)addLineBelow:(id)sender;
@@ -31,8 +29,11 @@
 -(IBAction)addColumnRight:(id)sender;
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
--(IBAction)updateConfiguration:(id)sender;
--(IBAction)copy:(id)sender;
+-(IBAction)toggleFormatView:(id)sender;
+
+-(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
+-(void)useInputConfig:(TTFormatViewController *)formatViewController;
+-(void)revertEditing;
 
 @end
 
