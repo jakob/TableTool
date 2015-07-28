@@ -34,7 +34,13 @@
             for(NSUInteger i = lineArray.count; i <= columndIdentifier.integerValue;i++){
                 [lineArray addObject:@""];
             }
-            NSString *cellString = lineArray[columndIdentifier.integerValue];
+            
+            NSString *cellString;
+            if([lineArray[columndIdentifier.integerValue] isKindOfClass:[NSDecimalNumber class]]){
+                cellString = [lineArray[columndIdentifier.integerValue] descriptionWithLocale:@{NSLocaleDecimalSeparator:_config.decimalMark}];
+            }else{
+                cellString = lineArray[columndIdentifier.integerValue];
+            }
             NSMutableString *temporaryCellValue = [[NSMutableString alloc]init];
             BOOL shouldSetQuotes = [cellString rangeOfString:_config.columnSeparator ].location == NSNotFound ? NO : YES;
             shouldSetQuotes |= [cellString rangeOfString:_config.quoteCharacter ].location == NSNotFound ? NO : YES;

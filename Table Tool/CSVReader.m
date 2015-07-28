@@ -15,6 +15,7 @@
     NSMutableCharacterSet *quoteAndEscapeSet;
     BOOL atEnd;
     BOOL skipQuotes;
+    NSRegularExpression *regex;
 }
 
 @end
@@ -71,6 +72,8 @@
         quoteAndEscapeSet = [[NSMutableCharacterSet alloc]init];
         [quoteAndEscapeSet addCharactersInString:_config.quoteCharacter];
         [quoteAndEscapeSet addCharactersInString:_config.escapeCharacter];
+        
+        regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",_config.decimalMark,_config.decimalMark] options:0 error:NULL];
     }
     
     return YES;
@@ -105,7 +108,11 @@
             return nil;
         }
         
-        [rowArray addObject:scannedString];
+        if([regex numberOfMatchesInString:scannedString options:0 range:NSMakeRange(0, [scannedString length])] == 1){
+            [rowArray addObject:[NSDecimalNumber decimalNumberWithString:scannedString locale:@{NSLocaleDecimalSeparator:_config.decimalMark}]];
+        }else{
+            [rowArray addObject:scannedString];
+        }
         
         if(!dataScanner.atEnd){
             BOOL didScanNewLine = [[NSCharacterSet newlineCharacterSet] characterIsMember:[dataScanner.string characterAtIndex:dataScanner.scanLocation]];
@@ -137,11 +144,20 @@
         NSString *scannedString = nil;
         
         [self scanUnquotedValueIntoString:&scannedString error:NULL];
+        NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:scannedString locale:[NSLocale currentLocale]];
         
         if(tableColumnsOrder.count > i){
-            [rowArray replaceObjectAtIndex:[tableColumnsOrder[i] integerValue] withObject:scannedString];
+            if(![decimalNumber isEqualTo:[NSDecimalNumber notANumber]]){
+                [rowArray replaceObjectAtIndex:[tableColumnsOrder[i] integerValue] withObject:decimalNumber];
+            }else{
+                [rowArray replaceObjectAtIndex:[tableColumnsOrder[i] integerValue] withObject:scannedString];
+            }
         } else {
-            [rowArray addObject:scannedString];
+            if(![decimalNumber isEqualTo:[NSDecimalNumber notANumber]]){
+                [rowArray addObject:decimalNumber];
+            }else{
+                [rowArray addObject:scannedString];
+            }
         }
         
         if(!dataScanner.atEnd){

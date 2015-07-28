@@ -124,6 +124,9 @@
     if(_data.count >= rowIndex+1) {
         NSArray *rowArray = _data[rowIndex];
         if(rowArray.count >= tableColumn.identifier.integerValue+1){
+            if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]) {
+                return [(NSDecimalNumber *)rowArray[tableColumn.identifier.integerValue] descriptionWithLocale:@{NSLocaleDecimalSeparator:_outputConfig.decimalMark}];
+            }
             return rowArray[tableColumn.identifier.integerValue];
         }
     }
@@ -137,9 +140,14 @@
     
 }
 
--(void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+-(void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex {
     NSTextFieldCell *textCell = cell;
-    textCell.alignment = NSRightTextAlignment;
+    NSArray *rowArray = _data[rowIndex];
+    if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]) {
+        textCell.alignment = NSRightTextAlignment;
+    }else{
+        textCell.alignment = NSLeftTextAlignment;
+    }
 }
 
 -(void)restoreObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex reload:(BOOL)shouldReload {
@@ -153,10 +161,15 @@
     
     [[self.undoManager prepareWithInvocationTarget:self] restoreObjectValue:rowArray[tableColumn.identifier.integerValue] forTableColumn:tableColumn row:rowIndex reload:YES];
     
-    if(![(NSString *)object isEqualToString:rowArray[tableColumn.identifier.integerValue]]){
+    if(![object isEqualTo:rowArray[tableColumn.identifier.integerValue]]){
         [self dataGotEdited];
     }
+    
     rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
+    NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:rowArray[tableColumn.identifier.integerValue] locale:@{NSLocaleDecimalSeparator:_outputConfig.decimalMark}];
+    if(![decimalNumber isEqualTo:[NSDecimalNumber notANumber]]) {
+        [rowArray replaceObjectAtIndex:tableColumn.identifier.integerValue withObject:decimalNumber];
+    }
     _data[rowIndex] = rowArray;
     if (shouldReload) [self.tableView reloadData];
 }
@@ -522,6 +535,7 @@
         }
     }else{
         _outputConfig = formatViewController.config;
+        [self.tableView reloadData];
     }
 }
 
@@ -589,7 +603,12 @@
         NSMutableString *rowString = [NSMutableString string];
         NSArray *row = _data[idx];
         for(NSString *columnId in [self getColumnsOrder]) {
-            NSString *cellValue = [[NSString alloc]initWithString:row[columnId.integerValue]];
+            NSString *cellValue;
+            if([row[columnId.integerValue] isKindOfClass:[NSDecimalNumber class]]){
+                cellValue = [row[columnId.integerValue] descriptionWithLocale:[NSLocale currentLocale]];
+            }else{
+                cellValue = row[columnId.integerValue];
+            }
             [self appendCell:cellValue toString:rowString];
         }
         [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
@@ -611,7 +630,12 @@
         NSArray *row = _data[i];
         [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
             NSUInteger columnIndex = ((NSTableColumn *)self.tableView.tableColumns[idx]).identifier.integerValue;
-            NSString *cellValue = [[NSString alloc]initWithString:row[columnIndex]];
+            NSString *cellValue;
+            if([row[columnIndex] isKindOfClass:[NSDecimalNumber class]]){
+                cellValue = [row[columnIndex] descriptionWithLocale:[NSLocale currentLocale]];
+            }else{
+                cellValue = row[columnIndex];
+            }
             [self appendCell:cellValue toString:rowString];
         }];
         [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
