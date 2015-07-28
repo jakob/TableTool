@@ -137,6 +137,11 @@
     
 }
 
+-(void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    NSTextFieldCell *textCell = cell;
+    textCell.alignment = NSRightTextAlignment;
+}
+
 -(void)restoreObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex reload:(BOOL)shouldReload {
     
     NSMutableArray *rowArray = _data[rowIndex];
@@ -190,7 +195,8 @@
     for(int i = 0; i < _maxColumnNumber; ++i) {
         NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]];
         tableColumn.dataCell = dataCell;
-        tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
+        tableColumn.title = [self generateColumnName:i];
+        ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn: tableColumn];
     }
 }
@@ -198,8 +204,34 @@
 -(void)updateTableColumnsNames {
     for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
         NSTableColumn *tableColumn = self.tableView.tableColumns[i];
-        tableColumn.title = [NSString stringWithFormat:@"Column %d", i+1];
+        tableColumn.title = [self generateColumnName:i];
+        ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
     }
+}
+
+-(NSString *)generateColumnName:(int)index {
+    int columnBase = 26;
+    int digitMax = 7; // ceil(log26(Int32.Max))
+    NSString *digits = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    
+    if (index < columnBase) {
+        return [digits substringWithRange:NSMakeRange(index, 1)];
+    }
+    
+    NSMutableArray *columnName = [[NSMutableArray alloc]initWithCapacity:digitMax];
+    for(int i = 0; i < digitMax; i++) {
+        columnName[i] = @"";
+    }
+    
+    index++;
+    int offset = digitMax;
+    while (index > 0)
+    {
+        [columnName replaceObjectAtIndex:--offset withObject:[digits substringWithRange:NSMakeRange(--index % columnBase, 1)]];
+        index /= columnBase;
+    }
+    
+    return [columnName componentsJoinedByString:@""];
 }
 
 #pragma mark - buttonActions
