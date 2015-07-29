@@ -59,6 +59,7 @@
         inputController = [[TTFormatViewController alloc]init];
         [self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
         [inputController setControlTitle:@"Input File Format"];
+        [inputController setCheckButton];
         inputController.delegate = self;
     }
 }
@@ -143,17 +144,19 @@
 -(void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex {
     NSTextFieldCell *textCell = cell;
     NSArray *rowArray = _data[rowIndex];
-    if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]) {
-        textCell.alignment = NSRightTextAlignment;
-    }else{
-        textCell.alignment = NSLeftTextAlignment;
+    if(rowArray.count > tableColumn.identifier.integerValue){
+        if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]){
+            textCell.alignment = NSRightTextAlignment;
+        }else{
+            textCell.alignment = NSLeftTextAlignment;
+        }
     }
 }
 
 -(void)restoreObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex reload:(BOOL)shouldReload {
     
     NSMutableArray *rowArray = _data[rowIndex];
-    if([rowArray count] < tableColumn.identifier.integerValue) {
+    if([rowArray count] <= tableColumn.identifier.integerValue) {
         for(NSUInteger i = rowArray.count; i <= tableColumn.identifier.integerValue+1; ++i){
             [rowArray addObject:@""];
         }
@@ -165,11 +168,14 @@
         [self dataGotEdited];
     }
     
-    rowArray[tableColumn.identifier.integerValue] = (NSString *)object;
-    NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:rowArray[tableColumn.identifier.integerValue] locale:@{NSLocaleDecimalSeparator:_outputConfig.decimalMark}];
-    if(![decimalNumber isEqualTo:[NSDecimalNumber notANumber]]) {
-        [rowArray replaceObjectAtIndex:tableColumn.identifier.integerValue withObject:decimalNumber];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",_outputConfig.decimalMark,_outputConfig.decimalMark] options:0 error:NULL];
+    NSString *userInputValue = (NSString *)object;
+    if([regex numberOfMatchesInString:userInputValue options:0 range:NSMakeRange(0, [userInputValue length])] == 1){
+        rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:_outputConfig.decimalMark}];
+    }else{
+        rowArray[tableColumn.identifier.integerValue] = userInputValue;
     }
+    
     _data[rowIndex] = rowArray;
     if (shouldReload) [self.tableView reloadData];
 }
@@ -528,10 +534,11 @@
         } else {
             self.errorBox.hidden = YES;
         }
-        if(outputController.sameAsInput){
+        if(outputController.checkBoxIsChecked){
             _outputConfig = _inputConfig;
-            outputController.config = _outputConfig;
+            outputController.config = _outputConfig.copy;
             [outputController selectFormatByConfig];
+            [self.tableView reloadData];
         }
     }else{
         _outputConfig = formatViewController.config;
@@ -540,7 +547,7 @@
 }
 
 -(void)useInputConfig:(TTFormatViewController *)formatViewController {
-    formatViewController.config = _inputConfig;
+    formatViewController.config = _inputConfig.copy;
 }
 
 -(void)revertEditing{

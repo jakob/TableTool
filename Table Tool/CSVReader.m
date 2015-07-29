@@ -52,6 +52,7 @@
             dataString = _dataString;
             skipQuotes = YES;
             _config.columnSeparator = @"\t";
+            _config.decimalMark = [[NSLocale currentLocale] objectForKey:NSLocaleDecimalSeparator];
         }else{
             dataString = [[NSString alloc] initWithData:_data encoding:_config.encoding];
         }
@@ -142,19 +143,22 @@
     
     for(int i = 0;;i++) {
         NSString *scannedString = nil;
+        BOOL scannedValueIsNumber = NO;
         
         [self scanUnquotedValueIntoString:&scannedString error:NULL];
-        NSDecimalNumber *decimalNumber = [NSDecimalNumber decimalNumberWithString:scannedString locale:[NSLocale currentLocale]];
+        if([regex numberOfMatchesInString:scannedString options:0 range:NSMakeRange(0, [scannedString length])] == 1){
+            scannedValueIsNumber = YES;
+        }
         
         if(tableColumnsOrder.count > i){
-            if(![decimalNumber isEqualTo:[NSDecimalNumber notANumber]]){
-                [rowArray replaceObjectAtIndex:[tableColumnsOrder[i] integerValue] withObject:decimalNumber];
+            if(scannedValueIsNumber){
+                [rowArray replaceObjectAtIndex:[tableColumnsOrder[i] integerValue] withObject:[NSDecimalNumber decimalNumberWithString:scannedString locale:@{NSLocaleDecimalSeparator:_config.decimalMark}]];
             }else{
                 [rowArray replaceObjectAtIndex:[tableColumnsOrder[i] integerValue] withObject:scannedString];
             }
         } else {
-            if(![decimalNumber isEqualTo:[NSDecimalNumber notANumber]]){
-                [rowArray addObject:decimalNumber];
+            if(scannedValueIsNumber){
+                [rowArray addObject:[NSDecimalNumber decimalNumberWithString:scannedString locale:@{NSLocaleDecimalSeparator:_config.decimalMark}]];
             }else{
                 [rowArray addObject:scannedString];
             }

@@ -15,12 +15,13 @@
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
 -(void)revertEditing;
 -(void)useInputConfig:(TTFormatViewController *)formatViewController;
+-(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
 @end
 
 @interface TTFormatViewController : NSViewController
 
 
-@property (readonly) BOOL sameAsInput;
+@property (readonly) BOOL checkBoxIsChecked;
 @property CSVConfiguration *config;
 @property IBOutlet NSSegmentedControl *quoteControl;
 @property IBOutlet NSSegmentedControl *escapeControl;
@@ -30,12 +31,12 @@
 @property IBOutlet NSTextField *helpText;
 @property IBOutlet NSButton *revertButton;
 @property IBOutlet NSTextField *viewTitle;
-@property IBOutlet NSButton *sameAsInputButton;
+@property IBOutlet NSButton *checkBox;
 @property id<TTFormatViewControllerDelegate> delegate;
 @property (strong) IBOutlet NSLayoutConstraint *bottomConstraint;
 
 - (IBAction)updateConfiguration:(id)sender;
-- (IBAction)useInputConfig:(id)sender;
+- (IBAction)clickCheckBox:(id)sender;
 - (IBAction)revertEditing:(id)sender;
 - (void)showRevertMessage;
 - (void)setCheckButton;

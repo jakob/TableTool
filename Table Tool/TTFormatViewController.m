@@ -20,7 +20,6 @@
         _config = [[CSVConfiguration alloc]init];
         _viewTitle.stringValue = @"";
         [self selectFormatByConfig];
-        _sameAsInput = YES;
     }
     return self;
 }
@@ -35,9 +34,18 @@
 }
 
 - (void)setCheckButton {
-    _sameAsInputButton.hidden = NO;
-    _sameAsInputButton.enabled = YES;
-    [self unableFormatting];
+    _checkBox.hidden = NO;
+    _checkBox.enabled = YES;
+    if([_viewTitle.stringValue isEqualToString:@"Output File Format"]){
+        _checkBox.title = @"Same as Input Format";
+        [[_checkBox cell] setState:1];
+        _checkBoxIsChecked = YES;
+        [self unableFormatting];
+    }else{
+        _checkBox.title = @"Use First Row as Header";
+        [[_checkBox cell] setState:0];
+        _checkBoxIsChecked = NO;
+    }
 }
 
 - (void)showRevertMessage {
@@ -64,16 +72,33 @@
     [self.delegate configurationChangedForFormatViewController:self];
 }
 
-- (IBAction)useInputConfig:(id)sender {
-    if(!_sameAsInput){
+- (IBAction)clickCheckBox:(id)sender {
+    if([_viewTitle.stringValue isEqualToString:@"Output File Format"]){
+        [self useInputConfig:sender];
+    }else{
+        [self useFirstRowAsHeader:sender];
+    }
+}
+
+-(void)useInputConfig:(id)sender{
+    if(!_checkBoxIsChecked){
         [self.delegate useInputConfig:self];
-        _sameAsInput = YES;
+        _checkBoxIsChecked = YES;
         [self selectFormatByConfig];
         [self unableFormatting];
     }else{
-        _sameAsInput = NO;
+        _checkBoxIsChecked = NO;
         [self enableFormatting];
     }
+}
+
+-(void)useFirstRowAsHeader:(id)sender{
+    if(!_checkBoxIsChecked){
+        _checkBoxIsChecked = YES;
+    }else{
+        _checkBoxIsChecked = NO;
+    }
+    [self.delegate useFirstRowAsHeader:self];
 }
 
 - (IBAction)revertEditing:(id)sender {
@@ -91,6 +116,9 @@
     _separatorControl.enabled = NO;
     _decimalControl.enabled = NO;
     _quoteControl.enabled = NO;
+    if([_viewTitle.stringValue isEqualToString:@"Input File Format"]){
+        _checkBox.enabled = NO;
+    }
 }
 
 -(void)enableFormatting{
@@ -99,6 +127,9 @@
     _decimalControl.enabled = YES;
     _quoteControl.enabled = YES;
     _escapeControl.enabled = YES;
+    if([_viewTitle.stringValue isEqualToString:@"Input File Format"]){
+        _checkBox.enabled = YES;
+    }
 }
 
 -(void)selectFormatByConfig{

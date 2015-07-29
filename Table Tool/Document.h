@@ -34,6 +34,7 @@
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
 -(void)useInputConfig:(TTFormatViewController *)formatViewController;
 -(void)revertEditing;
+-(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
 
 @end
 
