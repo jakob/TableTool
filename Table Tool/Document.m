@@ -9,16 +9,20 @@
 #import "Document.h"
 #import "CSVReader.h"
 #import "CSVWriter.h"
+#import "TTErrorViewController.h"
 
 @interface Document () {
     NSCell *dataCell;
     NSData *savedData;
     NSMutableArray *firstRow;
+    NSError *readingError;
     BOOL edited;
     BOOL didNotMoveColumn;
     BOOL newFile;
+    BOOL loadedNib;
     TTFormatViewController *inputController;
     TTFormatViewController *outputController;
+    TTErrorViewController *errorController;
 }
 
 @end
@@ -41,10 +45,6 @@
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
-    if(_errorMessage){
-        self.errorLabel.stringValue = _errorMessage;
-        self.errorBox.hidden = NO;
-    }
     
     outputController = [[TTFormatViewController alloc]init];
     [self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
@@ -63,6 +63,9 @@
         [inputController setCheckButton];
         inputController.delegate = self;
     }
+    
+    loadedNib = YES;
+    if(readingError)[self displayError:readingError];
 }
 
 + (BOOL)autosavesInPlace {
@@ -87,10 +90,14 @@
         [_data insertObject:dataFirstRow atIndex:0];
     }
     
+    NSError *error;
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
-    NSData *finalData = [writer writeDataWithError:outError];
+    NSData *finalData = [writer writeDataWithError:&error];
     if(finalData == nil){
-        return NO;
+        if(error) {
+            *outError = error;
+            [self displayError:error];
+        }
     }
     
     if(inputController && inputController.checkBoxIsChecked){
@@ -113,10 +120,13 @@
         NSError *error = nil;
         NSArray *oneReadLine = [reader readLineWithError:&error];
         if(oneReadLine == nil) {
-            _errorMessage = [NSString stringWithFormat:@"%@\n%@",error.localizedDescription,error.localizedRecoverySuggestion];
-            self.errorLabel.stringValue = _errorMessage;
-            self.errorBox.hidden = NO;
-            break;
+            if(error){
+                *outError = error;
+                readingError = error;
+                [self displayError:error];
+                break;
+                //return NO;
+            }
         }
         [_data addObject:oneReadLine];
         if(_maxColumnNumber < [[_data lastObject] count]){
@@ -128,6 +138,29 @@
     [self initFirstRow];
     [self.tableView reloadData];
     return YES;
+}
+
+-(void)displayError:(NSError *)error {
+    if(!loadedNib) return;
+    NSPopover *errorPopover = [[NSPopover alloc]init];
+    errorPopover.behavior = NSPopoverBehaviorTransient;
+    errorPopover.animates = YES;
+    errorController = [[TTErrorViewController alloc]initWithMessage:error.localizedDescription information:error.localizedRecoverySuggestion];
+    errorPopover.contentViewController = errorController;
+    switch (error.code) {
+        case 1:
+            [errorPopover showRelativeToRect:[inputController.encodingMenu bounds] ofView:inputController.encodingMenu preferredEdge:NSMinYEdge];
+            break;
+        case 2:
+        case 3:
+            [errorPopover showRelativeToRect:[inputController.view bounds] ofView:inputController.view preferredEdge:NSMinYEdge];
+            break;
+        case 4:
+            [errorPopover showRelativeToRect:[outputController.view bounds] ofView:outputController.view preferredEdge:NSMinYEdge];
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark - tableViewDataSource, delegate
@@ -275,7 +308,7 @@
     for(int i = 0; i < _maxColumnNumber; i++){
         firstRow[i] = @"";
     }
-    NSArray *dataFirstRow = _data[0];
+    NSArray *dataFirstRow = [_data firstObject];
     for(int i = 0; i < dataFirstRow.count; i++){
         [firstRow replaceObjectAtIndex:i withObject:dataFirstRow[i]];
     }
@@ -558,10 +591,7 @@
         }
         BOOL didReload = [self reloadDataWithError:&outError];
         if (!didReload) {
-            self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",outError.localizedDescription,outError.localizedRecoverySuggestion];
-            self.errorBox.hidden = NO;
-        } else {
-            self.errorBox.hidden = YES;
+            [self displayError:outError];
         }
         if(outputController.checkBoxIsChecked){
             _outputConfig = _inputConfig;

@@ -20,7 +20,6 @@
 
 @interface TTFormatViewController : NSViewController
 
-
 @property (readonly) BOOL checkBoxIsChecked;
 @property CSVConfiguration *config;
 @property IBOutlet NSSegmentedControl *quoteControl;
