@@ -13,6 +13,7 @@
 @interface Document () {
     NSCell *dataCell;
     NSData *savedData;
+    NSMutableArray *firstRow;
     BOOL edited;
     BOOL didNotMoveColumn;
     BOOL newFile;
@@ -75,12 +76,26 @@
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     
+    if(inputController && inputController.checkBoxIsChecked){
+        NSMutableArray *dataFirstRow = [[NSMutableArray alloc]init];
+        for(int i = 0; i < _maxColumnNumber; i++){
+            [dataFirstRow addObject:@""];
+        }
+        for(NSTableColumn * col in self.tableView.tableColumns){
+            [dataFirstRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.title];
+        }
+        [_data insertObject:dataFirstRow atIndex:0];
+    }
+    
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
     NSData *finalData = [writer writeDataWithError:outError];
     if(finalData == nil){
         return NO;
     }
     
+    if(inputController && inputController.checkBoxIsChecked){
+        [_data removeObjectAtIndex:0];
+    }
     return finalData;
 }
 
@@ -110,6 +125,7 @@
     }
     
     [self updateTableColumns];
+    [self initFirstRow];
     [self.tableView reloadData];
     return YES;
 }
@@ -191,7 +207,6 @@
         NSNumber *newIndex = [aNotification.userInfo valueForKey:@"NSNewColumn"];
         [[self.undoManager prepareWithInvocationTarget:self] moveColumnFrom:newIndex.longValue toIndex:oldIndex.longValue];
     }
-    
     [self updateTableColumnsNames];
 }
 
@@ -221,10 +236,12 @@
 }
 
 -(void)updateTableColumnsNames {
-    for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
-        NSTableColumn *tableColumn = self.tableView.tableColumns[i];
-        tableColumn.title = [self generateColumnName:i];
-        ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
+    if(!inputController || !inputController.checkBoxIsChecked){
+        for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
+            NSTableColumn *tableColumn = self.tableView.tableColumns[i];
+            tableColumn.title = [self generateColumnName:i];
+            ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
+        }
     }
 }
 
@@ -251,6 +268,17 @@
     }
     
     return [columnName componentsJoinedByString:@""];
+}
+
+-(void)initFirstRow{
+    firstRow = [[NSMutableArray alloc]init];
+    for(int i = 0; i < _maxColumnNumber; i++){
+        firstRow[i] = @"";
+    }
+    NSArray *dataFirstRow = _data[0];
+    for(int i = 0; i < dataFirstRow.count; i++){
+        [firstRow replaceObjectAtIndex:i withObject:dataFirstRow[i]];
+    }
 }
 
 #pragma mark - buttonActions
@@ -436,6 +464,7 @@
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
     col.dataCell = dataCell;
     [self.tableView addTableColumn:col];
+    col.title = @"";
     [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:columnIndex];
     
     for(NSMutableArray *rowArray in _data) {
@@ -463,7 +492,6 @@
         [self.tableView removeTableColumn:col];
     }];
     didNotMoveColumn = NO;
-    
     [self updateTableColumnsNames];
     
     long selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
@@ -481,19 +509,17 @@
 -(void)restoreColumns:(NSMutableArray *)columnIds atIndexes:(NSIndexSet *)columnIndexes{
     
     didNotMoveColumn = YES;
-    NSMutableIndexSet *columnIndexesCopy = columnIndexes.mutableCopy;
     for(int i = 0; i < columnIds.count; i++){
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
         col.dataCell = dataCell;
+        col.title = firstRow[((NSString *)columnIds[i]).integerValue];
+        ((NSCell *)col.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn:col];
-        NSUInteger index = [columnIndexesCopy firstIndex];
-        [columnIndexesCopy removeIndex:0];
-        [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:index];
+        [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:[columnIndexes firstIndex]+i];
     }
     didNotMoveColumn = NO;
     
     [self updateTableColumnsNames];
-    
     [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
     [[self.undoManager prepareWithInvocationTarget:self]deleteColumnsAtIndexes:columnIndexes];
     
@@ -527,6 +553,9 @@
     if([formatViewController.viewTitle.stringValue isEqualToString:@"Input File Format"]) {
         _inputConfig = formatViewController.config;
         NSError *outError;
+        if(inputController.checkBoxIsChecked){
+            [inputController uncheckCheckbox];
+        }
         BOOL didReload = [self reloadDataWithError:&outError];
         if (!didReload) {
             self.errorLabel.stringValue = [NSString stringWithFormat:@"%@\n%@",outError.localizedDescription,outError.localizedRecoverySuggestion];
@@ -548,6 +577,21 @@
 
 -(void)useInputConfig:(TTFormatViewController *)formatViewController {
     formatViewController.config = _inputConfig.copy;
+}
+
+-(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController {
+    if(formatViewController.checkBoxIsChecked){
+        int i = 0;
+        for(NSTableColumn *col in self.tableView.tableColumns){
+            col.title = firstRow[i++];
+        }
+        [_data removeObjectAtIndex:0];
+        [self.tableView reloadData];
+    }else{
+        [self updateTableColumnsNames];
+        [_data insertObject:firstRow.copy atIndex:0];
+        [self.tableView reloadData];
+    }
 }
 
 -(void)revertEditing{
@@ -579,6 +623,7 @@
     }
     
     [self updateTableColumns];
+    [self initFirstRow];
     [self.tableView reloadData];
     return YES;
 }

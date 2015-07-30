@@ -42,5 +42,6 @@
 - (void)setCheckButton;
 - (void)setControlTitle:(NSString *)title;
 - (void)selectFormatByConfig;
+- (void)uncheckCheckbox;
 
 @end

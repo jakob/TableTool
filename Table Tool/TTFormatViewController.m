@@ -80,6 +80,11 @@
     }
 }
 
+-(void)uncheckCheckbox{
+    [[_checkBox cell] setState:0];
+    [self useFirstRowAsHeader:NULL];
+}
+
 -(void)useInputConfig:(id)sender{
     if(!_checkBoxIsChecked){
         [self.delegate useInputConfig:self];
