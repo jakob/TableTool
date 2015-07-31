@@ -19,14 +19,21 @@
 @property NSString *errorMessage;
 
 @property IBOutlet NSTableView *tableView;
-@property IBOutlet NSBox *errorBox;
-@property IBOutlet NSTextField *errorLabel;
 @property IBOutlet NSSplitView *splitView;
+@property (strong) IBOutlet NSButton *toolBarButtonDeleteColumn;
+@property (strong) IBOutlet NSSegmentedControl *toolBarButtonsAddColumn;
+@property (strong) IBOutlet NSSegmentedControl *toolBarButtonsAddRow;
+@property (strong) IBOutlet NSToolbarItem *toolbarItemAddColumn;
+@property (strong) IBOutlet NSToolbarItem *toolbarItemAddRow;
+@property (strong) IBOutlet NSButtonCell *toolBarButtonDeleteRow;
 
--(IBAction)addLineAbove:(id)sender;
--(IBAction)addLineBelow:(id)sender;
--(IBAction)addColumnLeft:(id)sender;
--(IBAction)addColumnRight:(id)sender;
+
+-(IBAction)addColumn:(id)sender;
+-(IBAction)addRow:(id)sender;
+-(void)addRowAbove:(id)sender;
+-(void)addRowBelow:(id)sender;
+-(void)addColumnLeft:(id)sender;
+-(void)addColumnRight:(id)sender;
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
 -(IBAction)toggleFormatView:(id)sender;

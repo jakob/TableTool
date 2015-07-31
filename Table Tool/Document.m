@@ -10,6 +10,7 @@
 #import "CSVReader.h"
 #import "CSVWriter.h"
 #import "TTErrorViewController.h"
+#import "ToolbarIcons.h"
 
 @interface Document () {
     NSCell *dataCell;
@@ -66,12 +67,13 @@
     
     loadedNib = YES;
     if(readingError)[self displayError:readingError];
+    
+    [self updateToolbarIcons];
 }
 
 + (BOOL)autosavesInPlace {
     return YES;
 }
-
 
 - (NSString *)windowNibName {
     return @"Document";
@@ -125,7 +127,6 @@
                 readingError = error;
                 [self displayError:error];
                 break;
-                //return NO;
             }
         }
         [_data addObject:oneReadLine];
@@ -156,7 +157,7 @@
             [errorPopover showRelativeToRect:[inputController.view bounds] ofView:inputController.view preferredEdge:NSMinYEdge];
             break;
         case 4:
-            [errorPopover showRelativeToRect:[outputController.view bounds] ofView:outputController.view preferredEdge:NSMinYEdge];
+            [errorPopover showRelativeToRect:[outputController.encodingMenu bounds] ofView:outputController.encodingMenu preferredEdge:NSMinYEdge];
             break;
         default:
             break;
@@ -191,8 +192,9 @@
 }
 
 -(void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)rowIndex {
+    if(_data.count <= rowIndex) return;
     NSTextFieldCell *textCell = cell;
-    NSArray *rowArray = _data[rowIndex];
+    NSArray *rowArray = [_data objectAtIndex:rowIndex];
     if(rowArray.count > tableColumn.identifier.integerValue){
         if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]){
             textCell.alignment = NSRightTextAlignment;
@@ -231,13 +233,11 @@
 
 -(void)tableViewColumnDidMove:(NSNotification *)aNotification {
     
-    [self dataGotEdited];
-    
     if(!didNotMoveColumn){
         [self.undoManager setActionName:@"Move Column"];
-        
         NSNumber *oldIndex = [aNotification.userInfo valueForKey:@"NSOldColumn"];
         NSNumber *newIndex = [aNotification.userInfo valueForKey:@"NSNewColumn"];
+        [self dataGotEdited];
         [[self.undoManager prepareWithInvocationTarget:self] moveColumnFrom:newIndex.longValue toIndex:oldIndex.longValue];
     }
     [self updateTableColumnsNames];
@@ -294,8 +294,7 @@
     
     index++;
     int offset = digitMax;
-    while (index > 0)
-    {
+    while (index > 0) {
         [columnName replaceObjectAtIndex:--offset withObject:[digits substringWithRange:NSMakeRange(--index % columnBase, 1)]];
         index /= columnBase;
     }
@@ -316,14 +315,38 @@
 
 #pragma mark - buttonActions
 
--(IBAction)addLineAbove:(id)sender {
+
+- (IBAction)addRow:(id)sender {
+    switch ([self.toolBarButtonsAddRow selectedSegment]) {
+        case 0:
+            [self addRowAbove:sender];
+            break;
+        case 1:
+            [self addRowBelow:sender];
+        default:
+            break;
+    }
+}
+
+- (IBAction)addColumn:(id)sender {
+    switch ([self.toolBarButtonsAddColumn selectedSegment]) {
+        case 0:
+            [self addColumnLeft:sender];
+            break;
+        case 1:
+            [self addColumnRight:sender];
+        default:
+            break;
+    }
+}
+
+-(void)addRowAbove:(id)sender {
     
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
     }
     
-    [self dataGotEdited];
     long rowIndex;
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     if(rowIndexes.count != 0){
@@ -336,14 +359,13 @@
     [self.undoManager setActionName:@"Add Line Above"];
 }
 
--(IBAction)addLineBelow:(id)sender {
+-(void)addRowBelow:(id)sender {
     
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
     }
     
-    [self dataGotEdited];
     long rowIndex;
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     if(rowIndexes.count != 0){
@@ -356,14 +378,13 @@
     [self.undoManager setActionName:@"Add Line below"];
 }
 
--(IBAction)addColumnLeft:(id)sender {
+-(void)addColumnLeft:(id)sender {
     
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
     }
     
-    [self dataGotEdited];
     long columnIndex;
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
@@ -379,14 +400,13 @@
     [self.undoManager setActionName:@"Add Column left"];
 }
 
--(IBAction)addColumnRight:(id)sender {
+-(void)addColumnRight:(id)sender {
     
     if(![self.tableView.window makeFirstResponder:self.tableView]) {
         NSBeep();
         return;
     }
-    
-    [self dataGotEdited];
+
     long columnIndex;
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
@@ -410,8 +430,6 @@
         return;
     }
     
-    [self dataGotEdited];
-    
     NSIndexSet *columnIndexes = [self.tableView selectedColumnIndexes];
     [self deleteColumnsAtIndexes:columnIndexes];
     [self.undoManager setActionName:@"Delete Column(s)"];
@@ -424,8 +442,6 @@
         NSBeep();
         return;
     }
-    
-    [self dataGotEdited];
     
     NSIndexSet *rowIndexes = [self.tableView selectedRowIndexes];
     [self deleteRowsAtIndexes:rowIndexes];
@@ -450,6 +466,7 @@
     } else {
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
     }
+    [self dataGotEdited];
 }
 
 -(void)restoreRowsWithContent:(NSMutableArray *)rowContents atIndexes:(NSIndexSet *)rowIndexes {
@@ -461,6 +478,7 @@
     [_data insertObjects:rowContents atIndexes:rowIndexes];
     [self.tableView endUpdates];
     
+    [self dataGotEdited];
     [self.tableView selectRowIndexes:rowIndexes byExtendingSelection:NO];
 }
 
@@ -476,18 +494,19 @@
     }
     
     [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        [self.tableView scrollRowToVisible:rowIndex];
         [self.tableView beginUpdates];
         [_data insertObject:toInsertArray atIndex:rowIndex];
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
         [self.tableView endUpdates];
     } completionHandler:^{
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
-        [self.tableView scrollRowToVisible:rowIndex];
-        
     }];
     
+    [self dataGotEdited];
     NSIndexSet *toRedoIndexSet = [NSIndexSet indexSetWithIndex:rowIndex];
     [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:toRedoIndexSet];
+    [self.tableView scrollRowToVisible:[[self.tableView selectedRowIndexes] firstIndex]];
 }
 
 -(void)addColumnAtIndex:(long) columnIndex {
@@ -511,6 +530,7 @@
     [self.tableView scrollColumnToVisible:columnIndex];
     didNotMoveColumn = NO;
     
+    [self dataGotEdited];
     [[self.undoManager prepareWithInvocationTarget:self] deleteColumnsAtIndexes:[NSIndexSet indexSetWithIndex:columnIndex]];
 }
 
@@ -535,6 +555,7 @@
         [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex: selectedIndex] byExtendingSelection:NO];
     }
     
+    [self dataGotEdited];
     [[self.undoManager prepareWithInvocationTarget:self] restoreColumns:columnIds atIndexes:columnIndexes];
     
 }
@@ -545,7 +566,9 @@
     for(int i = 0; i < columnIds.count; i++){
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
         col.dataCell = dataCell;
-        col.title = firstRow[((NSString *)columnIds[i]).integerValue];
+        if(inputController && inputController.checkBoxIsChecked){
+            col.title = [firstRow objectAtIndex:((NSString *)columnIds[i]).integerValue];
+        }
         ((NSCell *)col.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn:col];
         [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:[columnIndexes firstIndex]+i];
@@ -554,6 +577,7 @@
     
     [self updateTableColumnsNames];
     [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
+    [self dataGotEdited];
     [[self.undoManager prepareWithInvocationTarget:self]deleteColumnsAtIndexes:columnIndexes];
     
 }
@@ -659,9 +683,15 @@
 }
 
 -(void)dataGotEdited {
-    if(!newFile){
+    if(!newFile && !edited){
         edited = YES;
         [inputController showRevertMessage];
+    }
+
+    if([self.tableView selectedColumn] != -1){
+        [self.tableView scrollColumnToVisible: [[self.tableView selectedColumnIndexes] firstIndex]];
+    }else if([self.tableView selectedRow] != -1){
+        [self.tableView scrollRowToVisible:[[self.tableView selectedRowIndexes] firstIndex]];
     }
 }
 
@@ -792,6 +822,24 @@
         [self.undoManager setActionName:@"Delete Row(s)"];
     }
     [self dataGotEdited];
+}
+
+
+-(void)updateToolbarIcons {
+    [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddLeftColumnIcon] forSegment:0];
+    [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddRightColumnIcon] forSegment:1];
+    NSSize addColumnSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
+    addColumnSize.height = 30;
+    self.toolbarItemAddColumn.minSize = addColumnSize;
+    self.toolbarItemAddColumn.maxSize = addColumnSize;
+    [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowAboveIcon] forSegment:0];
+    [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowBelowIcon] forSegment:1];
+    NSSize addRowSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
+    addRowSize.height = 30;
+    self.toolbarItemAddColumn.minSize = addRowSize;
+    self.toolbarItemAddColumn.maxSize = addRowSize;
+    self.toolBarButtonDeleteColumn.image = [ToolbarIcons imageOfDeleteColumnIcon];
+    self.toolBarButtonDeleteRow.image = [ToolbarIcons imageOfDeleteRowIcon];
 }
 
 

@@ -14,11 +14,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="220" height="108"/>
+            <rect key="frame" x="0.0" y="0.0" width="163" height="98"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <imageView translatesAutoresizingMaskIntoConstraints="NO" id="6YY-IT-zW8">
-                    <rect key="frame" x="15" y="47" width="32" height="46"/>
+                    <rect key="frame" x="10" y="42" width="32" height="46"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="46" id="LLW-e1-pB2"/>
                         <constraint firstAttribute="width" constant="32" id="WJN-Ca-U7m"/>
@@ -26,7 +26,7 @@
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="NSCaution" id="0on-N6-0J9"/>
                 </imageView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LkJ-4t-3rh">
-                    <rect key="frame" x="65" y="62" width="142" height="17"/>
+                    <rect key="frame" x="60" y="57" width="95" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="warning" id="DF6-gq-mgp">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -34,7 +34,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0LW-Mb-JBO">
-                    <rect key="frame" x="13" y="15" width="194" height="17"/>
+                    <rect key="frame" x="8" y="15" width="147" height="17"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="suggestion" id="Ogl-ZW-oKU">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -47,13 +47,13 @@
                 <constraint firstItem="LkJ-4t-3rh" firstAttribute="leading" secondItem="6YY-IT-zW8" secondAttribute="trailing" constant="20" id="Iwo-Jc-6PS"/>
                 <constraint firstItem="0LW-Mb-JBO" firstAttribute="leading" secondItem="6YY-IT-zW8" secondAttribute="leading" id="Nzl-ij-9ti"/>
                 <constraint firstItem="LkJ-4t-3rh" firstAttribute="centerY" secondItem="6YY-IT-zW8" secondAttribute="centerY" id="VFj-AE-AL5"/>
-                <constraint firstAttribute="trailing" secondItem="0LW-Mb-JBO" secondAttribute="trailing" constant="15" id="aS4-nB-enr"/>
-                <constraint firstItem="0LW-Mb-JBO" firstAttribute="top" secondItem="6YY-IT-zW8" secondAttribute="bottom" constant="15" id="eop-3a-a7Y"/>
-                <constraint firstItem="6YY-IT-zW8" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="15" id="jb2-SC-Uad"/>
-                <constraint firstItem="6YY-IT-zW8" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="15" id="s2d-ZP-4RM"/>
+                <constraint firstAttribute="trailing" secondItem="0LW-Mb-JBO" secondAttribute="trailing" constant="10" id="aS4-nB-enr"/>
+                <constraint firstItem="0LW-Mb-JBO" firstAttribute="top" secondItem="6YY-IT-zW8" secondAttribute="bottom" constant="10" id="eop-3a-a7Y"/>
+                <constraint firstItem="6YY-IT-zW8" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="10" id="jb2-SC-Uad"/>
+                <constraint firstItem="6YY-IT-zW8" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="10" id="s2d-ZP-4RM"/>
                 <constraint firstAttribute="bottom" secondItem="0LW-Mb-JBO" secondAttribute="bottom" constant="15" id="wd4-0Q-A09"/>
             </constraints>
-            <point key="canvasLocation" x="230" y="523"/>
+            <point key="canvasLocation" x="201.5" y="500.5"/>
         </customView>
     </objects>
     <resources>

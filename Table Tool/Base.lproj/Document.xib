@@ -8,6 +8,12 @@
             <connections>
                 <outlet property="splitView" destination="rW8-oV-UJz" id="BGf-UO-IOe"/>
                 <outlet property="tableView" destination="bLT-tG-Zln" id="EgL-4n-fw3"/>
+                <outlet property="toolBarButtonDeleteColumn" destination="HOS-Pg-Psj" id="Sik-mO-0a2"/>
+                <outlet property="toolBarButtonDeleteRow" destination="z47-HM-ILo" id="a7O-e8-fq4"/>
+                <outlet property="toolBarButtonsAddColumn" destination="ufp-YO-QNk" id="EFm-Wj-WzF"/>
+                <outlet property="toolBarButtonsAddRow" destination="FID-WH-eOP" id="PN3-hD-qNn"/>
+                <outlet property="toolbarItemAddColumn" destination="L16-81-E18" id="KPS-3i-p7J"/>
+                <outlet property="toolbarItemAddRow" destination="uIc-SS-WZD" id="K0q-Mc-Iyb"/>
                 <outlet property="window" destination="xOd-HO-29H" id="JIz-fz-R2o"/>
             </connections>
         </customObject>
@@ -96,127 +102,103 @@
                     <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="njR-H5-0m6"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="H3h-jI-Spc"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="U88-dC-DZu"/>
-                    <toolbarItem implicitItemIdentifier="4025DB13-6DCF-42D9-A856-0FF89B6660FF" label="left" paletteLabel="left" id="QdY-Xj-8dX">
+                    <toolbarItem implicitItemIdentifier="F1C98A2E-2043-4E86-8DBB-9103AAB3F296" label="Delete Column" paletteLabel="Delete Column" id="RIC-u2-0Xr">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="54" height="19"/>
-                        <size key="maxSize" width="122" height="19"/>
-                        <button key="view" verticalHuggingPriority="750" id="zcM-y1-M1J">
-                            <rect key="frame" x="0.0" y="14" width="85" height="19"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="add col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wcf-g8-9gg">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
-                            </buttonCell>
-                            <connections>
-                                <action selector="addColumnLeft:" target="-2" id="ZXy-D0-Sa3"/>
-                            </connections>
-                        </button>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="B19FF15A-AAF5-432C-A6B7-D9B5A3556DB4" label="right" paletteLabel="right" id="ROU-ce-fUf">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="54" height="19"/>
-                        <size key="maxSize" width="122" height="19"/>
-                        <button key="view" verticalHuggingPriority="750" id="bQp-0h-41W">
-                            <rect key="frame" x="-15" y="14" width="60" height="19"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="add col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EAo-F7-Lpi">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
-                            </buttonCell>
-                            <connections>
-                                <action selector="addColumnRight:" target="-2" id="8eO-21-WjR"/>
-                            </connections>
-                        </button>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="4A310BD7-BBE2-4EC8-A93D-01C19894170A" label="above" paletteLabel="above" id="6q1-lK-hgL">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="64" height="19"/>
-                        <size key="maxSize" width="122" height="19"/>
-                        <button key="view" verticalHuggingPriority="750" id="6Zh-eC-EkR">
-                            <rect key="frame" x="-12" y="14" width="64" height="19"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="add line" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WKS-D6-twp">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
-                                <connections>
-                                    <action selector="addLineAbove:" target="-2" id="Jvz-FL-A7Y"/>
-                                </connections>
-                            </buttonCell>
-                        </button>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="98ECFE10-5A52-44F8-80C5-8E779189A44C" label="below" paletteLabel="below" id="5z5-RX-Nr2">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="65" height="19"/>
-                        <size key="maxSize" width="122" height="19"/>
-                        <button key="view" verticalHuggingPriority="750" id="fuZ-k2-pbp">
-                            <rect key="frame" x="-11" y="14" width="65" height="19"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="add line" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qbr-A1-qd5">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
-                            </buttonCell>
-                            <connections>
-                                <action selector="addLineBelow:" target="-2" id="UEr-7M-e91"/>
-                            </connections>
-                        </button>
-                    </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F1C98A2E-2043-4E86-8DBB-9103AAB3F296" label="Custom View" paletteLabel="Custom View" id="RIC-u2-0Xr">
-                        <nil key="toolTip"/>
-                        <size key="minSize" width="76" height="19"/>
-                        <size key="maxSize" width="122" height="19"/>
+                        <size key="minSize" width="30" height="28"/>
+                        <size key="maxSize" width="30" height="28"/>
                         <button key="view" verticalHuggingPriority="750" id="HOS-Pg-Psj">
-                            <rect key="frame" x="0.0" y="14" width="83" height="19"/>
+                            <rect key="frame" x="0.0" y="14" width="30" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="delete col" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wdw-cD-Cxt">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wdw-cD-Cxt">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
+                                <font key="font" metaFont="system"/>
                                 <connections>
                                     <action selector="deleteColumn:" target="-2" id="fyR-50-QfC"/>
                                 </connections>
                             </buttonCell>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="15AFEA8F-1205-4891-A036-56F49D966167" label="Custom View" paletteLabel="Custom View" id="yQy-V2-Gkq">
+                    <toolbarItem implicitItemIdentifier="15AFEA8F-1205-4891-A036-56F49D966167" label="Delete Row" paletteLabel="Delete Row" id="yQy-V2-Gkq">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="83" height="19"/>
-                        <size key="maxSize" width="122" height="19"/>
+                        <size key="minSize" width="30" height="28"/>
+                        <size key="maxSize" width="30" height="28"/>
                         <button key="view" verticalHuggingPriority="750" id="2Bq-oO-aB0">
-                            <rect key="frame" x="0.0" y="14" width="83" height="19"/>
+                            <rect key="frame" x="0.0" y="14" width="30" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="delete row" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="z47-HM-ILo">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="z47-HM-ILo">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
+                                <font key="font" metaFont="system"/>
                                 <connections>
-                                    <action selector="deleteRow:" target="-2" id="ae1-MZ-Kr8"/>
+                                    <action selector="deleteRow:" target="-2" id="svp-02-qpM"/>
                                 </connections>
                             </buttonCell>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="1029FCFA-8F8D-479B-B36F-F1228BA11587" label="Custom View" paletteLabel="Custom View" id="w77-vN-zbW">
+                    <toolbarItem implicitItemIdentifier="1029FCFA-8F8D-479B-B36F-F1228BA11587" label="File Format" paletteLabel="File Format" image="NSActionTemplate" id="w77-vN-zbW">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="78" height="20"/>
-                        <size key="maxSize" width="111" height="23"/>
-                        <button key="view" verticalHuggingPriority="750" id="x68-6s-rFG">
-                            <rect key="frame" x="0.0" y="14" width="78" height="20"/>
+                        <size key="minSize" width="30" height="28"/>
+                        <size key="maxSize" width="30" height="28"/>
+                        <button key="view" verticalHuggingPriority="750" placeholderIntrinsicWidth="30" placeholderIntrinsicHeight="28" id="x68-6s-rFG">
+                            <rect key="frame" x="0.0" y="14" width="30" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundRect" title="File Format" bezelStyle="roundedRect" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KEx-oO-0p8">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSActionTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KEx-oO-0p8">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="cellTitle"/>
+                                <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
                                 <action selector="toggleFormatView:" target="-2" id="rLu-1k-ail"/>
                             </connections>
                         </button>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="0565C83F-5794-4021-81D9-15078D3B45FB" label="Add Column" paletteLabel="Add Column" id="L16-81-E18">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="71" height="28"/>
+                        <size key="maxSize" width="71" height="28"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="ufp-YO-QNk">
+                            <rect key="frame" x="0.0" y="14" width="71" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <segmentedCell key="cell" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="KPy-FB-oij">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment width="32"/>
+                                    <segment width="32" tag="1"/>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <action selector="addColumn:" target="-2" id="PhM-xQ-Oft"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="9CB9291B-E94F-4515-BDAE-2FC350E1CF35" label="Add Row" paletteLabel="Add Row" id="uIc-SS-WZD">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="71" height="28"/>
+                        <size key="maxSize" width="71" height="28"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="FID-WH-eOP">
+                            <rect key="frame" x="5" y="14" width="71" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <segmentedCell key="cell" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="h3f-jd-RHe">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment width="32">
+                                        <nil key="label"/>
+                                    </segment>
+                                    <segment width="32" tag="1">
+                                        <nil key="label"/>
+                                    </segment>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <action selector="addRow:" target="-2" id="TOo-A3-LE5"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
-                    <toolbarItem reference="U88-dC-DZu"/>
-                    <toolbarItem reference="QdY-Xj-8dX"/>
-                    <toolbarItem reference="ROU-ce-fUf"/>
-                    <toolbarItem reference="6q1-lK-hgL"/>
-                    <toolbarItem reference="5z5-RX-Nr2"/>
-                    <toolbarItem reference="yQy-V2-Gkq"/>
+                    <toolbarItem reference="L16-81-E18"/>
                     <toolbarItem reference="RIC-u2-0Xr"/>
+                    <toolbarItem reference="uIc-SS-WZD"/>
+                    <toolbarItem reference="yQy-V2-Gkq"/>
+                    <toolbarItem reference="U88-dC-DZu"/>
                     <toolbarItem reference="w77-vN-zbW"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -226,4 +208,7 @@
             <point key="canvasLocation" x="486.5" y="344.5"/>
         </window>
     </objects>
+    <resources>
+        <image name="NSActionTemplate" width="14" height="14"/>
+    </resources>
 </document>
