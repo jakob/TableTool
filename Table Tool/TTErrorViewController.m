@@ -20,6 +20,7 @@
         [self view];
         _information.stringValue = errorInformation ?: @"";
         _message.stringValue = errorMessage ?: @"";
+        [_message setFont:[NSFont boldSystemFontOfSize:13]];
     }
     return self;
 }

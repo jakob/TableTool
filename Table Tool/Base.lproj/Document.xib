@@ -21,19 +21,19 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="xOd-HO-29H" userLabel="Window">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="133" y="235" width="677" height="413"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
+            <rect key="contentRect" x="72" y="224" width="677" height="612"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <value key="minSize" type="size" width="94" height="86"/>
             <view key="contentView" id="gIp-Ho-8D9">
-                <rect key="frame" x="0.0" y="0.0" width="677" height="413"/>
+                <rect key="frame" x="0.0" y="1" width="677" height="612"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <splitView dividerStyle="thin" translatesAutoresizingMaskIntoConstraints="NO" id="rW8-oV-UJz">
-                        <rect key="frame" x="0.0" y="0.0" width="677" height="413"/>
+                        <rect key="frame" x="0.0" y="0.0" width="677" height="612"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="18" horizontalPageScroll="10" verticalLineScroll="18" verticalPageScroll="10" id="HMT-zz-891">
-                                <rect key="frame" x="0.0" y="0.0" width="677" height="413"/>
+                                <rect key="frame" x="0.0" y="0.0" width="677" height="612"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" id="GkF-y6-0qi">
                                     <rect key="frame" x="1" y="17" width="238" height="117"/>
@@ -205,7 +205,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-x8E"/>
             </connections>
-            <point key="canvasLocation" x="486.5" y="344.5"/>
+            <point key="canvasLocation" x="464.5" y="467"/>
         </window>
     </objects>
     <resources>

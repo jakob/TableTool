@@ -20,7 +20,6 @@
     BOOL edited;
     BOOL didNotMoveColumn;
     BOOL newFile;
-    BOOL loadedNib;
     TTFormatViewController *inputController;
     TTFormatViewController *outputController;
     TTErrorViewController *errorController;
@@ -64,12 +63,14 @@
         [inputController setCheckButton];
         inputController.delegate = self;
     }
-    
-    loadedNib = YES;
-    if(readingError)[self displayError:readingError];
+    if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
+        [self displayError:readingError];
+    });
     
     [self updateToolbarIcons];
+
 }
+
 
 + (BOOL)autosavesInPlace {
     return YES;
@@ -125,7 +126,6 @@
             if(error){
                 *outError = error;
                 readingError = error;
-                [self displayError:error];
                 break;
             }
         }
@@ -142,12 +142,13 @@
 }
 
 -(void)displayError:(NSError *)error {
-    if(!loadedNib) return;
     NSPopover *errorPopover = [[NSPopover alloc]init];
     errorPopover.behavior = NSPopoverBehaviorTransient;
     errorPopover.animates = YES;
     errorController = [[TTErrorViewController alloc]initWithMessage:error.localizedDescription information:error.localizedRecoverySuggestion];
     errorPopover.contentViewController = errorController;
+    [inputController view];
+    [outputController view];
     switch (error.code) {
         case 1:
             [errorPopover showRelativeToRect:[inputController.encodingMenu bounds] ofView:inputController.encodingMenu preferredEdge:NSMinYEdge];
@@ -406,7 +407,7 @@
         NSBeep();
         return;
     }
-
+    
     long columnIndex;
     if([self.tableView selectedColumn] == -1){
         if([self.tableView editedColumn] == -1){
@@ -455,31 +456,35 @@
     NSMutableArray *toDeleteRows = [[NSMutableArray alloc]initWithArray:[_data objectsAtIndexes:rowIndexes]];
     [[self.undoManager prepareWithInvocationTarget:self] restoreRowsWithContent:toDeleteRows atIndexes:rowIndexes];
     
-    [_data removeObjectsAtIndexes:rowIndexes];
-    [self.tableView beginUpdates];
-    [self.tableView removeRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideUp];
-    [self.tableView endUpdates];
-    long selectedIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
-    
-    if(selectedIndex == [self.tableView numberOfRows]){
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
-    } else {
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
-    }
-    [self dataGotEdited];
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        [self.tableView beginUpdates];
+        [_data removeObjectsAtIndexes:rowIndexes];
+        [self.tableView removeRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideUp];
+        [self.tableView endUpdates];
+    } completionHandler:^{
+        long selectedIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
+        if(selectedIndex == [self.tableView numberOfRows]){
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
+        } else {
+            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
+        }
+        [self dataGotEdited];
+    }];
 }
 
 -(void)restoreRowsWithContent:(NSMutableArray *)rowContents atIndexes:(NSIndexSet *)rowIndexes {
     
     [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:rowIndexes];
     
-    [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexes:rowIndexes withAnimation:0];
-    [_data insertObjects:rowContents atIndexes:rowIndexes];
-    [self.tableView endUpdates];
-    
-    [self dataGotEdited];
-    [self.tableView selectRowIndexes:rowIndexes byExtendingSelection:NO];
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        [self.tableView scrollRowToVisible:[rowIndexes firstIndex]];
+        [self.tableView beginUpdates];
+        [_data insertObjects:rowContents atIndexes:rowIndexes];
+        [self.tableView insertRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideDown];
+        [self.tableView endUpdates];
+    } completionHandler:^{
+        [self.tableView selectRowIndexes:rowIndexes byExtendingSelection:NO];
+    }];
 }
 
 -(void)addRowAtIndex:(long)rowIndex {
@@ -494,19 +499,17 @@
     }
     
     [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-        [self.tableView scrollRowToVisible:rowIndex];
         [self.tableView beginUpdates];
         [_data insertObject:toInsertArray atIndex:rowIndex];
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
         [self.tableView endUpdates];
     } completionHandler:^{
         [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
+        [self dataGotEdited];
     }];
     
-    [self dataGotEdited];
     NSIndexSet *toRedoIndexSet = [NSIndexSet indexSetWithIndex:rowIndex];
     [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:toRedoIndexSet];
-    [self.tableView scrollRowToVisible:[[self.tableView selectedRowIndexes] firstIndex]];
 }
 
 -(void)addColumnAtIndex:(long) columnIndex {
@@ -577,7 +580,6 @@
     
     [self updateTableColumnsNames];
     [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
-    [self dataGotEdited];
     [[self.undoManager prepareWithInvocationTarget:self]deleteColumnsAtIndexes:columnIndexes];
     
 }
@@ -621,12 +623,11 @@
             _outputConfig = _inputConfig;
             outputController.config = _outputConfig.copy;
             [outputController selectFormatByConfig];
-            [self.tableView reloadData];
         }
     }else{
         _outputConfig = formatViewController.config;
-        [self.tableView reloadData];
     }
+    [self.tableView reloadData];
 }
 
 -(void)useInputConfig:(TTFormatViewController *)formatViewController {
@@ -640,12 +641,11 @@
             col.title = firstRow[i++];
         }
         [_data removeObjectAtIndex:0];
-        [self.tableView reloadData];
     }else{
         [self updateTableColumnsNames];
         [_data insertObject:firstRow.copy atIndex:0];
-        [self.tableView reloadData];
     }
+    [self.tableView reloadData];
 }
 
 -(void)revertEditing{
@@ -678,7 +678,6 @@
     
     [self updateTableColumns];
     [self initFirstRow];
-    [self.tableView reloadData];
     return YES;
 }
 
@@ -686,8 +685,9 @@
     if(!newFile && !edited){
         edited = YES;
         [inputController showRevertMessage];
+        [self.splitView layoutSubtreeIfNeeded];
     }
-
+    
     if([self.tableView selectedColumn] != -1){
         [self.tableView scrollColumnToVisible: [[self.tableView selectedColumnIndexes] firstIndex]];
     }else if([self.tableView selectedRow] != -1){
@@ -795,13 +795,12 @@
         [_data insertObject:oneReadLine atIndex:toInsertIndex];
         toInsertIndex++;
     }
-    
     [self.tableView reloadData];
     
     NSIndexSet *toSelectRowIndexes = [[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(firstIndex, toInsertIndex-firstIndex)];
     [self.tableView selectRowIndexes:toSelectRowIndexes byExtendingSelection:NO];
     [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:toSelectRowIndexes];
-    [self.undoManager setActionName:@"Paste String(s)"];
+    [self.undoManager setActionName:@"Paste Data"];
     [self dataGotEdited];
 }
 
@@ -823,7 +822,6 @@
     }
     [self dataGotEdited];
 }
-
 
 -(void)updateToolbarIcons {
     [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddLeftColumnIcon] forSegment:0];

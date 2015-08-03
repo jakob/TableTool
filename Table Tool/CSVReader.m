@@ -16,6 +16,9 @@
     BOOL atEnd;
     BOOL skipQuotes;
     NSRegularExpression *regex;
+    NSString *errorCode1;
+    NSString *errorCode2;
+    NSString *errorCode3;
 }
 
 @end
@@ -27,8 +30,7 @@
     self = [super init];
     if(self) {
         _data = data;
-        _config = config.copy;
-        atEnd = NO;
+        [self initVariables:config];
     }
     return self;
 }
@@ -37,10 +39,17 @@
     self = [super init];
     if(self) {
         _dataString = dataString;
-        _config = config.copy;
-        atEnd = NO;
+        [self initVariables:config];
     }
     return self;
+}
+
+-(void)initVariables:(CSVConfiguration *)config{
+    _config = config.copy;
+    atEnd = NO;
+    errorCode1 = @"Try specifying a different encoding.";
+    errorCode2 = @"Try specifying a different separator, quote or escape character.";
+    errorCode3 = errorCode2;
 }
 
 
@@ -59,7 +68,7 @@
         
         if(dataString == nil) {
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifiying a different encoding"}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode1}];
             }
             return NO;
         }
@@ -206,7 +215,7 @@
                             dataScanner.scanLocation++;
                             if(dataScanner.atEnd){
                                 if(outError != NULL) {
-                                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
+                                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
                                 }
                                 return NO;
                             }
@@ -214,7 +223,7 @@
                             break;
                         }else{
                             if(outError != NULL) {
-                                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
+                                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
                             }
                             return NO;
                         }
@@ -224,7 +233,7 @@
                     if(didScan){
                         if(dataScanner.atEnd || ![_config.quoteCharacter isEqualToString:[NSString stringWithFormat:@"%c",[dataScanner.string characterAtIndex:dataScanner.scanLocation]]]){
                             if(outError != NULL) {
-                                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
+                                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
                             }
                             return NO;
                         }
@@ -244,7 +253,7 @@
                 if(didScan){
                     if(dataScanner.atEnd){
                         if(outError != NULL) {
-                            *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
+                            *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
                         }
                         return NO;
                     }
@@ -258,14 +267,14 @@
                         return YES;
                     }
                     if(outError != NULL) {
-                        *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
+                        *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
                     }
                     return NO;
                     
                 }
             }
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"At some point there is a quote missing"}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
             }
             return NO;
         }
@@ -283,7 +292,7 @@
     if(didScanValue){
         if([temporaryString.copy rangeOfString:_config.quoteCharacter].location != NSNotFound && !skipQuotes){
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"A non-quote value is unacceptable due to at least one quote character in it"}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode3}];
             }
             return NO;
         }

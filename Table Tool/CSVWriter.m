@@ -10,6 +10,7 @@
 
 @implementation CSVWriter {
     NSCharacterSet *quoteOrColumnSeparator;
+    NSString *errorCode4;
 }
 
 
@@ -19,6 +20,7 @@
         _dataArray = dataArray;
         _config = config.copy;
         _columnsOrder = columnsOrder;
+        errorCode4 = @"Try to specifiy another encoding to export data";
     }
     return self;
 }
@@ -76,7 +78,7 @@
     NSData *finalData = [dataString dataUsingEncoding:_config.encoding];
     if(finalData == nil){
         if(outError != NULL) {
-            *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:4 userInfo:@{NSLocalizedDescriptionKey: @"Could not write data", NSLocalizedRecoverySuggestionErrorKey:@"Try to specifiy another encoding to export data"}];
+            *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:4 userInfo:@{NSLocalizedDescriptionKey: @"Could not write data", NSLocalizedRecoverySuggestionErrorKey:errorCode4}];
         }
         return nil;
     }
