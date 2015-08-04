@@ -9,6 +9,7 @@
 #import "Document.h"
 #import "CSVReader.h"
 #import "CSVWriter.h"
+#import "CSVHeuristic.h"
 #import "TTErrorViewController.h"
 #import "ToolbarIcons.h"
 
@@ -62,6 +63,11 @@
         [inputController setControlTitle:@"Input File Format"];
         [inputController setCheckButton];
         inputController.delegate = self;
+        inputController.config = _inputConfig;
+        _outputConfig = _inputConfig;
+        outputController.config = _inputConfig;
+        [inputController selectFormatByConfig];
+        [outputController selectFormatByConfig];
     }
     if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
         [self displayError:readingError];
@@ -113,8 +119,10 @@
     
     [self.undoManager removeAllActions];
     newFile = NO;
+    CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
+    _inputConfig = [formatHeuristic calculatePossibleFormat];
+
     savedData = data;
-    
     _maxColumnNumber = 1;
     [_data removeAllObjects];
     
@@ -608,21 +616,20 @@
 }
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController*)formatViewController {
-    
     if([formatViewController.viewTitle.stringValue isEqualToString:@"Input File Format"]) {
         _inputConfig = formatViewController.config;
         NSError *outError;
         if(inputController.checkBoxIsChecked){
             [inputController uncheckCheckbox];
         }
-        BOOL didReload = [self reloadDataWithError:&outError];
-        if (!didReload) {
-            [self displayError:outError];
-        }
         if(outputController.checkBoxIsChecked){
             _outputConfig = _inputConfig;
             outputController.config = _outputConfig.copy;
             [outputController selectFormatByConfig];
+        }
+        BOOL didReload = [self reloadDataWithError:&outError];
+        if (!didReload) {
+            [self displayError:outError];
         }
     }else{
         _outputConfig = formatViewController.config;

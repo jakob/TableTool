@@ -14,10 +14,10 @@
     self = [super init];
     if(self){
         _encoding = NSUTF8StringEncoding;
-        _columnSeparator = @",";
+        _columnSeparator = @";";
         _quoteCharacter = @"\"";
-        _escapeCharacter = @"\\";
-        _decimalMark = @".";
+        _escapeCharacter = @"\"";
+        _decimalMark = @",";
     }
     return self;
 }

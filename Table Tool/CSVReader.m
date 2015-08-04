@@ -14,7 +14,7 @@
     NSMutableCharacterSet *quoteEndedCharacterSet;
     NSMutableCharacterSet *quoteAndEscapeSet;
     BOOL atEnd;
-    BOOL skipQuotes;
+    BOOL forPasting;
     NSRegularExpression *regex;
     NSString *errorCode1;
     NSString *errorCode2;
@@ -59,7 +59,7 @@
         NSString *dataString = [NSString alloc];
         if(!_data){
             dataString = _dataString;
-            skipQuotes = YES;
+            forPasting = YES;
             _config.columnSeparator = @"\t";
             _config.decimalMark = [[NSLocale currentLocale] objectForKey:NSLocaleDecimalSeparator];
         }else{
@@ -106,8 +106,12 @@
         NSString *scannedString = nil;
         NSError *scanError = nil;
         
-        BOOL didScan = [self scanQuotedValueIntoString:&scannedString error:&scanError];
-        if(!didScan && scanError == nil){
+        BOOL didScan = NO;
+        if(![_config.quoteCharacter isEqualToString:@""]){
+            didScan = [self scanQuotedValueIntoString:&scannedString error:&scanError];
+        }
+        
+        if((!didScan && scanError == nil)){
             didScan = [self scanUnquotedValueIntoString:&scannedString error:&scanError];
         }
         
@@ -290,7 +294,7 @@
     NSString *temporaryString;
     BOOL didScanValue = [dataScanner scanCharactersFromSet:valueCharacterSet intoString:&temporaryString];
     if(didScanValue){
-        if([temporaryString.copy rangeOfString:_config.quoteCharacter].location != NSNotFound && !skipQuotes){
+        if([temporaryString.copy rangeOfString:_config.quoteCharacter].location != NSNotFound && !forPasting){
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode3}];
             }
@@ -301,6 +305,10 @@
         *scannedString = @"";
     }
     return YES;
+}
+
+-(void)reset{
+    dataScanner = nil;
 }
 
 @end

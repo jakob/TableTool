@@ -21,5 +21,6 @@
 -(NSArray *)readLineWithError:(NSError **)outError;
 -(NSArray *)readLineForPastingTo:(NSArray *)columnsOrder maxColumnIndex:(long)maxColumnNumber;
 -(BOOL)isAtEnd;
+-(void)reset;
 
 @end

@@ -16,7 +16,6 @@
 @property long maxColumnNumber;
 @property CSVConfiguration *inputConfig;
 @property CSVConfiguration *outputConfig;
-@property NSString *errorMessage;
 
 @property IBOutlet NSTableView *tableView;
 @property IBOutlet NSSplitView *splitView;

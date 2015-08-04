@@ -65,8 +65,11 @@
         _config.columnSeparator = [self.separatorControl labelForSegment:[self.separatorControl selectedSegment] ];
     }
     _config.decimalMark = [self.decimalControl labelForSegment:[self.decimalControl selectedSegment]];
-    _config.quoteCharacter = [self.quoteControl labelForSegment:[self.quoteControl selectedSegment]];
-    [self.escapeControl setLabel:_config.quoteCharacter forSegment:1];
+    if([self.quoteControl selectedSegment] == 1){
+        _config.quoteCharacter = @"";
+    }else{
+        _config.quoteCharacter = [self.quoteControl labelForSegment:[self.quoteControl selectedSegment]];
+    }
     _config.escapeCharacter = [self.escapeControl labelForSegment:[self.escapeControl selectedSegment]];
     
     [self.delegate configurationChangedForFormatViewController:self];
@@ -139,15 +142,15 @@
 
 -(void)selectFormatByConfig{
     [_encodingMenu selectItemWithTag:_config.encoding];
-    if([_config.columnSeparator isEqualToString:@","]){
+    if([_config.columnSeparator isEqualToString:@";"]){
         [_separatorControl selectSegmentWithTag:0];
-    }else if([_config.columnSeparator isEqualToString:@";"]){
+    }else if([_config.columnSeparator isEqualToString:@","]){
         [_separatorControl selectSegmentWithTag:1];
     }else {
         [_separatorControl selectSegmentWithTag:2];
     }
     
-    if([_config.decimalMark isEqualToString:@"."]){
+    if([_config.decimalMark isEqualToString:@","]){
         [_decimalControl selectSegmentWithTag:0];
     }else{
         [_decimalControl selectSegmentWithTag:1];
@@ -155,13 +158,11 @@
     
     if([_config.quoteCharacter isEqualToString:@"\""]){
         [_quoteControl selectSegmentWithTag:0];
-        [_escapeControl setLabel:@"\"" forSegment:1];
     }else{
         [_quoteControl selectSegmentWithTag:1];
-        [_escapeControl setLabel:@"'" forSegment:1];
     }
     
-    if([_config.escapeCharacter isEqualToString:@"\\"]){
+    if([_config.escapeCharacter isEqualToString:@"\""]){
         [_escapeControl selectSegmentWithTag:0];
     }else{
         [_escapeControl selectSegmentWithTag:1];
