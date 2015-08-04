@@ -142,15 +142,15 @@
 
 -(void)selectFormatByConfig{
     [_encodingMenu selectItemWithTag:_config.encoding];
-    if([_config.columnSeparator isEqualToString:@";"]){
+    if([_config.columnSeparator isEqualToString:@","]){
         [_separatorControl selectSegmentWithTag:0];
-    }else if([_config.columnSeparator isEqualToString:@","]){
+    }else if([_config.columnSeparator isEqualToString:@";"]){
         [_separatorControl selectSegmentWithTag:1];
     }else {
         [_separatorControl selectSegmentWithTag:2];
     }
     
-    if([_config.decimalMark isEqualToString:@","]){
+    if([_config.decimalMark isEqualToString:@"."]){
         [_decimalControl selectSegmentWithTag:0];
     }else{
         [_decimalControl selectSegmentWithTag:1];

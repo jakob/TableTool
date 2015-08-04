@@ -64,8 +64,8 @@
         [inputController setCheckButton];
         inputController.delegate = self;
         inputController.config = _inputConfig;
-        _outputConfig = _inputConfig;
-        outputController.config = _inputConfig;
+        _outputConfig = _inputConfig.copy;
+        outputController.config = _outputConfig;
         [inputController selectFormatByConfig];
         [outputController selectFormatByConfig];
     }

@@ -26,12 +26,12 @@
 
 -(void)setConfigs{
     _config1 = [[CSVConfiguration alloc]init];
-    _config1.columnSeparator = @";";
-    _config1.decimalMark = @",";
+    _config1.columnSeparator = @",";
+    _config1.decimalMark = @".";
     
     _config2 = [[CSVConfiguration alloc]init];
-    _config2.columnSeparator = @",";
-    _config2.decimalMark = @".";
+    _config2.columnSeparator = @";";
+    _config2.decimalMark = @",";
     
     _config3 = [[CSVConfiguration alloc]init];
     _config3.columnSeparator = @"\t";
@@ -62,7 +62,7 @@
     if(![self useSimpleHeuristic]){
         for(CSVReader *reader in readerArray){
             [reader reset];
-            reader.config.encoding = 12;
+            reader.config.encoding = NSWindowsCP1252StringEncoding;
         }
         [self useSimpleHeuristic];
     }

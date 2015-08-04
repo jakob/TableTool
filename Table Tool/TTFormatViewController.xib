@@ -36,14 +36,14 @@
                             <subviews>
                                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3cI-b8-P1V">
                                     <rect key="frame" x="70" y="34" width="223" height="22"/>
-                                    <popUpButtonCell key="cell" type="push" title="Western (Windows Latin 1)" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="12" imageScaling="proportionallyDown" inset="2" selectedItem="aag-kN-g3l" id="Sdf-6x-D8V">
+                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Sdf-6x-D8V">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
                                         <menu key="menu" id="eaN-Lx-OAa">
                                             <items>
-                                                <menuItem title="Unicode (UTF-8)" tag="4" id="vaM-Bt-YTU"/>
+                                                <menuItem title="Unicode (UTF-8)" state="on" tag="4" id="vaM-Bt-YTU"/>
                                                 <menuItem title="Western (Mac OS Roman)" tag="30" id="hNv-38-3w7"/>
-                                                <menuItem title="Western (Windows Latin 1)" state="on" tag="12" id="aag-kN-g3l"/>
+                                                <menuItem title="Western (Windows Latin 1)" tag="12" id="aag-kN-g3l"/>
                                                 <menuItem title="Central European (ISO Latin 2)" tag="9" id="2O3-s0-0dg"/>
                                                 <menuItem title="Central European (Windows Latin 2)" tag="15" id="gfp-H3-sdr"/>
                                                 <menuItem title="Cyrillic (Windows)" tag="11" id="Sla-hs-RWk"/>
@@ -87,8 +87,8 @@
                                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="mew-jA-XDb">
                                         <font key="font" metaFont="smallSystem"/>
                                         <segments>
-                                            <segment label=";" selected="YES"/>
-                                            <segment label="," tag="1"/>
+                                            <segment label="," selected="YES"/>
+                                            <segment label=";" tag="1"/>
                                             <segment label="⇥" tag="2"/>
                                         </segments>
                                     </segmentedCell>
@@ -140,8 +140,8 @@
                                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="2Bs-KA-HbN">
                                         <font key="font" metaFont="smallSystem"/>
                                         <segments>
-                                            <segment label="," toolTip="Sets the decimal mark for the reading of the CSV-file" selected="YES"/>
-                                            <segment label="." tag="1"/>
+                                            <segment label="." selected="YES"/>
+                                            <segment label="," tag="1"/>
                                         </segments>
                                     </segmentedCell>
                                     <connections>
