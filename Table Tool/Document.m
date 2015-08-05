@@ -74,7 +74,7 @@
     });
     
     [self updateToolbarIcons];
-
+    
 }
 
 
@@ -121,7 +121,7 @@
     newFile = NO;
     CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
     _inputConfig = [formatHeuristic calculatePossibleFormat];
-
+    
     savedData = data;
     _maxColumnNumber = 1;
     [_data removeAllObjects];
@@ -722,6 +722,7 @@
         NSMutableString *rowString = [NSMutableString string];
         NSArray *row = _data[idx];
         for(NSString *columnId in [self getColumnsOrder]) {
+            if(row.count <= columnId.integerValue) break;
             NSString *cellValue;
             if([row[columnId.integerValue] isKindOfClass:[NSDecimalNumber class]]){
                 cellValue = [row[columnId.integerValue] descriptionWithLocale:[NSLocale currentLocale]];
@@ -750,6 +751,7 @@
         [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
             NSUInteger columnIndex = ((NSTableColumn *)self.tableView.tableColumns[idx]).identifier.integerValue;
             NSString *cellValue;
+            if(row.count <= columnIndex) return;
             if([row[columnIndex] isKindOfClass:[NSDecimalNumber class]]){
                 cellValue = [row[columnIndex] descriptionWithLocale:[NSLocale currentLocale]];
             }else{
@@ -757,7 +759,7 @@
             }
             [self appendCell:cellValue toString:rowString];
         }];
-        [rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
+        if(rowString.length > 0)[rowString deleteCharactersInRange:NSMakeRange(rowString.length-1, 1)];
         [copyString appendString:rowString];
         [copyString appendString:@"\n"];
     }

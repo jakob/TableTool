@@ -283,6 +283,7 @@
             return NO;
         }
         *scannedString = temporaryString;
+        [self checkForCRLF];
         return YES;
     }else{
         return NO;
@@ -304,11 +305,19 @@
     }else{
         *scannedString = @"";
     }
+    [self checkForCRLF];
     return YES;
 }
 
 -(void)reset{
     dataScanner = nil;
+}
+
+-(void)checkForCRLF{
+    if(dataScanner.atEnd) return;
+    if([dataScanner.string characterAtIndex:dataScanner.scanLocation] == '\r' && [dataScanner.string characterAtIndex:dataScanner.scanLocation+1] == '\n'){
+        [dataScanner scanString:@"\r" intoString:NULL];
+    }
 }
 
 @end
