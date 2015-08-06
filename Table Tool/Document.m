@@ -18,7 +18,7 @@
     NSData *savedData;
     NSMutableArray *firstRow;
     NSError *readingError;
-    BOOL edited;
+    NSString *errorCode5;
     BOOL didNotMoveColumn;
     BOOL newFile;
     TTFormatViewController *inputController;
@@ -36,8 +36,9 @@
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
         _inputConfig = [[CSVConfiguration alloc]init];
-        _outputConfig = _inputConfig.copy;
+        _outputConfig = _inputConfig;
         newFile = YES;
+        errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
     }
     return self;
 }
@@ -47,34 +48,31 @@
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
     
-    outputController = [[TTFormatViewController alloc]init];
-    [self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
-    if(!newFile){
-        [outputController setControlTitle:@"Output File Format"];
-        [outputController setCheckButton];
+    if(newFile){
+        _maxColumnNumber = 3;
+        [self updateTableColumns];
+        [_data addObject:[[NSMutableArray alloc]init]];
+        [self.tableView reloadData];
+        
+        outputController = [[TTFormatViewController alloc]initAsInputController:NO];
+        [self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
+        [outputController useLocale];
+        [self enableToolbarButtons];
+        outputController.delegate = self;
     }else{
-        [outputController setControlTitle:@"File Format"];
-    }
-    outputController.delegate = self;
-    
-    if(!newFile){
-        inputController = [[TTFormatViewController alloc]init];
+        inputController = [[TTFormatViewController alloc]initAsInputController:YES];
         [self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
-        [inputController setControlTitle:@"Input File Format"];
-        [inputController setCheckButton];
         inputController.delegate = self;
         inputController.config = _inputConfig;
-        _outputConfig = _inputConfig.copy;
-        outputController.config = _outputConfig;
         [inputController selectFormatByConfig];
-        [outputController selectFormatByConfig];
+        self.tableView.enabled = NO;
     }
     if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
         [self displayError:readingError];
+        inputController.confirmButton.enabled = NO;
     });
     
     [self updateToolbarIcons];
-    
 }
 
 
@@ -88,7 +86,13 @@
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     
-    if(inputController && inputController.checkBoxIsChecked){
+    if(readingError){
+        NSError *error = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:5 userInfo:@{NSLocalizedDescriptionKey: @"Could not save", NSLocalizedRecoverySuggestionErrorKey:errorCode5}];
+        [self displayError:error];
+        return nil;
+    }
+    
+    if(inputController && inputController.firstRowAsHeader){
         NSMutableArray *dataFirstRow = [[NSMutableArray alloc]init];
         for(int i = 0; i < _maxColumnNumber; i++){
             [dataFirstRow addObject:@""];
@@ -109,7 +113,7 @@
         }
     }
     
-    if(inputController && inputController.checkBoxIsChecked){
+    if(inputController && inputController.firstRowAsHeader){
         [_data removeObjectAtIndex:0];
     }
     return finalData;
@@ -163,6 +167,7 @@
             break;
         case 2:
         case 3:
+        case 5:
             [errorPopover showRelativeToRect:[inputController.view bounds] ofView:inputController.view preferredEdge:NSMinYEdge];
             break;
         case 4:
@@ -278,7 +283,7 @@
 }
 
 -(void)updateTableColumnsNames {
-    if(!inputController || !inputController.checkBoxIsChecked){
+    if(!inputController || !inputController.firstRowAsHeader){
         for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
             NSTableColumn *tableColumn = self.tableView.tableColumns[i];
             tableColumn.title = [self generateColumnName:i];
@@ -457,6 +462,32 @@
     [self.undoManager setActionName:@"Delete Row(s)"];
 }
 
+-(void)updateToolbarIcons {
+    [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddLeftColumnIcon] forSegment:0];
+    [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddRightColumnIcon] forSegment:1];
+    NSSize addColumnSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
+    addColumnSize.height = 30;
+    self.toolbarItemAddColumn.minSize = addColumnSize;
+    self.toolbarItemAddColumn.maxSize = addColumnSize;
+    [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowAboveIcon] forSegment:0];
+    [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowBelowIcon] forSegment:1];
+    NSSize addRowSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
+    addRowSize.height = 30;
+    self.toolbarItemAddColumn.minSize = addRowSize;
+    self.toolbarItemAddColumn.maxSize = addRowSize;
+    self.toolBarButtonDeleteColumn.image = [ToolbarIcons imageOfDeleteColumnIcon];
+    self.toolBarButtonDeleteRow.image = [ToolbarIcons imageOfDeleteRowIcon];
+
+}
+
+-(void)enableToolbarButtons{
+    _toolBarButtonDeleteColumn.enabled = YES;
+    _toolBarButtonDeleteRow.enabled = YES;
+    _toolBarButtonsAddColumn.enabled = YES;
+    _toolBarButtonsAddRow.enabled = YES;
+}
+
+
 #pragma mark - buttonActionImplementations
 
 -(void)deleteRowsAtIndexes:(NSIndexSet *)rowIndexes{
@@ -577,7 +608,7 @@
     for(int i = 0; i < columnIds.count; i++){
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
         col.dataCell = dataCell;
-        if(inputController && inputController.checkBoxIsChecked){
+        if(inputController && inputController.firstRowAsHeader){
             col.title = [firstRow objectAtIndex:((NSString *)columnIds[i]).integerValue];
         }
         ((NSCell *)col.headerCell).alignment = NSCenterTextAlignment;
@@ -606,30 +637,30 @@
         }else{
             inputController.view.hidden = YES;
         }
-    }
-    
-    if(outputController.view.hidden){
-        outputController.view.hidden = NO;
-    } else {
-        outputController.view.hidden = YES;
+    }else{
+        if(outputController.view.hidden){
+            outputController.view.hidden = NO;
+        } else {
+            outputController.view.hidden = YES;
+        }
     }
 }
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController*)formatViewController {
-    if([formatViewController.viewTitle.stringValue isEqualToString:@"Input File Format"]) {
+    if(formatViewController.isInputController) {
         _inputConfig = formatViewController.config;
         NSError *outError;
-        if(inputController.checkBoxIsChecked){
+        if(inputController.firstRowAsHeader){
             [inputController uncheckCheckbox];
-        }
-        if(outputController.checkBoxIsChecked){
-            _outputConfig = _inputConfig;
-            outputController.config = _outputConfig.copy;
-            [outputController selectFormatByConfig];
         }
         BOOL didReload = [self reloadDataWithError:&outError];
         if (!didReload) {
+            readingError = outError;
             [self displayError:outError];
+            inputController.confirmButton.enabled = NO;
+        } else {
+            readingError = nil;
+            inputController.confirmButton.enabled = YES;
         }
     }else{
         _outputConfig = formatViewController.config;
@@ -637,12 +668,8 @@
     [self.tableView reloadData];
 }
 
--(void)useInputConfig:(TTFormatViewController *)formatViewController {
-    formatViewController.config = _inputConfig.copy;
-}
-
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController {
-    if(formatViewController.checkBoxIsChecked){
+    if(formatViewController.firstRowAsHeader){
         int i = 0;
         for(NSTableColumn *col in self.tableView.tableColumns){
             col.title = firstRow[i++];
@@ -655,12 +682,15 @@
     [self.tableView reloadData];
 }
 
--(void)revertEditing{
-    while([self.undoManager canUndo]){
-        [self.undoManager undo];
-    }
-    [self.undoManager removeAllActions];
-    edited = NO;
+-(void)confirmFormat:(TTFormatViewController *)formatViewController {
+    self.tableView.enabled = YES;
+    _outputConfig = _inputConfig.copy;
+    outputController = [[TTFormatViewController alloc]initAsInputController:NO];
+    [outputController setConfig:_outputConfig];
+    [self.splitView replaceSubview:inputController.view with:outputController.view];
+    [outputController selectFormatByConfig];
+    outputController.delegate = self;
+    [self enableToolbarButtons];
 }
 
 -(BOOL)reloadDataWithError:(NSError**)error {
@@ -689,12 +719,6 @@
 }
 
 -(void)dataGotEdited {
-    if(!newFile && !edited){
-        edited = YES;
-        [inputController showRevertMessage];
-        [self.splitView layoutSubtreeIfNeeded];
-    }
-    
     if([self.tableView selectedColumn] != -1){
         [self.tableView scrollColumnToVisible: [[self.tableView selectedColumnIndexes] firstIndex]];
     }else if([self.tableView selectedRow] != -1){
@@ -830,23 +854,6 @@
         [self.undoManager setActionName:@"Delete Row(s)"];
     }
     [self dataGotEdited];
-}
-
--(void)updateToolbarIcons {
-    [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddLeftColumnIcon] forSegment:0];
-    [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddRightColumnIcon] forSegment:1];
-    NSSize addColumnSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
-    addColumnSize.height = 30;
-    self.toolbarItemAddColumn.minSize = addColumnSize;
-    self.toolbarItemAddColumn.maxSize = addColumnSize;
-    [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowAboveIcon] forSegment:0];
-    [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowBelowIcon] forSegment:1];
-    NSSize addRowSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
-    addRowSize.height = 30;
-    self.toolbarItemAddColumn.minSize = addRowSize;
-    self.toolbarItemAddColumn.maxSize = addRowSize;
-    self.toolBarButtonDeleteColumn.image = [ToolbarIcons imageOfDeleteColumnIcon];
-    self.toolBarButtonDeleteRow.image = [ToolbarIcons imageOfDeleteRowIcon];
 }
 
 

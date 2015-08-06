@@ -13,35 +13,33 @@
 
 @protocol TTFormatViewControllerDelegate
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
--(void)useInputConfig:(TTFormatViewController *)formatViewController;
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
--(void)revertEditing;
+-(void)confirmFormat:(TTFormatViewController *)formatViewController;
 @end
 
 @interface TTFormatViewController : NSViewController
 
-@property (readonly) BOOL checkBoxIsChecked;
+@property (readonly) BOOL isInputController;
+@property (readonly) BOOL firstRowAsHeader;
 @property CSVConfiguration *config;
 @property id<TTFormatViewControllerDelegate> delegate;
-@property IBOutlet NSSegmentedControl *quoteControl;
 @property IBOutlet NSSegmentedControl *escapeControl;
 @property IBOutlet NSSegmentedControl *separatorControl;
 @property IBOutlet NSSegmentedControl *decimalControl;
 @property IBOutlet NSPopUpButton *encodingMenu;
-@property IBOutlet NSTextField *helpText;
-@property IBOutlet NSButton *revertButton;
-@property IBOutlet NSTextField *viewTitle;
-@property IBOutlet NSButton *checkBox;
-@property (strong) IBOutlet NSLayoutConstraint *bottomConstraint;
+@property IBOutlet NSButton *useFirstRowAsHeaderCheckbox;
+@property IBOutlet NSLayoutConstraint *bottomConstraint;
+@property IBOutlet NSButton *confirmButton;
+@property IBOutlet NSBox *confirmBox;
+@property IBOutlet NSButton *quoteCheckbox;
 
 - (IBAction)updateConfiguration:(id)sender;
-- (IBAction)clickCheckBox:(id)sender;
-- (IBAction)revertEditing:(id)sender;
+- (IBAction)useFirstRowAsHeaderClicked:(id)sender;
+- (IBAction)confirmConfiguration:(id)sender;
 
-- (void)showRevertMessage;
-- (void)setCheckButton;
-- (void)setControlTitle:(NSString *)title;
+- (instancetype)initAsInputController:(BOOL)inputController;
 - (void)selectFormatByConfig;
 - (void)uncheckCheckbox;
+- (void)useLocale;
 
 @end

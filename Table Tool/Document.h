@@ -38,8 +38,7 @@
 -(IBAction)toggleFormatView:(id)sender;
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
--(void)useInputConfig:(TTFormatViewController *)formatViewController;
--(void)revertEditing;
+-(void)confirmFormat:(TTFormatViewController *)formatViewController;
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
 
 @end

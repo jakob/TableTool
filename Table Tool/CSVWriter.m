@@ -44,13 +44,8 @@
                 cellString = lineArray[columndIdentifier.integerValue];
             }
             NSMutableString *temporaryCellValue = [[NSMutableString alloc]init];
-            BOOL shouldSetQuotes = [cellString rangeOfString:_config.columnSeparator ].location == NSNotFound ? NO : YES;
-            shouldSetQuotes |= [cellString rangeOfString:_config.quoteCharacter ].location == NSNotFound ? NO : YES;
-            if(![_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
-                shouldSetQuotes |= [cellString rangeOfString:[NSString stringWithFormat:@"%@",_config.escapeCharacter]].location == NSNotFound ? NO : YES;
-            }
-            
-            if(shouldSetQuotes) {
+
+            if([_config.quoteCharacter isEqualToString:@"\""]) {
                 [temporaryCellValue appendString:cellString];
                 if(![_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
                     [temporaryCellValue replaceOccurrencesOfString:_config.escapeCharacter withString:[NSString stringWithFormat:@"%@%@",_config.escapeCharacter,_config.escapeCharacter] options:0 range:NSMakeRange(0, temporaryCellValue.length)];
