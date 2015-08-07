@@ -18,6 +18,7 @@
     NSData *savedData;
     NSMutableArray *firstRow;
     NSError *readingError;
+    NSView *errorControllerView;
     NSString *errorCode5;
     BOOL didNotMoveColumn;
     BOOL newFile;
@@ -64,6 +65,7 @@
         [self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
         inputController.delegate = self;
         inputController.config = _inputConfig;
+        _outputConfig = _inputConfig;
         [inputController selectFormatByConfig];
         self.tableView.enabled = NO;
     }
@@ -154,28 +156,22 @@
 }
 
 -(void)displayError:(NSError *)error {
-    NSPopover *errorPopover = [[NSPopover alloc]init];
-    errorPopover.behavior = NSPopoverBehaviorTransient;
-    errorPopover.animates = YES;
+    
     errorController = [[TTErrorViewController alloc]initWithMessage:error.localizedDescription information:error.localizedRecoverySuggestion];
-    errorPopover.contentViewController = errorController;
-    [inputController view];
-    [outputController view];
-    switch (error.code) {
-        case 1:
-            [errorPopover showRelativeToRect:[inputController.encodingMenu bounds] ofView:inputController.encodingMenu preferredEdge:NSMinYEdge];
-            break;
-        case 2:
-        case 3:
-        case 5:
-            [errorPopover showRelativeToRect:[inputController.view bounds] ofView:inputController.view preferredEdge:NSMinYEdge];
-            break;
-        case 4:
-            [errorPopover showRelativeToRect:[outputController.encodingMenu bounds] ofView:outputController.encodingMenu preferredEdge:NSMinYEdge];
-            break;
-        default:
-            break;
+    
+    NSView *errorContainerView = self.tableView.enclosingScrollView.superview;
+    if(errorControllerView){
+        [errorContainerView replaceSubview:errorControllerView with:errorController.view];
+        errorControllerView = errorController.view;
+    }else{
+        errorControllerView = errorController.view;
+        [errorContainerView addSubview:errorControllerView positioned:NSWindowAbove relativeTo:nil];
     }
+    
+    [errorContainerView addConstraint:[NSLayoutConstraint constraintWithItem:errorController.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:errorContainerView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [errorContainerView addConstraint:[NSLayoutConstraint constraintWithItem:errorController.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:errorContainerView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [errorContainerView addConstraint:[NSLayoutConstraint constraintWithItem:errorControllerView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:errorContainerView attribute:NSLayoutAttributeBottom multiplier:1 constant:-20]];
+    [errorController.view setWantsLayer:YES];
 }
 
 #pragma mark - tableViewDataSource, delegate
@@ -471,13 +467,22 @@
     self.toolbarItemAddColumn.maxSize = addColumnSize;
     [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowAboveIcon] forSegment:0];
     [self.toolBarButtonsAddRow setImage:[ToolbarIcons imageOfAddRowBelowIcon] forSegment:1];
-    NSSize addRowSize = self.toolBarButtonsAddColumn.intrinsicContentSize;
+    NSSize addRowSize = self.toolBarButtonsAddRow.intrinsicContentSize;
     addRowSize.height = 30;
-    self.toolbarItemAddColumn.minSize = addRowSize;
-    self.toolbarItemAddColumn.maxSize = addRowSize;
+    self.toolbarItemAddRow.minSize = addRowSize;
+    self.toolbarItemAddRow.maxSize = addRowSize;
     self.toolBarButtonDeleteColumn.image = [ToolbarIcons imageOfDeleteColumnIcon];
+    NSSize deleteColumnSize = self.toolBarButtonDeleteColumn.intrinsicContentSize;
+    deleteColumnSize.width = 35;
+    deleteColumnSize.height = 30;
+    self.toolbarItemDeleteColumn.minSize = deleteColumnSize;
+    self.toolbarItemDeleteColumn.maxSize = deleteColumnSize;
     self.toolBarButtonDeleteRow.image = [ToolbarIcons imageOfDeleteRowIcon];
-
+    NSSize deleteRowSize = self.toolBarButtonDeleteRow.intrinsicContentSize;
+    deleteRowSize.width = 35;
+    deleteRowSize.height = 30;
+    self.toolbarItemDeleteRow.minSize = deleteRowSize;
+    self.toolbarItemDeleteRow.maxSize = deleteRowSize;
 }
 
 -(void)enableToolbarButtons{
@@ -485,6 +490,9 @@
     _toolBarButtonDeleteRow.enabled = YES;
     _toolBarButtonsAddColumn.enabled = YES;
     _toolBarButtonsAddRow.enabled = YES;
+    for (NSToolbarItem *item in [(NSWindowController*)self.windowControllers.firstObject window].toolbar.visibleItems) {
+        item.enabled = YES;
+    }
 }
 
 
@@ -632,13 +640,13 @@
 
 - (IBAction)toggleFormatView:(id)sender {
     if(inputController){
-        if(inputController.view.hidden){
+        if([inputController.view isHidden]){
             inputController.view.hidden = NO;
         }else{
             inputController.view.hidden = YES;
         }
     }else{
-        if(outputController.view.hidden){
+        if([outputController.view isHidden]){
             outputController.view.hidden = NO;
         } else {
             outputController.view.hidden = YES;
@@ -660,11 +668,12 @@
             inputController.confirmButton.enabled = NO;
         } else {
             readingError = nil;
+            [errorControllerView removeFromSuperview];
+            errorControllerView = nil;
             inputController.confirmButton.enabled = YES;
         }
-    }else{
-        _outputConfig = formatViewController.config;
     }
+    _outputConfig = formatViewController.config;
     [self.tableView reloadData];
 }
 

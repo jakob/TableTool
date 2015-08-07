@@ -20,15 +20,15 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <box autoresizesSubviews="NO" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" title="BackgroundBox" boxType="custom" borderType="none" titlePosition="noTitle" id="qvq-Ir-Smc">
-            <rect key="frame" x="0.0" y="0.0" width="788" height="120"/>
+        <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="BackgroundBox" boxType="custom" borderType="none" titlePosition="noTitle" id="qvq-Ir-Smc">
+            <rect key="frame" x="0.0" y="0.0" width="731" height="120"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <view key="contentView">
-                <rect key="frame" x="0.0" y="0.0" width="788" height="120"/>
+                <rect key="frame" x="0.0" y="0.0" width="731" height="120"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <box autoresizesSubviews="NO" verticalHuggingPriority="750" borderWidth="0.0" title="Box" boxType="custom" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="zue-QE-eXZ">
-                        <rect key="frame" x="29" y="0.0" width="731" height="120"/>
+                        <rect key="frame" x="0.0" y="0.0" width="731" height="120"/>
                         <view key="contentView">
                             <rect key="frame" x="0.0" y="0.0" width="731" height="120"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -40,8 +40,8 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bk9-rm-Dyw">
-                                                <rect key="frame" x="604" y="4" width="91" height="25"/>
-                                                <buttonCell key="cell" type="roundTextured" title="Confirm" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rrZ-67-s4I">
+                                                <rect key="frame" x="598" y="-1" width="103" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Confirm" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rrZ-67-s4I">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
@@ -50,15 +50,15 @@
                                                 </connections>
                                             </button>
                                             <textField horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="clg-Ze-Vv0">
-                                                <rect key="frame" x="2" y="2" width="594" height="29"/>
+                                                <rect key="frame" x="0.0" y="2" width="598" height="29"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="29" id="0Sn-Fo-ObQ"/>
                                                     <constraint firstAttribute="width" constant="594" id="t9c-C5-dm2"/>
                                                 </constraints>
-                                                <textFieldCell key="cell" controlSize="small" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" drawsBackground="YES" id="0q7-4e-qhe">
+                                                <textFieldCell key="cell" controlSize="small" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" id="0q7-4e-qhe">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <string key="title">Table Tool autodetected the input file format. You can manually change it by clicking the desired buttons. When you are satisfied with the format, click 'Confirm' to save it.</string>
-                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="backgroundColor" red="0.99396306820000002" green="0.97839398310000003" blue="0.6969861101" alpha="1" colorSpace="calibratedRGB"/>
                                                 </textFieldCell>
                                             </textField>
@@ -258,7 +258,7 @@
             </constraints>
             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
             <color key="fillColor" red="0.96014835860000003" green="0.96014835860000003" blue="0.96014835860000003" alpha="1" colorSpace="calibratedRGB"/>
-            <point key="canvasLocation" x="297" y="363"/>
+            <point key="canvasLocation" x="288.5" y="363"/>
         </box>
     </objects>
 </document>

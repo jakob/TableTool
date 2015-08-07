@@ -74,25 +74,6 @@
     [self useFirstRowAsHeader];
 }
 
--(void)unableFormatting{
-    _encodingMenu.enabled = NO;
-    _escapeControl.enabled = NO;
-    _separatorControl.enabled = NO;
-    _decimalControl.enabled = NO;
-    _quoteCheckbox.enabled = NO;
-    _useFirstRowAsHeaderCheckbox.enabled = NO;
-}
-
--(void)enableFormatting{
-    _encodingMenu.enabled = YES;
-    _separatorControl.enabled = YES;
-    _decimalControl.enabled = YES;
-    _quoteCheckbox.enabled = YES;
-    if([_quoteCheckbox state]) {
-    _escapeControl.enabled = YES;
-    }
-    _useFirstRowAsHeaderCheckbox.enabled = YES;
-}
 -(void)useLocale{
     _config.decimalMark = [[NSLocale currentLocale] objectForKey:NSLocaleDecimalSeparator];
     if([_config.decimalMark isEqualToString:@"."]){
