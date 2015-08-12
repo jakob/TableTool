@@ -59,8 +59,10 @@
 -(void)useFirstRowAsHeader{
     if(!_firstRowAsHeader){
         _firstRowAsHeader = YES;
+        _config.firstRowAsHeader = YES;
     }else{
         _firstRowAsHeader = NO;
+        _config.firstRowAsHeader = NO;
     }
     [self.delegate useFirstRowAsHeader:self];
 }
@@ -116,6 +118,11 @@
         _escapeControl.enabled = YES;
     } else {
         _escapeControl.enabled = NO;
+    }
+    
+    if(_config.firstRowAsHeader){
+        [_useFirstRowAsHeaderCheckbox setState:1];
+        [self useFirstRowAsHeader];
     }
 }
 

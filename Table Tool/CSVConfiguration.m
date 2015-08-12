@@ -18,6 +18,7 @@
         _quoteCharacter = @"\"";
         _escapeCharacter = @"\"";
         _decimalMark = @".";
+        _firstRowAsHeader = NO;
     }
     return self;
 }
@@ -29,6 +30,7 @@
     copy->_decimalMark = _decimalMark;
     copy->_escapeCharacter = _escapeCharacter;
     copy->_quoteCharacter = _quoteCharacter;
+    copy->_firstRowAsHeader = _firstRowAsHeader;
     return copy;
 }
 

@@ -15,5 +15,6 @@
 @property NSString *quoteCharacter;
 @property NSString *escapeCharacter;
 @property NSString *decimalMark;
+@property BOOL firstRowAsHeader;
 
 @end

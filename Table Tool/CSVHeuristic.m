@@ -12,6 +12,7 @@
 @implementation CSVHeuristic {
     NSMutableArray *scores;
     NSArray *readerArray;
+    NSMutableArray *firstRowArray;
     NSMutableArray *readLines;
 }
 
@@ -70,6 +71,7 @@
     CSVReader *reader8 = [[CSVReader alloc]initWithData:_data configuration:_config8];
     CSVReader *reader9 = [[CSVReader alloc]initWithData:_data configuration:_config9];
 
+    firstRowArray = [[NSMutableArray alloc]initWithObjects:[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO], nil];
     readerArray = [[NSArray alloc]initWithObjects:reader1,reader2,reader3,reader4,reader5,reader6,reader7,reader8,reader9,nil];
     scores = [[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],nil];
 }
@@ -116,10 +118,11 @@
     long count = ((NSArray *)readLines[0]).count;
     BOOL sameLength = YES;
     for(int i = 1; i < readLines.count; i++){
-        sameLength |= (((NSArray *)readLines[i]).count == count);
+        sameLength &= (((NSArray *)readLines[i]).count == count);
     }
     if(sameLength){
         scores[index] = [NSNumber numberWithInt:([scores[index] intValue] + 5)];
+        [firstRowArray replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:YES]];
     }
 }
 
@@ -130,6 +133,11 @@
         for(int j = 0; j < line.count; j++){
             if([line[j] isKindOfClass:[NSDecimalNumber class]]){
                 numbers++;
+                if(i == 0) {
+                    [firstRowArray replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:NO]];
+                }
+            }else if(i == 0 && ((NSString *)line[j]).length == 0){
+                [firstRowArray replaceObjectAtIndex:index withObject:[NSNumber numberWithBool:NO]];
             }
         }
     }
@@ -146,7 +154,9 @@
             highestScoreIndex = i;
         }
     }
-    return ((CSVReader *)readerArray[highestScoreIndex]).config;
+    CSVConfiguration *finalConfig = ((CSVReader *)readerArray[highestScoreIndex]).config;
+    finalConfig.firstRowAsHeader = [firstRowArray[highestScoreIndex] boolValue];
+    return finalConfig;
 }
 
 @end

@@ -69,6 +69,7 @@
         [inputController selectFormatByConfig];
         self.tableView.enabled = NO;
     }
+    
     if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
         [self displayError:readingError];
         inputController.confirmButton.enabled = NO;
