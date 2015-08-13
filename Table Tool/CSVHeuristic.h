@@ -20,6 +20,7 @@
 @property CSVConfiguration *config7;
 @property CSVConfiguration *config8;
 @property CSVConfiguration *config9;
+@property CSVConfiguration *config10;
 @property NSData *data;
 
 -(instancetype)initWithData:(NSData *)data;

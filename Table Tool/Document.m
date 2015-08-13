@@ -134,7 +134,7 @@
     [_data removeAllObjects];
     
     CSVReader *reader = [[CSVReader alloc ]initWithData:data configuration: _inputConfig];
-    while(![reader isAtEnd]) {
+    while(!reader.isAtEnd) {
         NSError *error = nil;
         NSArray *oneReadLine = [reader readLineWithError:&error];
         if(oneReadLine == nil) {
@@ -709,7 +709,7 @@
     
     NSError *outError;
     CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: _inputConfig];
-    while(![reader isAtEnd]) {
+    while(!reader.isAtEnd) {
         NSArray *oneReadLine = [reader readLineWithError:&outError];
         if(oneReadLine == nil) {
             if (error) *error = outError;
@@ -828,7 +828,7 @@
     NSArray *toInsert = [generalPasteboard readObjectsForClasses:classes options:options];
     CSVReader *reader = [[CSVReader alloc]initWithString:[toInsert lastObject] configuration:_inputConfig];
     
-    while(![reader isAtEnd]) {
+    while(!reader.isAtEnd) {
         NSArray *oneReadLine = [reader readLineForPastingTo:[self getColumnsOrder] maxColumnIndex:_maxColumnNumber];
         
         for(long i = _maxColumnNumber; i < oneReadLine.count;i++){

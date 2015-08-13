@@ -10,11 +10,10 @@
 
 @interface CSVReader () {
     NSScanner *dataScanner;
-    NSString *workString;
+    NSString *dataString;
     NSMutableCharacterSet *valueCharacterSet;
     NSMutableCharacterSet *quoteEndedCharacterSet;
     NSMutableCharacterSet *quoteAndEscapeSet;
-    BOOL atEnd;
     BOOL forPasting;
     NSRegularExpression *regex;
     NSString *errorCode1;
@@ -36,10 +35,10 @@
     return self;
 }
 
--(instancetype)initWithString:(NSString *)dataString configuration:(CSVConfiguration *)config{
+-(instancetype)initWithString:(NSString *)newDataString configuration:(CSVConfiguration *)config{
     self = [super init];
     if(self) {
-        _dataString = dataString;
+        dataString = newDataString;
         [self initVariables:config];
     }
     return self;
@@ -47,7 +46,7 @@
 
 -(void)initVariables:(CSVConfiguration *)config{
     _config = config.copy;
-    atEnd = NO;
+    _atEnd = NO;
     errorCode1 = @"Try specifying a different encoding.";
     errorCode2 = @"Try specifying a different separator, quote or escape character.";
     errorCode3 = errorCode2;
@@ -56,14 +55,14 @@
 
 -(BOOL)initScannerWithError:(NSError **)outError skipQuotes:(BOOL)skip{
     if(!dataScanner){
-        
-        NSString *dataString = [NSString alloc];
-        if(!_data){
-            dataString = _dataString;
+        if(skip){
             forPasting = YES;
             _config.columnSeparator = @"\t";
+            _config.quoteCharacter = @"";
             _config.decimalMark = [[NSLocale currentLocale] objectForKey:NSLocaleDecimalSeparator];
-        }else{
+        }
+        
+        if(!dataString){
             dataString = [[NSString alloc] initWithData:_data encoding:_config.encoding];
         }
         
@@ -77,11 +76,8 @@
         dataScanner.caseSensitive = YES;
         dataScanner.charactersToBeSkipped = nil;
         
-        workString = dataScanner.string;
-        
         quoteEndedCharacterSet = [NSCharacterSet newlineCharacterSet].mutableCopy;
         [quoteEndedCharacterSet addCharactersInString:_config.columnSeparator];
-        valueCharacterSet = [quoteEndedCharacterSet invertedSet].mutableCopy;
         quoteAndEscapeSet = [[NSMutableCharacterSet alloc]init];
         [quoteAndEscapeSet addCharactersInString:_config.quoteCharacter];
         [quoteAndEscapeSet addCharactersInString:_config.escapeCharacter];
@@ -105,7 +101,7 @@
     
     NSMutableArray *rowArray = [[NSMutableArray alloc]init];
     
-    while(!atEnd){
+    while(!_atEnd){
         NSString *scannedString = nil;
         NSError *scanError = nil;
         
@@ -131,18 +127,18 @@
             [rowArray addObject:scannedString];
         }
         
-        if(dataScanner.atEnd){
-            atEnd = YES;
+        if(dataScanner.isAtEnd){
+            _atEnd = YES;
             break;
         }
         
-        BOOL didScanNewLine = [[NSCharacterSet newlineCharacterSet] characterIsMember:[dataScanner.string characterAtIndex:dataScanner.scanLocation]];
-        if(didScanNewLine) {
+        if([[NSCharacterSet newlineCharacterSet] characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
             dataScanner.scanLocation++;
             break;
         }
         
-        BOOL didScanColumnSeparator = [dataScanner scanString:_config.columnSeparator intoString:NULL];
+        //scanning column separator
+        dataScanner.scanLocation++;
     }
     
     return rowArray;
@@ -179,113 +175,78 @@
             }
         }
         
-        if(!dataScanner.atEnd){
-            BOOL didScanNewLine = [[NSCharacterSet newlineCharacterSet] characterIsMember:[dataScanner.string characterAtIndex:dataScanner.scanLocation]];
-            if(didScanNewLine) {
-                dataScanner.scanLocation++;
-                break;
-            }
-        }
-        
-        BOOL didScanColumnSeparator = [dataScanner scanString:_config.columnSeparator intoString:NULL];
-        if(!didScanColumnSeparator){
-            atEnd = YES;
+        if(dataScanner.isAtEnd){
+            _atEnd = YES;
             break;
         }
+        
+        if([[NSCharacterSet newlineCharacterSet] characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
+            dataScanner.scanLocation++;
+            break;
+        }
+        
+        //scanning column separator
+        dataScanner.scanLocation++;
     }
     return rowArray;
 }
 
--(BOOL)isAtEnd {
-    return atEnd;
-}
-
 -(BOOL)scanQuotedValueIntoString:(NSString **)scannedString error:(NSError**)outError {
     
-    if(dataScanner.atEnd) {
+    if(dataScanner.isAtEnd) {
         *scannedString = @"";
         return YES;
     }
     
-    if([workString characterAtIndex:dataScanner.scanLocation] != '\"'){
+    if([dataString characterAtIndex:dataScanner.scanLocation] != '\"'){
         return NO;
     }
     
+    NSMutableString *temporaryString = [[NSMutableString alloc] init];
     dataScanner.scanLocation++;
     
-    NSString *partialString;
-    NSMutableString *temporaryString = [[NSMutableString alloc] init];
-    
-    if([_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
-        while(!dataScanner.atEnd){
-            
-            while(!dataScanner.atEnd && [workString characterAtIndex:dataScanner.scanLocation] != [_config.escapeCharacter characterAtIndex:0]) {
-                [temporaryString appendString:[workString substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
-                dataScanner.scanLocation++;
-            }
-            
-            if(dataScanner.atEnd) {
-                if(outError != NULL) {
-                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
-                }
-                return NO;
-            }
-            
-            dataScanner.scanLocation++;
-            if(workString.length >= dataScanner.scanLocation+1){
-                if([quoteEndedCharacterSet characterIsMember:[workString characterAtIndex:dataScanner.scanLocation]]) {
-                    *scannedString = temporaryString;
-                    [self checkForCRLF];
-                    return YES;
-                }
-                [temporaryString appendString:[workString substringWithRange:NSMakeRange(dataScanner.scanLocation,1)]];
-                if(dataScanner.atEnd) {
-                    if(outError != NULL) {
-                        *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
-                    }
-                    return NO;
-                }
-                dataScanner.scanLocation++;
-            }else{
-                *scannedString = temporaryString;
-                [self checkForCRLF];
-                return YES;
-            }
-        }
-        if(outError != NULL) {
-            *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
-        }
-        return NO;
-    }
-    
-    while(!dataScanner.atEnd){
-        BOOL didScan = [dataScanner scanUpToCharactersFromSet:quoteAndEscapeSet intoString:&partialString];
-        if(didScan){
-            [temporaryString appendString:partialString];
-        }
-        didScan = [dataScanner scanString:_config.escapeCharacter intoString:NULL];
-        if(didScan){
-            if(dataScanner.atEnd){
-                if(outError != NULL) {
-                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
-                }
-                return NO;
-            }
-            [temporaryString appendString:[dataScanner.string substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
+    while(!dataScanner.isAtEnd){
+        while(!dataScanner.isAtEnd && ![quoteAndEscapeSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
+            [temporaryString appendString:[dataString substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
             dataScanner.scanLocation++;
         }
-        didScan = [dataScanner scanString:_config.quoteCharacter intoString:NULL];
-        if(didScan){
-            if(dataScanner.atEnd || [quoteEndedCharacterSet characterIsMember:[dataScanner.string characterAtIndex:dataScanner.scanLocation]]){
-                *scannedString = temporaryString;
-                return YES;
-            }
+        
+        if(dataScanner.isAtEnd){
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
             }
             return NO;
-            
         }
+        
+        if([dataString characterAtIndex:dataScanner.scanLocation] == [_config.escapeCharacter characterAtIndex:0]) {
+            if([_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
+                if((dataScanner.scanLocation+2 <= dataString.length && [quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation+1]]) || dataScanner.scanLocation+1 == dataString.length){
+                    dataScanner.scanLocation++;
+                    *scannedString = temporaryString;
+                    [self checkForCRLF];
+                    return YES;
+                }
+            }
+            
+            dataScanner.scanLocation++;
+            if(dataScanner.isAtEnd){
+                if(outError != NULL) {
+                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
+                }
+                return NO;
+            }
+            [temporaryString appendString:[dataString substringWithRange:NSMakeRange(dataScanner.scanLocation,1)]];
+            dataScanner.scanLocation++;
+            continue;
+        }
+        
+        if([dataString characterAtIndex:dataScanner.scanLocation] == [_config.quoteCharacter characterAtIndex:0]) {
+            dataScanner.scanLocation++;
+            *scannedString = temporaryString;
+            [self checkForCRLF];
+            return YES;
+        }
+        
     }
     if(outError != NULL) {
         *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
@@ -296,14 +257,14 @@
 -(BOOL)scanUnquotedValueIntoString:(NSString **)scannedString error:(NSError **)outError{
     
     NSMutableString *temporaryString = [[NSMutableString alloc]initWithString:@""];
-    while(!dataScanner.atEnd && ![quoteEndedCharacterSet characterIsMember:[workString characterAtIndex:dataScanner.scanLocation]]){
-        if([workString characterAtIndex:dataScanner.scanLocation] == '\"' && !forPasting){
+    while(!dataScanner.isAtEnd && ![quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
+        if([dataString characterAtIndex:dataScanner.scanLocation] == '\"' && !forPasting){
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode3}];
             }
             return NO;
         }
-        [temporaryString appendString:[workString substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
+        [temporaryString appendString:[dataString substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
         dataScanner.scanLocation++;
     }
     *scannedString = temporaryString;
@@ -316,8 +277,8 @@
 }
 
 -(void)checkForCRLF{
-    if(dataScanner.scanLocation>dataScanner.string.length-2) return;
-    if([dataScanner.string characterAtIndex:dataScanner.scanLocation] == '\r' && [dataScanner.string characterAtIndex:dataScanner.scanLocation+1] == '\n'){
+    if(dataScanner.scanLocation>dataString.length-2) return;
+    if([dataString characterAtIndex:dataScanner.scanLocation] == '\r' && [dataString characterAtIndex:dataScanner.scanLocation+1] == '\n'){
         dataScanner.scanLocation++;
     }
 }
