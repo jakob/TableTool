@@ -24,7 +24,7 @@
 		E1CEF8831B6B63380083B957 /* ToolbarIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = E1CEF8821B6B63380083B957 /* ToolbarIcons.m */; };
 		E1CEF8861B7097280083B957 /* CSVHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = E1CEF8851B7097280083B957 /* CSVHeuristic.m */; };
 		E1CEF8881B74B4310083B957 /* test-doc-unquoted.csv in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8871B74B4310083B957 /* test-doc-unquoted.csv */; };
-		E1CEF88C1B79E5360083B957 /* Test Documents in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF88B1B79E5360083B957 /* Test Documents */; };
+		E1CEF88C1B79E5360083B957 /* Reading Test Documents in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF88B1B79E5360083B957 /* Reading Test Documents */; };
 		E1CEF8921B7B4E5E0083B957 /* test-doc-quoted.csv in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */; };
 /* End PBXBuildFile section */
 
@@ -69,7 +69,7 @@
 		E1CEF8841B7097280083B957 /* CSVHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVHeuristic.h; sourceTree = "<group>"; };
 		E1CEF8851B7097280083B957 /* CSVHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVHeuristic.m; sourceTree = "<group>"; };
 		E1CEF8871B74B4310083B957 /* test-doc-unquoted.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-doc-unquoted.csv"; sourceTree = "<group>"; };
-		E1CEF88B1B79E5360083B957 /* Test Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Test Documents"; sourceTree = "<group>"; };
+		E1CEF88B1B79E5360083B957 /* Reading Test Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Reading Test Documents"; sourceTree = "<group>"; };
 		E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-doc-quoted.csv"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,7 +155,7 @@
 				E1CC84FA1B4A5F2A00ED8314 /* Table_ToolTests.m */,
 				E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */,
 				E1CEF8871B74B4310083B957 /* test-doc-unquoted.csv */,
-				E1CEF88B1B79E5360083B957 /* Test Documents */,
+				E1CEF88B1B79E5360083B957 /* Reading Test Documents */,
 				E1CC84F81B4A5F2A00ED8314 /* Supporting Files */,
 			);
 			path = "Table ToolTests";
@@ -261,7 +261,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1CEF88C1B79E5360083B957 /* Test Documents in Resources */,
+				E1CEF88C1B79E5360083B957 /* Reading Test Documents in Resources */,
 				E1CEF8881B74B4310083B957 /* test-doc-unquoted.csv in Resources */,
 				E1CEF8921B7B4E5E0083B957 /* test-doc-quoted.csv in Resources */,
 			);

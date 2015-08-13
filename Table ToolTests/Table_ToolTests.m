@@ -32,11 +32,11 @@
 }
 
 - (void)testReadCommaSeparatedCSVFile {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/comma-separated" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/comma-separated" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     config.quoteCharacter = @"";
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:NULL];
         XCTAssertNotNil(line, "CSVReader should return object.");
         count++;
@@ -52,13 +52,13 @@
 }
 
 - (void)testReadSemicolonSeparatedCSVFile {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/semicolon-separated" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/semicolon-separated" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     config.columnSeparator = @";";
     config.decimalMark = @",";
     config.quoteCharacter = @"";
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:NULL];
         XCTAssertNotNil(line, "CSVReader should return object.");
         count++;
@@ -74,11 +74,11 @@
 }
 
 - (void)testReadQuotedCommaSeparatedCSVFile {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/comma-separated-quote" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/comma-separated-quote" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     config.decimalMark = @",";
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:NULL];
         XCTAssertNotNil(line, "CSVReader should return object.");
         count++;
@@ -94,10 +94,10 @@
 }
 
 - (void)testReadQuotedCSVFileWithQuoteEscape {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/quote-quote-escape" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/quote-quote-escape" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:NULL];
         XCTAssertNotNil(line, "CSVReader should return object.");
         count++;
@@ -112,11 +112,11 @@
 }
 
 - (void)testReadQuotedCSVFileWithBackslashEscape {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/quote-backslash-escape" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/quote-backslash-escape" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     config.escapeCharacter = @"\\";
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:NULL];
         XCTAssertNotNil(line, "CSVReader should return object.");
         count++;
@@ -131,40 +131,43 @@
 }
 
 - (void)testReadCSVFileShouldGetErrorCode1 {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/invalid-encoding" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/invalid-encoding" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
     NSError *error = nil;
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:&error];
         if(error) break;
+        XCTAssertNotNil(line, "CSVReader should return object.");
     }
     XCTAssertTrue(error.code == 1, "Returned wrong error code");
     XCTAssert(YES, @"Pass");
 }
 
-- (void)testReadCSVFileShouldGetErrorCode2 {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/missing-quote" withExtension:@"csv"];
+- (void)testReadCSVFileWithMissingQuoteAtEnd_ShouldGetErrorCode2 {
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/missing-quote-atEnd" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
     NSError *error = nil;
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:&error];
         if(error) break;
+        XCTAssertNil(line, "CSVReader should not return object.");
         }
     XCTAssertTrue(error.code == 2, "Returned wrong error code");
     XCTAssert(YES, @"Pass");
 }
 
 - (void)testReadCSVFileShouldGetErrorCode3 {
-    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Test Documents/invalid-quote" withExtension:@"csv"];
+    NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/invalid-quote" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
     config.quoteCharacter = @"";
     CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
     NSError *error = nil;
-    while(![reader isAtEnd]){
+    while(!reader.isAtEnd){
         NSArray *line = [reader readLineWithError:&error];
         if(error) break;
+        XCTAssertNotNil(line, "CSVReader should return object.");
     }
     XCTAssertTrue(error.code == 3, "Returned wrong error code");
     XCTAssert(YES, @"Pass");
@@ -176,7 +179,7 @@
     [self measureBlock:^{
         NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
         CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-        while(![reader isAtEnd]){
+        while(!reader.isAtEnd){
             NSArray *line = [reader readLineWithError:NULL];
             XCTAssertEqual(line.count, 12);
             XCTAssertNotNil(line, "CSVReader should return object.");
@@ -192,7 +195,7 @@
     [self measureBlock:^{
         NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
         CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
-        while(![reader isAtEnd]){
+        while(!reader.isAtEnd){
             NSArray *line = [reader readLineWithError:NULL];
             XCTAssertEqual(line.count, 11);
             XCTAssertNotNil(line, "CSVReader should return object.");
