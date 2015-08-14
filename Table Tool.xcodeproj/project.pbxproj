@@ -26,6 +26,7 @@
 		E1CEF8881B74B4310083B957 /* test-doc-unquoted.csv in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8871B74B4310083B957 /* test-doc-unquoted.csv */; };
 		E1CEF88C1B79E5360083B957 /* Reading Test Documents in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF88B1B79E5360083B957 /* Reading Test Documents */; };
 		E1CEF8921B7B4E5E0083B957 /* test-doc-quoted.csv in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */; };
+		E1CEF89A1B7CC4250083B957 /* Heuristic Test Documents in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8991B7CC4250083B957 /* Heuristic Test Documents */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		E1CEF8871B74B4310083B957 /* test-doc-unquoted.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-doc-unquoted.csv"; sourceTree = "<group>"; };
 		E1CEF88B1B79E5360083B957 /* Reading Test Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Reading Test Documents"; sourceTree = "<group>"; };
 		E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-doc-quoted.csv"; sourceTree = "<group>"; };
+		E1CEF8991B7CC4250083B957 /* Heuristic Test Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Heuristic Test Documents"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +157,7 @@
 				E1CC84FA1B4A5F2A00ED8314 /* Table_ToolTests.m */,
 				E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */,
 				E1CEF8871B74B4310083B957 /* test-doc-unquoted.csv */,
+				E1CEF8991B7CC4250083B957 /* Heuristic Test Documents */,
 				E1CEF88B1B79E5360083B957 /* Reading Test Documents */,
 				E1CC84F81B4A5F2A00ED8314 /* Supporting Files */,
 			);
@@ -263,6 +266,7 @@
 			files = (
 				E1CEF88C1B79E5360083B957 /* Reading Test Documents in Resources */,
 				E1CEF8881B74B4310083B957 /* test-doc-unquoted.csv in Resources */,
+				E1CEF89A1B7CC4250083B957 /* Heuristic Test Documents in Resources */,
 				E1CEF8921B7B4E5E0083B957 /* test-doc-quoted.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
