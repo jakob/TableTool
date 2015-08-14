@@ -25,42 +25,56 @@
     return self;
 }
 
+/*WARNING: used order for calculating differs from configuration name:
+1.  _config1
+2.  _config10
+3.  _config6
+4.  _config2
+5.  _config5
+6.  _config7
+7.  _config3
+8.  _config8
+9.  _config4
+10. _config9
+11. _config11
+*/
 -(void)setConfigs{
     _config1 = [[CSVConfiguration alloc]init];
     _config1.columnSeparator = @",";
     _config1.decimalMark = @".";
     
+    _config10 = _config1.copy;
+    _config10.escapeCharacter = @"\\";
+    
+    _config6 = _config1.copy;
+    _config6.quoteCharacter = @"";
+    
     _config2 = [[CSVConfiguration alloc]init];
     _config2.columnSeparator = @";";
     _config2.decimalMark = @",";
+    
+    _config5 = _config2.copy;
+    _config5.escapeCharacter = @"\\";
+    
+    _config7 = _config2.copy;
+    _config7.quoteCharacter = @"";
     
     _config3 = [[CSVConfiguration alloc]init];
     _config3.columnSeparator = @"\t";
     _config3.decimalMark = @".";
     
+    _config8 = _config3.copy;
+    _config8.quoteCharacter = @"";
+    
     _config4 = [[CSVConfiguration alloc]init];
     _config4.columnSeparator = @"\t";
     _config4.decimalMark = @",";
     
-    _config5 = [[CSVConfiguration alloc]init];
-    _config5.columnSeparator = @";";
-    _config5.decimalMark = @",";
-    _config5.escapeCharacter = @"\\";
-    
-    _config6 = _config1.copy;
-    _config6.quoteCharacter = @"";
-    
-    _config7 = _config2.copy;
-    _config7.quoteCharacter = @"";
-    
-    _config8 = _config3.copy;
-    _config8.quoteCharacter = @"";
-    
     _config9 = _config4.copy;
     _config9.quoteCharacter = @"";
     
-    _config10 = _config2.copy;
-    _config10.escapeCharacter = @"\\";
+    _config11 = _config1.copy;
+    _config11.decimalMark = @",";
 }
 
 -(void)initializeArrays{
@@ -73,11 +87,13 @@
     CSVReader *reader7 = [[CSVReader alloc]initWithData:_data configuration:_config7];
     CSVReader *reader8 = [[CSVReader alloc]initWithData:_data configuration:_config8];
     CSVReader *reader9 = [[CSVReader alloc]initWithData:_data configuration:_config9];
-        CSVReader *reader10 = [[CSVReader alloc]initWithData:_data configuration:_config10];
+    CSVReader *reader10 = [[CSVReader alloc]initWithData:_data configuration:_config10];
+    CSVReader *reader11 = [[CSVReader alloc]initWithData:_data configuration:_config11];
 
-    firstRowArray = [[NSMutableArray alloc]initWithObjects:[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO], nil];
-    readerArray = [[NSArray alloc]initWithObjects:reader1,reader2,reader3,reader4,reader5,reader6,reader7,reader8,reader9,reader10,nil];
-    scores = [[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],nil];
+    firstRowArray = [[NSMutableArray alloc]initWithObjects:[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO],[NSNumber numberWithBool:NO], nil];
+    readerArray = [[NSArray alloc]initWithObjects:reader1,reader10,reader6,reader2,reader5,reader7,reader3,reader8,reader4,reader9,reader11,nil];
+    scores = [[NSMutableArray alloc]initWithObjects:[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],[NSNumber numberWithInt:0],nil];
+    readLines = [[NSMutableArray alloc]init];
 }
 
 -(CSVConfiguration *)calculatePossibleFormat{
@@ -94,22 +110,18 @@
 }
 
 -(BOOL)useSimpleHeuristic{
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < readerArray.count; i++){
         CSVReader *reader = readerArray[i];
         readLines = [[NSMutableArray alloc]initWithCapacity:5];
         NSError *error = nil;
         for(int i = 0; i < 5; i++){
             NSArray *line = [reader readLineWithError:&error];
-            if(error) break;
+            if(line.count == 0) break;
             [readLines addObject:line];
         }
         
-        if(error) {
-            if(error.code == 1){
-                return NO;
-            }
-            continue;
-        }
+        if(error.code == 1) return NO;
+        if(error) continue;
         scores[i] = [NSNumber numberWithInt:([scores[i] intValue] + readLines.count)];
         [self checkForRowLengthsFromReader:i];
         [self checkForNumbersFromReader:i];
@@ -152,7 +164,7 @@
 -(CSVConfiguration *)getBestConfiguration{
     NSNumber *highestScore = scores[0];
     int highestScoreIndex = 0;
-    for(int i = 1; i < 10; i++){
+    for(int i = 1; i < readerArray.count; i++){
         NSNumber *score = scores[i];
         if([score intValue] > [highestScore intValue]){
             highestScore = score;

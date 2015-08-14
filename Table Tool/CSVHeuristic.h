@@ -21,8 +21,10 @@
 @property CSVConfiguration *config8;
 @property CSVConfiguration *config9;
 @property CSVConfiguration *config10;
+@property CSVConfiguration *config11;
 @property NSData *data;
 
 -(instancetype)initWithData:(NSData *)data;
 -(CSVConfiguration *)calculatePossibleFormat;
+
 @end

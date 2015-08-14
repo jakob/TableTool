@@ -28,7 +28,6 @@
 @property (strong) IBOutlet NSToolbarItem *toolbarItemDeleteColumn;
 @property (strong) IBOutlet NSToolbarItem *toolbarItemDeleteRow;
 
-
 -(IBAction)addColumn:(id)sender;
 -(IBAction)addRow:(id)sender;
 -(void)addRowAbove:(id)sender;

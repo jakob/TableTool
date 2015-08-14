@@ -22,6 +22,7 @@
     NSString *errorCode5;
     BOOL didNotMoveColumn;
     BOOL newFile;
+    BOOL enableEditing;
     TTFormatViewController *inputController;
     TTFormatViewController *outputController;
     TTErrorViewController *errorController;
@@ -487,6 +488,7 @@
 }
 
 -(void)enableToolbarButtons{
+    enableEditing = YES;
     _toolBarButtonDeleteColumn.enabled = YES;
     _toolBarButtonDeleteRow.enabled = YES;
     _toolBarButtonsAddColumn.enabled = YES;
@@ -646,7 +648,9 @@
         }else{
             inputController.view.hidden = YES;
         }
-    }else{
+    }
+    
+    if(outputController){
         if([outputController.view isHidden]){
             outputController.view.hidden = NO;
         } else {
@@ -737,6 +741,25 @@
 }
 
 #pragma mark - copy,paste,delete
+
+-(BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+    if (menuItem.action == @selector(copy:)){
+       if([self.tableView selectedRow] == -1 && [self.tableView selectedColumn] == -1){
+           return NO;
+       }
+    }
+    if (menuItem.action == @selector(paste:)) {
+        if(!enableEditing) {
+            return NO;
+        }
+    }
+    if (menuItem.action == @selector(delete:)) {
+        if(([self.tableView selectedRow] == -1 && [self.tableView selectedColumn] == -1)|| !enableEditing){
+            return NO;
+        }
+    }
+    return YES;
+}
 
 -(IBAction)copy:(id)sender {
     if([self.tableView selectedRow] != -1){
@@ -865,6 +888,5 @@
     }
     [self dataGotEdited];
 }
-
 
 @end

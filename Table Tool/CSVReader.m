@@ -11,10 +11,9 @@
 @interface CSVReader () {
     NSScanner *dataScanner;
     NSString *dataString;
-    NSMutableCharacterSet *valueCharacterSet;
     NSMutableCharacterSet *quoteEndedCharacterSet;
     NSMutableCharacterSet *quoteAndEscapeSet;
-    BOOL forPasting;
+    BOOL unquoted;
     NSRegularExpression *regex;
     NSString *errorCode1;
     NSString *errorCode2;
@@ -46,6 +45,7 @@
 
 -(void)initVariables:(CSVConfiguration *)config{
     _config = config.copy;
+    if([_config.quoteCharacter isEqualToString:@""]) unquoted = YES;
     _atEnd = NO;
     errorCode1 = @"Try specifying a different encoding.";
     errorCode2 = @"Try specifying a different separator, quote or escape character.";
@@ -56,7 +56,6 @@
 -(BOOL)initScannerWithError:(NSError **)outError skipQuotes:(BOOL)skip{
     if(!dataScanner){
         if(skip){
-            forPasting = YES;
             _config.columnSeparator = @"\t";
             _config.quoteCharacter = @"";
             _config.decimalMark = [[NSLocale currentLocale] objectForKey:NSLocaleDecimalSeparator];
@@ -66,7 +65,7 @@
             dataString = [[NSString alloc] initWithData:_data encoding:_config.encoding];
         }
         
-        if(dataString == nil) {
+        if(!dataString) {
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode1}];
             }
@@ -106,7 +105,7 @@
         NSError *scanError = nil;
         
         BOOL didScan = NO;
-        if(![_config.quoteCharacter isEqualToString:@""]){
+        if(!unquoted){
             didScan = [self scanQuotedValueIntoString:&scannedString error:&scanError];
         }
         
@@ -145,8 +144,8 @@
 }
 
 -(NSArray *)readLineForPastingTo:(NSArray *)tableColumnsOrder maxColumnIndex:(long)maxColumnNumber {
-    [self initScannerWithError:NULL skipQuotes:YES];
     
+    [self initScannerWithError:NULL skipQuotes:YES];
     NSMutableArray *rowArray = [[NSMutableArray alloc]init];
     for(int i = 0; i < maxColumnNumber; i++){
         [rowArray addObject:@""];
@@ -242,9 +241,15 @@
         
         if([dataString characterAtIndex:dataScanner.scanLocation] == [_config.quoteCharacter characterAtIndex:0]) {
             dataScanner.scanLocation++;
-            *scannedString = temporaryString;
-            [self checkForCRLF];
-            return YES;
+            if(dataScanner.isAtEnd || [quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
+                *scannedString = temporaryString;
+                [self checkForCRLF];
+                return YES;
+            }
+            if(outError != NULL) {
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
+            }
+            return NO;
         }
         
     }
@@ -258,7 +263,7 @@
     
     NSMutableString *temporaryString = [[NSMutableString alloc]initWithString:@""];
     while(!dataScanner.isAtEnd && ![quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
-        if([dataString characterAtIndex:dataScanner.scanLocation] == '\"' && !forPasting){
+        if([dataString characterAtIndex:dataScanner.scanLocation] == '\"' && !unquoted){
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode3}];
             }
