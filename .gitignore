@@ -1,4 +1,3 @@
-Table Tool.xcodeproj/project.xcworkspace/xcuserdata/*/UserInterfaceState.xcuserstate
-Table Tool.xcodeproj/project.xcworkspace/xcuserdata/*/WorkspaceSettings.xcsettings
-Table Tool.xcodeproj/project.xcworkspace/xcshareddata/Table Tool.xccheckout
-Table Tool/TableToolIcons.pcvd
+xcshareddata
+xcuserdata
+.DS_Store
