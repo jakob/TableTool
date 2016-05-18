@@ -145,7 +145,8 @@
                 break;
             }
         }
-        [_data addObject:oneReadLine];
+        if (oneReadLine != nil) [_data addObject:oneReadLine];
+        
         if(_maxColumnNumber < [[_data lastObject] count]){
             _maxColumnNumber = [[_data lastObject] count];
         }
@@ -721,7 +722,7 @@
             [self.tableView reloadData];
             return NO;
         }
-        [_data addObject:oneReadLine];
+        if (oneReadLine != nil) [_data addObject:oneReadLine];
         if(_maxColumnNumber < [[_data lastObject] count]){
             _maxColumnNumber = [[_data lastObject] count];
         }

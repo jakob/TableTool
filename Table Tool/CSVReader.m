@@ -140,6 +140,10 @@
         dataScanner.scanLocation++;
     }
     
+    if ([self isRowEmpty:rowArray]) {
+        return nil;
+    }
+    
     return rowArray;
 }
 
@@ -187,7 +191,21 @@
         //scanning column separator
         dataScanner.scanLocation++;
     }
+    
     return rowArray;
+}
+
+-(BOOL)isRowEmpty:(NSArray *)row {
+    if (row.count == 0) return YES;
+    else if (row.count == 1) {
+        if ([row[0] isKindOfClass:[NSString class]]) {
+            if ([((NSString *)row[0]) isEqualToString:@""]) {
+                return YES;
+            }
+        }
+    }
+    
+    return NO;
 }
 
 -(BOOL)scanQuotedValueIntoString:(NSString **)scannedString error:(NSError**)outError {

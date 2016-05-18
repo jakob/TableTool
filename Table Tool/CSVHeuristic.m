@@ -116,7 +116,7 @@
         NSError *error = nil;
         for(int i = 0; i < 5; i++){
             NSArray *line = [reader readLineWithError:&error];
-            if(line.count == 0) break;
+            if(line.count == 0 || line == nil) break;
             [readLines addObject:line];
         }
         
@@ -173,6 +173,7 @@
     }
     CSVConfiguration *finalConfig = ((CSVReader *)readerArray[highestScoreIndex]).config;
     finalConfig.firstRowAsHeader = [firstRowArray[highestScoreIndex] boolValue];
+    
     return finalConfig;
 }
 
