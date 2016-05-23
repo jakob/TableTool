@@ -10,7 +10,7 @@
 #import "CSVConfiguration.h"
 #import "TTFormatViewController.h"
 
-@interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate>
+@interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate, TTFormatViewControllerDelegate>
 
 @property NSMutableArray *data;
 @property long maxColumnNumber;
@@ -37,6 +37,8 @@
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
 -(IBAction)toggleFormatView:(id)sender;
+
+@property (weak) IBOutlet NSTextField *settingsInfoLabel;
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
 -(void)confirmFormat:(TTFormatViewController *)formatViewController;

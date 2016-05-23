@@ -240,31 +240,29 @@
     XCTAssertEqual([config.columnSeparator characterAtIndex:0], ',', "Column Separator should be ','.");
     XCTAssertEqual([config.decimalMark characterAtIndex:0], '.', "Decimal Mark should be '.'.");
     XCTAssertEqual([config.quoteCharacter characterAtIndex:0], '\"', "Quote should be enabled.");
-    //XCTAssertTrue([config.quoteCharacter isEqualToString:@""], "Quote should be disabled.");
     XCTAssertTrue(config.firstRowAsHeader, "First row should be header.");
     XCTAssertEqual([config.escapeCharacter characterAtIndex:0], '\"', "Escape character should be '\"'.");
 }
 
 - (void)testHeuristicError2 {
-    NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/heuristic-config1" withExtension:@"csv"];
+    NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/heuristic-comma-separated-people-2" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileUrl];
     CSVHeuristic *heuristic = [[CSVHeuristic alloc] initWithData:testData];
     config = [heuristic calculatePossibleFormat];
     XCTAssertEqual([config.columnSeparator characterAtIndex:0], ',', "Column Separator should be ','.");
     XCTAssertEqual([config.decimalMark characterAtIndex:0], '.', "Decimal Mark should be '.'.");
-    XCTAssertEqual([config.quoteCharacter characterAtIndex:0], '\"', "Quote should be enabled.");
     XCTAssertTrue(config.firstRowAsHeader, "First row should be header.");
     XCTAssertEqual([config.escapeCharacter characterAtIndex:0], '\"', "Escape character should be '\"'.");
 }
 
 - (void)testHeuristicError3 {
-    NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/heuristic-config1" withExtension:@"csv"];
+    NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/heuristic-comma-separated-places" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileUrl];
     CSVHeuristic *heuristic = [[CSVHeuristic alloc] initWithData:testData];
     config = [heuristic calculatePossibleFormat];
     XCTAssertEqual([config.columnSeparator characterAtIndex:0], ',', "Column Separator should be ','.");
     XCTAssertEqual([config.decimalMark characterAtIndex:0], '.', "Decimal Mark should be '.'.");
-    XCTAssertEqual([config.quoteCharacter characterAtIndex:0], '\"', "Quote should be enabled.");
+    XCTAssert([config.quoteCharacter isEqual:@"\""], "Quote should be enabled.");
     XCTAssertTrue(config.firstRowAsHeader, "First row should be header.");
     XCTAssertEqual([config.escapeCharacter characterAtIndex:0], '\"', "Escape character should be '\"'.");
 }

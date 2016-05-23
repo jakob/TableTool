@@ -300,7 +300,7 @@
 }
 
 -(void)checkForCRLF{
-    if(dataScanner.scanLocation>dataString.length-2) return;
+    if(dataScanner.scanLocation + 2 > dataString.length) return;
     if([dataString characterAtIndex:dataScanner.scanLocation] == '\r' && [dataString characterAtIndex:dataScanner.scanLocation+1] == '\n'){
         dataScanner.scanLocation++;
     }

@@ -30,7 +30,7 @@
 
 @end
 
-@implementation Document
+@implementation Document 
 
 - (instancetype)init {
     self = [super init];
@@ -58,7 +58,6 @@
         
         outputController = [[TTFormatViewController alloc]initAsInputController:NO];
         [self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
-        [outputController useLocale];
         [self enableToolbarButtons];
         outputController.delegate = self;
     }else{
@@ -77,6 +76,7 @@
     });
     
     [self updateToolbarIcons];
+    [self updateSettingsInfoLabel];
 }
 
 
@@ -110,6 +110,8 @@
     NSError *error;
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
     NSData *finalData = [writer writeDataWithError:&error];
+    self.inputConfig = self.outputConfig;
+    [self updateSettingsInfoLabel];
     if(finalData == nil){
         if(error) {
             *outError = error;
@@ -120,6 +122,7 @@
     if(inputController && inputController.firstRowAsHeader){
         [_data removeObjectAtIndex:0];
     }
+    
     return finalData;
 }
 
@@ -681,6 +684,8 @@
     }
     _outputConfig = formatViewController.config;
     [self.tableView reloadData];
+    
+    [self updateSettingsInfoLabel];
 }
 
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController {
@@ -889,5 +894,54 @@
     }
     [self dataGotEdited];
 }
+
+#pragma mark - Settings Info 
+
+-(void)updateSettingsInfoLabel {
+    NSString *encoding = [self encodingNameForConfiguration: self.inputConfig];
+    NSString *separator = [self separatorForConfiguration:self.inputConfig];
+    NSString *deciamlMark = [self decimalMarkForConfiguration:self.inputConfig];
+    NSString *quote = [self quotedForConfiguration:self.inputConfig];
+    NSString *escape = [self escapeForConfiguration:self.inputConfig];
+    
+    
+    NSString *info = [NSString stringWithFormat:@"%@  |  Separator: \'%@\'  |  Decimal: \'%@\'  |  %@  |  Escape: \'%@\'", encoding, separator, deciamlMark, quote, escape];
+    
+    [self.settingsInfoLabel setStringValue:info];
+}
+
+-(NSString *)encodingNameForConfiguration: (CSVConfiguration *) config {
+    
+    NSStringEncoding encoding = config.encoding;
+    CFStringEncoding cfEncoding = CFStringConvertNSStringEncodingToEncoding(encoding);
+    NSString *name = (NSString *)CFStringGetNameOfEncoding(cfEncoding);
+    
+    return name;
+}
+
+-(NSString *)separatorForConfiguration: (CSVConfiguration *) config {
+    if ([config.columnSeparator isEqualToString:@"\t"]) {
+        return @"⇥";
+    }
+    return config.columnSeparator;
+}
+
+-(NSString *)decimalMarkForConfiguration: (CSVConfiguration *) config {
+    return config.decimalMark;
+}
+
+-(NSString *)quotedForConfiguration: (CSVConfiguration *) config {
+    if ([config.quoteCharacter isEqualToString:@"\""]) { return @"Quoted"; }
+    return @"";
+}
+
+-(NSString *)escapeForConfiguration: (CSVConfiguration *) config {
+    return config.escapeCharacter;
+}
+
+- (IBAction)reopenUsingEncoding:(NSButton *)sender {
+    
+}
+
 
 @end

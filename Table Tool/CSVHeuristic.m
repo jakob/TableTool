@@ -19,6 +19,9 @@
 -(instancetype)initWithData:(NSData *)data {
     self = [super init];
     if(self){
+        if (data == nil) {
+            [[NSException exceptionWithName:@"InvalidArgumentException" reason:@"data may not be nil" userInfo:nil] raise];
+        }
         _data = data;
         [self setConfigs];
     }
@@ -38,6 +41,7 @@
 10. _config9
 11. _config11
 */
+
 -(void)setConfigs{
     _config1 = [[CSVConfiguration alloc]init];
     _config1.columnSeparator = @",";
@@ -158,6 +162,7 @@
             }
         }
     }
+    if (numbers > 5) numbers = 5;
     scores[index] = [NSNumber numberWithInt:([scores[index] intValue] + numbers)];
 }
 
@@ -173,6 +178,8 @@
     }
     CSVConfiguration *finalConfig = ((CSVReader *)readerArray[highestScoreIndex]).config;
     finalConfig.firstRowAsHeader = [firstRowArray[highestScoreIndex] boolValue];
+    
+    NSLog(@"Final scores: %@", scores);
     
     return finalConfig;
 }
