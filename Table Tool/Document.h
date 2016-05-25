@@ -37,8 +37,6 @@
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
 
-@property (weak) IBOutlet NSTextField *settingsInfoLabel;
-
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
 -(void)confirmFormat:(TTFormatViewController *)formatViewController;
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
