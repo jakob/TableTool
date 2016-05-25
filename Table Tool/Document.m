@@ -52,10 +52,14 @@
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
-    NSLog(@"%@", self.fileURL);
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
+    
+    if (!accessoryViewController) {
+        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
+        accessoryViewController.delegate = self;
+    }
     
     if(newFile){
         _maxColumnNumber = 3;
@@ -63,11 +67,18 @@
         [_data addObject:[[NSMutableArray alloc]init]];
         [self.tableView reloadData];
     }else{
+        CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:savedData];
+        _inputConfig = [formatHeuristic calculatePossibleFormat];
+        
         inputController = [[TTFormatViewController alloc]initAsInputController:YES];
         inputController.delegate = self;
         inputController.config = _inputConfig;
+        
+        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:YES];
+        accessoryViewController.delegate = self;
+        accessoryViewController.config = _inputConfig;
+        
         _outputConfig = _inputConfig;
-        [inputController selectFormatByConfig];
     }
     
     [self enableToolbarButtons];
@@ -77,12 +88,9 @@
     });
     
     [self updateToolbarIcons];
-    
-    if (!accessoryViewController) {
-        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
-    }
-    
+
     [self.splitView addSubview:accessoryViewController.view positioned:NSWindowAbove relativeTo:self.splitView];
+    [accessoryViewController selectFormatByConfig];
 }
 
 - (void)close {
@@ -920,14 +928,6 @@
         popoverViewController.config = self.outputConfig;
         [popoverViewController selectFormatByConfig];
     }
-}
-
--(BOOL)prepareSavePanel:(NSSavePanel *)savePanel {
-    if (!accessoryViewController) {
-        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
-        accessoryViewController.delegate = self;
-    }
-    return YES;
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
