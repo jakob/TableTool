@@ -28,14 +28,14 @@
 @property IBOutlet NSSegmentedControl *decimalControl;
 @property IBOutlet NSPopUpButton *encodingMenu;
 @property IBOutlet NSButton *useFirstRowAsHeaderCheckbox;
-@property IBOutlet NSLayoutConstraint *bottomConstraint;
-@property IBOutlet NSButton *confirmButton;
-@property IBOutlet NSBox *confirmBox;
+//@property IBOutlet NSLayoutConstraint *bottomConstraint;
+//@property IBOutlet NSButton *confirmButton;
+//@property IBOutlet NSBox *confirmBox;
 @property IBOutlet NSButton *quoteCheckbox;
 
 - (IBAction)updateConfiguration:(id)sender;
 - (IBAction)useFirstRowAsHeaderClicked:(id)sender;
-- (IBAction)confirmConfiguration:(id)sender;
+//- (IBAction)confirmConfiguration:(id)sender;
 
 - (instancetype)initAsInputController:(BOOL)inputController;
 - (void)selectFormatByConfig;

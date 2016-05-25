@@ -24,8 +24,11 @@
     BOOL newFile;
     BOOL enableEditing;
     TTFormatViewController *inputController;
-    TTFormatViewController *outputController;
+    //TTFormatViewController *outputController;
     TTErrorViewController *errorController;
+    
+    TTFormatViewController *popoverViewController;
+    NSPopover *popover;
 }
 
 @end
@@ -56,23 +59,23 @@
         [_data addObject:[[NSMutableArray alloc]init]];
         [self.tableView reloadData];
         
-        outputController = [[TTFormatViewController alloc]initAsInputController:NO];
-        [self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
+        //outputController = [[TTFormatViewController alloc]initAsInputController:NO];
+        //[self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
         [self enableToolbarButtons];
-        outputController.delegate = self;
+        //outputController.delegate = self;
     }else{
         inputController = [[TTFormatViewController alloc]initAsInputController:YES];
-        [self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
+        //[self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
         inputController.delegate = self;
         inputController.config = _inputConfig;
         _outputConfig = _inputConfig;
         [inputController selectFormatByConfig];
-        self.tableView.enabled = NO;
+        //self.tableView.enabled = NO;
     }
     
     if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
         [self displayError:readingError];
-        inputController.confirmButton.enabled = NO;
+        //inputController.confirmButton.enabled = NO;
     });
     
     [self updateToolbarIcons];
@@ -646,24 +649,27 @@
 #pragma mark - configuration
 
 - (IBAction)toggleFormatView:(id)sender {
-    if(inputController){
-        if([inputController.view isHidden]){
-            inputController.view.hidden = NO;
-        }else{
-            inputController.view.hidden = YES;
-        }
-    }
+//    if(inputController){
+//        if([inputController.view isHidden]){
+//            inputController.view.hidden = NO;
+//        }else{
+//            inputController.view.hidden = YES;
+//        }
+//    }
     
-    if(outputController){
-        if([outputController.view isHidden]){
-            outputController.view.hidden = NO;
-        } else {
-            outputController.view.hidden = YES;
-        }
-    }
+//    if(outputController){
+//        if([outputController.view isHidden]){
+//            outputController.view.hidden = NO;
+//        } else {
+//            outputController.view.hidden = YES;
+//        }
+//    }
 }
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController*)formatViewController {
+    _inputConfig.firstRowAsHeader = NO;
+    [formatViewController uncheckCheckbox];
+    
     if(formatViewController.isInputController) {
         _inputConfig = formatViewController.config;
         NSError *outError;
@@ -674,12 +680,12 @@
         if (!didReload) {
             readingError = outError;
             [self displayError:outError];
-            inputController.confirmButton.enabled = NO;
+            //inputController.confirmButton.enabled = NO;
         } else {
             readingError = nil;
             [errorControllerView removeFromSuperview];
             errorControllerView = nil;
-            inputController.confirmButton.enabled = YES;
+            //inputController.confirmButton.enabled = YES;
         }
     }
     _outputConfig = formatViewController.config;
@@ -705,11 +711,11 @@
 -(void)confirmFormat:(TTFormatViewController *)formatViewController {
     self.tableView.enabled = YES;
     _outputConfig = _inputConfig.copy;
-    outputController = [[TTFormatViewController alloc]initAsInputController:NO];
-    [outputController setConfig:_outputConfig];
-    [self.splitView replaceSubview:inputController.view with:outputController.view];
-    [outputController selectFormatByConfig];
-    outputController.delegate = self;
+    //outputController = [[TTFormatViewController alloc]initAsInputController:NO];
+    //[outputController setConfig:_outputConfig];
+    //[self.splitView replaceSubview:inputController.view with:outputController.view];
+    //[outputController selectFormatByConfig];
+    //outputController.delegate = self;
     [self enableToolbarButtons];
 }
 
@@ -941,7 +947,58 @@
 
 - (IBAction)reopenUsingEncoding:(NSButton *)sender {
     
+    popover = [[NSPopover alloc] init];
+    popover.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
+    popover.behavior = NSPopoverBehaviorTransient;
+    
+    if (self.documentEdited) {
+        TTErrorViewController *errorPopoverVC = [[TTErrorViewController alloc]
+                                                 initWithMessage:@"ERROR: Reopen"
+                                                 information:@"File have to be unchanged to be reopened."];
+        
+        popover.contentViewController = errorPopoverVC;
+        [popover showRelativeToRect:sender.bounds ofView:sender preferredEdge:NSRectEdgeMinY];
+        
+    } else {
+        
+        [self readFromData:savedData ofType:@"csv" error:NULL];
+        
+        popoverViewController = [[TTFormatViewController alloc] initAsInputController:YES];
+        popoverViewController.delegate = self;
+        
+        popover.contentViewController = popoverViewController;
+        [popover showRelativeToRect:sender.bounds ofView:sender preferredEdge:NSRectEdgeMinY];
+        
+        popoverViewController.config = self.outputConfig;
+        [popoverViewController selectFormatByConfig];
+    }
 }
 
-
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
