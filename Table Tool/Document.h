@@ -36,7 +36,6 @@
 -(void)addColumnRight:(id)sender;
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
--(IBAction)toggleFormatView:(id)sender;
 
 @property (weak) IBOutlet NSTextField *settingsInfoLabel;
 
