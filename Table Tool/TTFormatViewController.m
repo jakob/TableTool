@@ -32,6 +32,15 @@
     [super viewDidLoad];
 }
 
+- (void)setEnabled:(BOOL)enabled {
+    self.encodingMenu.enabled = enabled;
+    self.escapeControl.enabled = enabled;
+    self.separatorControl.enabled = enabled;
+    self.decimalControl.enabled = enabled;
+    self.useFirstRowAsHeaderCheckbox.enabled = enabled;
+    self.quoteCheckbox.enabled = enabled;
+}
+
 - (IBAction)updateConfiguration:(id)sender {
     _config.encoding = [self.encodingMenu selectedTag];
     if([self.separatorControl selectedSegment] == 2) {

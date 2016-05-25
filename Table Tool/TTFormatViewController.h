@@ -41,5 +41,6 @@
 - (void)selectFormatByConfig;
 - (void)uncheckCheckbox;
 - (void)useLocale;
+- (void)setEnabled:(BOOL)enabled;
 
 @end
