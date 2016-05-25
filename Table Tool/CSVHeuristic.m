@@ -179,8 +179,6 @@
     CSVConfiguration *finalConfig = ((CSVReader *)readerArray[highestScoreIndex]).config;
     finalConfig.firstRowAsHeader = [firstRowArray[highestScoreIndex] boolValue];
     
-    NSLog(@"Final scores: %@", scores);
-    
     return finalConfig;
 }
 
