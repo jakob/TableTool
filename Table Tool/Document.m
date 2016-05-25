@@ -24,9 +24,7 @@
     BOOL newFile;
     BOOL enableEditing;
     TTFormatViewController *inputController;
-    //TTFormatViewController *outputController;
     TTErrorViewController *errorController;
-    
     TTFormatViewController *popoverViewController;
     NSPopover *popover;
     TTFormatViewController *accessoryViewController;
@@ -64,25 +62,18 @@
         [self updateTableColumns];
         [_data addObject:[[NSMutableArray alloc]init]];
         [self.tableView reloadData];
-        
-        //outputController = [[TTFormatViewController alloc]initAsInputController:NO];
-        //[self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
-        //outputController.delegate = self;
     }else{
         inputController = [[TTFormatViewController alloc]initAsInputController:YES];
-        //[self.splitView addSubview:inputController.view positioned:NSWindowBelow relativeTo:nil];
         inputController.delegate = self;
         inputController.config = _inputConfig;
         _outputConfig = _inputConfig;
         [inputController selectFormatByConfig];
-        //self.tableView.enabled = NO;
     }
     
     [self enableToolbarButtons];
     
     if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
         [self displayError:readingError];
-        //inputController.confirmButton.enabled = NO;
     });
     
     [self updateToolbarIcons];
@@ -692,12 +683,10 @@
         if (!didReload) {
             readingError = outError;
             [self displayError:outError];
-            //inputController.confirmButton.enabled = NO;
         } else {
             readingError = nil;
             [errorControllerView removeFromSuperview];
             errorControllerView = nil;
-            //inputController.confirmButton.enabled = YES;
         }
     }
     _outputConfig = formatViewController.config;
@@ -723,11 +712,6 @@
 -(void)confirmFormat:(TTFormatViewController *)formatViewController {
     self.tableView.enabled = YES;
     _outputConfig = _inputConfig.copy;
-    //outputController = [[TTFormatViewController alloc]initAsInputController:NO];
-    //[outputController setConfig:_outputConfig];
-    //[self.splitView replaceSubview:inputController.view with:outputController.view];
-    //[outputController selectFormatByConfig];
-    //outputController.delegate = self;
     [self enableToolbarButtons];
 }
 
@@ -995,14 +979,10 @@
 }
 
 -(BOOL)prepareSavePanel:(NSSavePanel *)savePanel {
-    
     if (!accessoryViewController) {
         accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
         accessoryViewController.delegate = self;
     }
-    
-    //[savePanel setAccessoryView:accessoryViewController.view];
-    
     return YES;
 }
 
@@ -1031,31 +1011,5 @@
     }
 
 }
+
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

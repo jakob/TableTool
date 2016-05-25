@@ -24,10 +24,7 @@
 
 - (void)viewDidLoad {
     if(_isInputController){
-        //_confirmBox.hidden = NO;
         _useFirstRowAsHeaderCheckbox.hidden = NO;
-    }else{
-        //_bottomConstraint.active = NO;
     }
     [super viewDidLoad];
 }
