@@ -35,7 +35,7 @@
 }
 
 -(NSString *)description {
-    return [NSString stringWithFormat:@"separator: %@, quote: %@, escape: %@, decimal: %@, firstAsHeader: %@",
+    return [NSString stringWithFormat:@"separator: \'%@\', quote: \'%@\', escape: \'%@\', decimal: \'%@\', firstAsHeader: %@",
             _columnSeparator, _quoteCharacter, _escapeCharacter, _decimalMark, _firstRowAsHeader ? @"YES" : @"NO"];
 }
 
