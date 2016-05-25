@@ -29,7 +29,9 @@
     
     TTFormatViewController *popoverViewController;
     NSPopover *popover;
+    TTFormatViewController *accessoryViewController;
 }
+@property BOOL didSave;
 
 @end
 
@@ -44,11 +46,15 @@
         _outputConfig = _inputConfig;
         newFile = YES;
         errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
+        _didSave = NO;
+        [self addObserver:self forKeyPath:@"fileURL" options:0 context:nil];
+        [self addObserver:self forKeyPath:@"didSave" options:0 context:nil];
     }
     return self;
 }
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
+    NSLog(@"%@", self.fileURL);
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
@@ -61,7 +67,6 @@
         
         //outputController = [[TTFormatViewController alloc]initAsInputController:NO];
         //[self.splitView addSubview:outputController.view positioned:NSWindowBelow relativeTo:nil];
-        [self enableToolbarButtons];
         //outputController.delegate = self;
     }else{
         inputController = [[TTFormatViewController alloc]initAsInputController:YES];
@@ -73,6 +78,8 @@
         //self.tableView.enabled = NO;
     }
     
+    [self enableToolbarButtons];
+    
     if(readingError) dispatch_async(dispatch_get_main_queue(), ^{
         [self displayError:readingError];
         //inputController.confirmButton.enabled = NO;
@@ -80,6 +87,18 @@
     
     [self updateToolbarIcons];
     [self updateSettingsInfoLabel];
+    
+    if (!accessoryViewController) {
+        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
+    }
+    
+    [self.splitView addSubview:accessoryViewController.view positioned:NSWindowAbove relativeTo:self.splitView];
+}
+
+- (void)close {
+    [self removeObserver:self forKeyPath:@"fileURL"];
+    [self removeObserver:self forKeyPath:@"didSave"];
+    [super close];
 }
 
 
@@ -90,6 +109,14 @@
 - (NSString *)windowNibName {
     return @"Document";
 }
+
+- (void)updateChangeCountWithToken:(id)changeCountToken forSaveOperation:(NSSaveOperationType)saveOperation {
+    if (saveOperation == NSSaveOperation || saveOperation == NSSaveAsOperation ) {
+        self.didSave = YES;
+    }
+    [super updateChangeCountWithToken:changeCountToken forSaveOperation:saveOperation];
+}
+
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     
@@ -126,6 +153,7 @@
         [_data removeObjectAtIndex:0];
     }
     
+    savedData = finalData; // if the file gets saved, private variable is resetet.
     return finalData;
 }
 
@@ -648,27 +676,11 @@
 
 #pragma mark - configuration
 
-- (IBAction)toggleFormatView:(id)sender {
-//    if(inputController){
-//        if([inputController.view isHidden]){
-//            inputController.view.hidden = NO;
-//        }else{
-//            inputController.view.hidden = YES;
-//        }
-//    }
-    
-//    if(outputController){
-//        if([outputController.view isHidden]){
-//            outputController.view.hidden = NO;
-//        } else {
-//            outputController.view.hidden = YES;
-//        }
-//    }
-}
-
 -(void)configurationChangedForFormatViewController:(TTFormatViewController*)formatViewController {
-    _inputConfig.firstRowAsHeader = NO;
-    [formatViewController uncheckCheckbox];
+    if (formatViewController.firstRowAsHeader) {
+        _inputConfig.firstRowAsHeader = NO;
+        [formatViewController uncheckCheckbox];
+    }
     
     if(formatViewController.isInputController) {
         _inputConfig = formatViewController.config;
@@ -904,6 +916,11 @@
 #pragma mark - Settings Info 
 
 -(void)updateSettingsInfoLabel {
+    if (!self.fileURL) {
+        [self.settingsInfoLabel setStringValue:@""];
+        return;
+    }
+    
     NSString *encoding = [self encodingNameForConfiguration: self.inputConfig];
     NSString *separator = [self separatorForConfiguration:self.inputConfig];
     NSString *deciamlMark = [self decimalMarkForConfiguration:self.inputConfig];
@@ -951,7 +968,7 @@
     popover.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     popover.behavior = NSPopoverBehaviorTransient;
     
-    if (self.documentEdited) {
+    if (self.documentEdited) {  // If the document is edited it isn't possible to reopen the data!
         TTErrorViewController *errorPopoverVC = [[TTErrorViewController alloc]
                                                  initWithMessage:@"ERROR: Reopen"
                                                  information:@"File have to be unchanged to be reopened."];
@@ -974,6 +991,46 @@
     }
 }
 
+- (IBAction)convertToFormat:(NSButton *)sender {
+}
+
+-(BOOL)prepareSavePanel:(NSSavePanel *)savePanel {
+    
+    if (!accessoryViewController) {
+        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
+        accessoryViewController.delegate = self;
+    }
+    
+    //[savePanel setAccessoryView:accessoryViewController.view];
+    
+    return YES;
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+    [self updateStatusBar];
+}
+
+-(void)updateChangeCount:(NSDocumentChangeType)change {
+    [super updateChangeCount:change];
+    [self updateStatusBar];
+}
+
+-(void)updateStatusBar {
+    if (self.fileURL) {
+        if (self.didSave) {
+            [accessoryViewController setEnabled:NO];
+        } else {
+            if (self.documentEdited) {
+                [accessoryViewController setEnabled:NO];
+            } else {
+                [accessoryViewController setEnabled:YES];
+            }
+        }
+    } else {
+        [accessoryViewController setEnabled:YES];
+    }
+
+}
 @end
 
 
