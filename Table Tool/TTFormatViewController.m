@@ -35,7 +35,6 @@
     self.separatorControl.enabled = enabled;
     self.decimalControl.enabled = enabled;
     self.useFirstRowAsHeaderCheckbox.enabled = enabled;
-    self.quoteCheckbox.enabled = enabled;
 }
 
 - (IBAction)updateConfiguration:(id)sender {
@@ -46,12 +45,9 @@
         _config.columnSeparator = [self.separatorControl labelForSegment:[self.separatorControl selectedSegment] ];
     }
     _config.decimalMark = [self.decimalControl labelForSegment:[self.decimalControl selectedSegment]];
-    if([self.quoteCheckbox state] == 1){
+    
+    if ([self.escapeControl selectedSegment] == 0 || [self.escapeControl selectedSegment] == 1) {
         _config.quoteCharacter = @"\"";
-        self.escapeControl.enabled = YES;
-    }else{
-        _config.quoteCharacter = @"";
-        self.escapeControl.enabled = NO;
     }
     _config.escapeCharacter = [self.escapeControl labelForSegment:[self.escapeControl selectedSegment]];
     
@@ -108,22 +104,12 @@
         [_decimalControl selectSegmentWithTag:1];
     }
     
-    if([_config.quoteCharacter isEqualToString:@"\""]){
-        [_quoteCheckbox setState:1];
-    }else{
-        [_quoteCheckbox setState:0];
-    }
-    
     if([_config.escapeCharacter isEqualToString:@"\""]){
         [_escapeControl selectSegmentWithTag:0];
-    }else{
+    }else if ([_config.escapeCharacter isEqualToString:@"\\"]) {
         [_escapeControl selectSegmentWithTag:1];
-    }
-    
-    if([_quoteCheckbox state]){
-        _escapeControl.enabled = YES;
-    } else {
-        _escapeControl.enabled = NO;
+    }else {
+        [_escapeControl selectSegmentWithTag:2];
     }
     
     if(_config.firstRowAsHeader){
