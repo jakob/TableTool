@@ -20,24 +20,24 @@
                 <rect key="frame" x="1" y="1" width="263" height="135"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LkJ-4t-3rh">
-                        <rect key="frame" x="80" y="94" width="53" height="17"/>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LkJ-4t-3rh">
+                        <rect key="frame" x="80" y="88" width="53" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="warning" id="DF6-gq-mgp">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField misplaced="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0LW-Mb-JBO">
-                        <rect key="frame" x="80" y="18" width="174" height="66"/>
+                    <textField setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0LW-Mb-JBO">
+                        <rect key="frame" x="80" y="18" width="168" height="60"/>
                         <textFieldCell key="cell" controlSize="small" selectable="YES" sendsActionOnEndEditing="YES" title="suggestion" id="Ogl-ZW-oKU">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <imageView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YY-IT-zW8">
-                        <rect key="frame" x="17" y="80" width="45" height="45"/>
+                    <imageView translatesAutoresizingMaskIntoConstraints="NO" id="6YY-IT-zW8">
+                        <rect key="frame" x="17" y="74" width="45" height="45"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="45" id="LLW-e1-pB2"/>
                             <constraint firstAttribute="width" constant="45" id="WJN-Ca-U7m"/>
