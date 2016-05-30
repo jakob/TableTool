@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */; };
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
 		E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B4901B623924005B4959 /* TTFormatViewController.m */; };
 		E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E109B4911B623924005B4959 /* TTFormatViewController.xib */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Table Tool-Bridging-Header.h"; sourceTree = "<group>"; };
+		AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewControllerAccessory.xib; sourceTree = "<group>"; };
 		E109B4891B5E4598005B4959 /* CSVConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVConfiguration.h; sourceTree = "<group>"; };
 		E109B48A1B5E4598005B4959 /* CSVConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVConfiguration.m; sourceTree = "<group>"; };
 		E109B48F1B623924005B4959 /* TTFormatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTFormatViewController.h; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				E109B48F1B623924005B4959 /* TTFormatViewController.h */,
 				E109B4901B623924005B4959 /* TTFormatViewController.m */,
 				E109B4911B623924005B4959 /* TTFormatViewController.xib */,
+				AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */,
 				E1CEF87C1B6A23860083B957 /* TTErrorViewController.h */,
 				E1CEF87D1B6A23860083B957 /* TTErrorViewController.m */,
 				E1CEF87E1B6A23860083B957 /* TTErrorViewController.xib */,
@@ -219,7 +222,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Egger Apps";
 				TargetAttributes = {
 					E1CC84DA1B4A5F2A00ED8314 = {
@@ -257,6 +260,7 @@
 			files = (
 				E1CEF8801B6A23860083B957 /* TTErrorViewController.xib in Resources */,
 				E1CC84EA1B4A5F2A00ED8314 /* Document.xib in Resources */,
+				AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */,
 				E1CC84EC1B4A5F2A00ED8314 /* Images.xcassets in Resources */,
 				E1CC84EF1B4A5F2A00ED8314 /* MainMenu.xib in Resources */,
 				E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */,
@@ -353,6 +357,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -419,6 +424,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Table Tool/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "at.eggerapps.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Table Tool/Table Tool-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -433,6 +439,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Table Tool/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "at.eggerapps.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Table Tool/Table Tool-Bridging-Header.h";
 			};
@@ -453,6 +460,7 @@
 				);
 				INFOPLIST_FILE = "Table ToolTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "at.eggerapps.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Table Tool.app/Contents/MacOS/Table Tool";
 			};
@@ -469,6 +477,7 @@
 				);
 				INFOPLIST_FILE = "Table ToolTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "at.eggerapps.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Table Tool.app/Contents/MacOS/Table Tool";
 			};
