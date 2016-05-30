@@ -28,7 +28,6 @@
 @property IBOutlet NSSegmentedControl *decimalControl;
 @property IBOutlet NSPopUpButton *encodingMenu;
 @property IBOutlet NSButton *useFirstRowAsHeaderCheckbox;
-@property IBOutlet NSButton *quoteCheckbox;
 
 - (IBAction)updateConfiguration:(id)sender;
 - (IBAction)useFirstRowAsHeaderClicked:(id)sender;
