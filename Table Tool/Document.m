@@ -353,7 +353,7 @@
     }
     NSArray *dataFirstRow = [_data firstObject];
     for(int i = 0; i < dataFirstRow.count; i++){
-        [firstRow replaceObjectAtIndex:i withObject:dataFirstRow[i]];
+        firstRow[i] = dataFirstRow[i];
     }
 }
 
@@ -701,6 +701,9 @@
 
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController {
     if(formatViewController.firstRowAsHeader){
+        if (firstRow == nil || newFile) {
+            [self initFirstRow];
+        }
         int i = 0;
         for(NSTableColumn *col in self.tableView.tableColumns){
             col.title = firstRow[i++];
@@ -708,7 +711,7 @@
         [_data removeObjectAtIndex:0];
     }else{
         [self updateTableColumnsNames];
-        [_data insertObject:firstRow.copy atIndex:0];
+        [_data insertObject:firstRow.mutableCopy atIndex:0];
     }
     [self.tableView reloadData];
 }
