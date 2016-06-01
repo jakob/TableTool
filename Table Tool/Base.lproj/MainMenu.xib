@@ -102,7 +102,7 @@
                                     <action selector="saveDocumentAs:" target="-1" id="mDf-zr-I0C"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Export…" id="aee-o8-6kn">
+                            <menuItem title="Convert…" id="aee-o8-6kn">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="exportFile:" target="-1" id="XqB-sP-GdC"/>
