@@ -13,8 +13,17 @@
 
 @implementation TTFormatViewController
 
--(instancetype) initAsInputController:(BOOL)inputController {
+-(instancetype)initAsInputController:(BOOL)inputController {
     self = [super initWithNibName:@"TTFormatViewController" bundle:nil];
+    if(self) {
+        _config = [[CSVConfiguration alloc]init];
+        _isInputController = inputController;
+    }
+    return self;
+}
+
+-(instancetype)initAsInputController:(BOOL)inputController withNibName:(NSString *)nibName {
+    self = [super initWithNibName:nibName bundle:nil];
     if(self) {
         _config = [[CSVConfiguration alloc]init];
         _isInputController = inputController;
@@ -48,8 +57,11 @@
     
     if ([self.escapeControl selectedSegment] == 0 || [self.escapeControl selectedSegment] == 1) {
         _config.quoteCharacter = @"\"";
+    } else {
+        _config.quoteCharacter = @"";
+        _config.escapeCharacter = @"";
     }
-    _config.escapeCharacter = [self.escapeControl labelForSegment:[self.escapeControl selectedSegment]];
+    _config.escapeCharacter = [[self.escapeControl labelForSegment:[self.escapeControl selectedSegment]] substringToIndex:1];
     
     [self.delegate configurationChangedForFormatViewController:self];
 }
