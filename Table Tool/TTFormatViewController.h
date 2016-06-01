@@ -33,6 +33,7 @@
 - (IBAction)useFirstRowAsHeaderClicked:(id)sender;
 
 - (instancetype)initAsInputController:(BOOL)inputController;
+- (instancetype)initAsInputController:(BOOL)inputController withNibName:(NSString *)nibName;
 - (void)selectFormatByConfig;
 - (void)uncheckCheckbox;
 - (void)useLocale;
