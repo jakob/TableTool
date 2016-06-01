@@ -27,7 +27,8 @@
     TTErrorViewController *errorController;
     TTFormatViewController *popoverViewController;
     NSPopover *popover;
-    TTFormatViewController *accessoryViewController;
+    TTFormatViewController *statusBarFormatViewController;
+    TTFormatViewController* accessoryViewController;
 }
 @property BOOL didSave;
 
@@ -56,9 +57,9 @@
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
     
-    if (!accessoryViewController) {
-        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO];
-        accessoryViewController.delegate = self;
+    if (!statusBarFormatViewController) {
+        statusBarFormatViewController = [[TTFormatViewController alloc] initAsInputController:NO];
+        statusBarFormatViewController.delegate = self;
     }
     
     if(newFile){
@@ -74,9 +75,9 @@
         inputController.delegate = self;
         inputController.config = _inputConfig;
         
-        accessoryViewController = [[TTFormatViewController alloc] initAsInputController:YES];
-        accessoryViewController.delegate = self;
-        accessoryViewController.config = _inputConfig;
+        statusBarFormatViewController = [[TTFormatViewController alloc] initAsInputController:YES];
+        statusBarFormatViewController.delegate = self;
+        statusBarFormatViewController.config = _inputConfig;
         
         _outputConfig = _inputConfig;
     }
@@ -89,8 +90,8 @@
     
     [self updateToolbarIcons];
 
-    [self.splitView addSubview:accessoryViewController.view positioned:NSWindowAbove relativeTo:self.splitView];
-    [accessoryViewController selectFormatByConfig];
+    [self.splitView addSubview:statusBarFormatViewController.view positioned:NSWindowAbove relativeTo:self.splitView];
+    [statusBarFormatViewController selectFormatByConfig];
 }
 
 - (void)close {
@@ -136,6 +137,11 @@
     }
     
     NSError *error;
+    
+    if (_outputConfig.firstRowAsHeader) {
+        [_data insertObject:firstRow atIndex:0];
+    }
+    
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
     NSData *finalData = [writer writeDataWithError:&error];
     self.inputConfig = self.outputConfig;
@@ -150,6 +156,10 @@
         [_data removeObjectAtIndex:0];
     }
     
+    if (_outputConfig.firstRowAsHeader) {
+        [_data removeObjectAtIndex:0];
+    }
+    
     savedData = finalData; // if the file gets saved, private variable is resetet.
     return finalData;
 }
@@ -160,6 +170,8 @@
     newFile = NO;
     CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
     _inputConfig = [formatHeuristic calculatePossibleFormat];
+    
+    NSLog(@"config: %@", _inputConfig.description);
     
     savedData = data;
     _maxColumnNumber = 1;
@@ -945,18 +957,53 @@
 -(void)updateStatusBar {
     if (self.fileURL) {
         if (self.didSave) {
-            [accessoryViewController setEnabled:NO];
+            [statusBarFormatViewController setEnabled:NO];
         } else {
             if (self.documentEdited) {
-                [accessoryViewController setEnabled:NO];
+                [statusBarFormatViewController setEnabled:NO];
             } else {
-                [accessoryViewController setEnabled:YES];
+                [statusBarFormatViewController setEnabled:YES];
             }
         }
     } else {
-        [accessoryViewController setEnabled:YES];
+        [statusBarFormatViewController setEnabled:YES];
     }
+}
 
+#pragma mark - Menu Item Actions
+
+-(IBAction)exportFile:(id)sender {
+    
+    accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO withNibName:@"TTFormatViewControllerAccessory"];
+    
+    
+    NSWindow *window = [[[self windowControllers] objectAtIndex: 0] window];
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    savePanel.accessoryView = accessoryViewController.view;
+    accessoryViewController.config.firstRowAsHeader = self.outputConfig.firstRowAsHeader;
+    [accessoryViewController selectFormatByConfig];
+    savePanel.allowedFileTypes = [NSArray arrayWithObject:@"csv"];
+    [savePanel beginSheetModalForWindow:window completionHandler:^(NSInteger result){
+        if (result == NSFileHandlingPanelOKButton)
+        {
+            NSURL*  theFile = [savePanel URL];
+            NSLog(@"Save file with config: %@", accessoryViewController.config.description);
+            
+            [self writeToURL:theFile ofType:@"csv" error:nil withConfiguration:accessoryViewController.config];
+        }
+    }];
+}
+
+-(BOOL)writeToURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError withConfiguration:(CSVConfiguration *)config {
+    
+    CSVConfiguration *temporaryOutputConfig = self.outputConfig;
+    self.outputConfig = config;
+    
+    [self writeToURL:url ofType:typeName error:outError];
+    
+    self.outputConfig = temporaryOutputConfig;
+    
+    return YES;
 }
 
 @end
