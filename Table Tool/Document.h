@@ -36,6 +36,7 @@
 -(void)addColumnRight:(id)sender;
 -(IBAction)deleteRow:(id)sender;
 -(IBAction)deleteColumn:(id)sender;
+-(IBAction)exportFile:(id)sender;
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
 -(void)confirmFormat:(TTFormatViewController *)formatViewController;
