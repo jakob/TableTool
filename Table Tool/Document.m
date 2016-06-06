@@ -725,6 +725,7 @@
         [self updateTableColumnsNames];
         [_data insertObject:firstRow.mutableCopy atIndex:0];
     }
+    _outputConfig.firstRowAsHeader = formatViewController.firstRowAsHeader;
     [self.tableView reloadData];
 }
 
