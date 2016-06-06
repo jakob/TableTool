@@ -15,6 +15,7 @@
                 <outlet property="toolBarButtonsAddRow" destination="FID-WH-eOP" id="PN3-hD-qNn"/>
                 <outlet property="toolbarItemAddColumn" destination="L16-81-E18" id="KPS-3i-p7J"/>
                 <outlet property="toolbarItemAddRow" destination="uIc-SS-WZD" id="K0q-Mc-Iyb"/>
+                <outlet property="toolbarItemConvert" destination="cxB-ko-x5S" id="pnY-W3-9Sr"/>
                 <outlet property="toolbarItemDeleteColumn" destination="RIC-u2-0Xr" id="N9X-h4-Gbj"/>
                 <outlet property="toolbarItemDeleteRow" destination="yQy-V2-Gkq" id="Ic3-C1-weY"/>
                 <outlet property="window" destination="xOd-HO-29H" id="JIz-fz-R2o"/>
@@ -32,21 +33,21 @@
                 <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <splitView misplaced="YES" dividerStyle="thin" translatesAutoresizingMaskIntoConstraints="NO" id="rW8-oV-UJz">
-                        <rect key="frame" x="0.0" y="64" width="837" height="459"/>
+                    <splitView dividerStyle="thin" translatesAutoresizingMaskIntoConstraints="NO" id="rW8-oV-UJz">
+                        <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
                         <subviews>
-                            <customView misplaced="YES" id="xRP-0k-CDp">
-                                <rect key="frame" x="0.0" y="0.0" width="837" height="459"/>
+                            <customView id="xRP-0k-CDp">
+                                <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
-                                    <scrollView wantsLayer="YES" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="18" horizontalPageScroll="10" verticalLineScroll="18" verticalPageScroll="10" translatesAutoresizingMaskIntoConstraints="NO" id="HMT-zz-891">
-                                        <rect key="frame" x="0.0" y="0.0" width="837" height="459"/>
+                                    <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="18" horizontalPageScroll="10" verticalLineScroll="18" verticalPageScroll="10" translatesAutoresizingMaskIntoConstraints="NO" id="HMT-zz-891">
+                                        <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
                                         <clipView key="contentView" id="GkF-y6-0qi">
-                                            <rect key="frame" x="0.0" y="17" width="837" height="442"/>
+                                            <rect key="frame" x="0.0" y="17" width="837" height="506"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" columnSelection="YES" autosaveColumns="NO" headerView="81d-2U-CFl" id="bLT-tG-Zln">
-                                                    <rect key="frame" x="0.0" y="0.0" width="677" height="18"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="837" height="506"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="1" height="1"/>
                                                     <color key="backgroundColor" red="0.96014835858585856" green="0.96014835858585856" blue="0.96014835858585856" alpha="1" colorSpace="calibratedRGB"/>
