@@ -48,7 +48,7 @@
     if([_config.quoteCharacter isEqualToString:@""]) unquoted = YES;
     _atEnd = NO;
     errorCode1 = @"Try specifying a different encoding.";
-    errorCode2 = @"Try specifying a different separator, quote or escape character.";
+    errorCode2 = @"Try specifying a different separator or quote.";
     errorCode3 = errorCode2;
 }
 
