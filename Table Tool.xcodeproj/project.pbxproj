@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */; };
+		AAB016721D057426005E3F7A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = AAB016711D057426005E3F7A /* Credits.rtf */; };
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
 		E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B4901B623924005B4959 /* TTFormatViewController.m */; };
 		E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E109B4911B623924005B4959 /* TTFormatViewController.xib */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Table Tool-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewControllerAccessory.xib; sourceTree = "<group>"; };
+		AAB016711D057426005E3F7A /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		E109B4891B5E4598005B4959 /* CSVConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVConfiguration.h; sourceTree = "<group>"; };
 		E109B48A1B5E4598005B4959 /* CSVConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVConfiguration.m; sourceTree = "<group>"; };
 		E109B48F1B623924005B4959 /* TTFormatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTFormatViewController.h; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				E1CC84DF1B4A5F2A00ED8314 /* Info.plist */,
+				AAB016711D057426005E3F7A /* Credits.rtf */,
 				E1CC84E31B4A5F2A00ED8314 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -263,6 +266,7 @@
 				AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */,
 				E1CC84EC1B4A5F2A00ED8314 /* Images.xcassets in Resources */,
 				E1CC84EF1B4A5F2A00ED8314 /* MainMenu.xib in Resources */,
+				AAB016721D057426005E3F7A /* Credits.rtf in Resources */,
 				E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
