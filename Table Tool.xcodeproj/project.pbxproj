@@ -42,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		36007A091D083BA000898043 /* Table Tool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Table Tool.entitlements"; sourceTree = "<group>"; };
 		AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Table Tool-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewControllerAccessory.xib; sourceTree = "<group>"; };
 		AAB016711D057426005E3F7A /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 		E1CC84DD1B4A5F2A00ED8314 /* Table Tool */ = {
 			isa = PBXGroup;
 			children = (
+				36007A091D083BA000898043 /* Table Tool.entitlements */,
 				E1CEF8811B6B63380083B957 /* ToolbarIcons.h */,
 				E1CEF8821B6B63380083B957 /* ToolbarIcons.m */,
 				E1CC84E01B4A5F2A00ED8314 /* AppDelegate.h */,
@@ -230,6 +232,11 @@
 				TargetAttributes = {
 					E1CC84DA1B4A5F2A00ED8314 = {
 						CreatedOnToolsVersion = 6.4;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 					E1CC84F31B4A5F2A00ED8314 = {
 						CreatedOnToolsVersion = 6.4;
@@ -425,6 +432,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Table Tool/Table Tool.entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Table Tool/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -440,6 +448,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Table Tool/Table Tool.entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Table Tool/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
