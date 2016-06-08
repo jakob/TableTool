@@ -1007,4 +1007,7 @@
     return YES;
 }
 
+-(IBAction)openReadme:(id)sender {
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/jakob/TableTool/blob/master/README.md"]];
+}
 @end
