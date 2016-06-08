@@ -18,16 +18,16 @@ Download the most recent build in the [releases section](https://github.com/jako
 
 ## Usage
 
-### Open:
+**Open Files:**
 When opening a CSV file, TableTool detects the format specifications 
 (record delimiter, character encoding, etc.) automatically.
 You can also set the specifications manually.
 
-### Edit:
+**Edit Files:**
 Edit the contents of the cells, rows and columns of the document easily in a grid based user interface.
 
-### Convert:
-Convert an existing file to a different format.
+**Convert Files:**
+Convert an existing CSV file to a different format.
 
 ## Credits
 
