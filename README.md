@@ -16,30 +16,24 @@ Using TableTool is the easy way to create, edit and convert CSV files.
 
 Download the most recent build in the [releases section](https://github.com/jakob/TableTool/releases).
 
----
-
 ## Usage
 
-- _Open:_
-> When opening a CSV file, TableTool detects the format specifications 
->(record delimiter, character encoding, etc.) automatically.
-> You can also set the specifications manually.
+### Open:
+When opening a CSV file, TableTool detects the format specifications 
+(record delimiter, character encoding, etc.) automatically.
+You can also set the specifications manually.
 
-- _Edit:_
-> Edit the contents of the cells, rows and columns of the document easily in a grid based user interface.
+### Edit:
+Edit the contents of the cells, rows and columns of the document easily in a grid based user interface.
 
-- _Convert:_ 
-> Convert an existing file to a different format.
-
----
+### Convert:
+Convert an existing file to a different format.
 
 ## Credits
 
 TableTool was made by [Sandro Peham](https://github.com/SandroPeham), 
 [Andreas Aigner](https://github.com/aigi) and 
 [Jakob Egger](https://github.com/jakob).
-
----
 
 ## Licence
 
