@@ -171,8 +171,6 @@
     CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
     _inputConfig = [formatHeuristic calculatePossibleFormat];
     
-    NSLog(@"config: %@", _inputConfig.description);
-    
     savedData = data;
     _maxColumnNumber = 1;
     [_data removeAllObjects];
@@ -988,8 +986,6 @@
         if (result == NSFileHandlingPanelOKButton)
         {
             NSURL*  theFile = [savePanel URL];
-            NSLog(@"Save file with config: %@", accessoryViewController.config.description);
-            
             [self writeToURL:theFile ofType:@"csv" error:nil withConfiguration:accessoryViewController.config];
         }
     }];
