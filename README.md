@@ -6,6 +6,8 @@ A simple CSV editor for OS X.
 
 Download [on the Mac App Store](https://itunes.apple.com/app/table-tool/id1122008420?mt=12).
 
+<img style='margin: 0 auto' src="https://github.com/jakob/TableTool/raw/master/Artwork/Screenshots/2016-06-08 Tabletool 1.1 Customers.jpg" width=800 height=500>
+
 The CSV format is a common used file format to store and exchange tabular data. 
 Almost all spreadsheet and database apps (e.g. Excel and Numbers) support it.
 Unfortunately, not all CSV files are made equal.
