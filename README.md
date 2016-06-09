@@ -1,11 +1,10 @@
+<img style='margin: 0 auto' src="https://github.com/jakob/TableTool/raw/master/Artwork/Table%20Tool%20App%20Icon%20256pt.png" width=128 height=128>
+
 # Table Tool 
-
-<img src="https://github.com/jakob/TableTool/raw/master/Artwork/Table%20Tool%20App%20Icon%20128pt.png" width=64 height=64>
-
 
 A simple CSV editor for OS X.
 
-Table Tool is available [on the Mac App Store](https://itunes.apple.com/app/table-tool/id1122008420?mt=12).
+Download [on the Mac App Store](https://itunes.apple.com/app/table-tool/id1122008420?mt=12).
 
 The CSV format is a common used file format to store and exchange tabular data. 
 Almost all spreadsheet and database apps (e.g. Excel and Numbers) support it.
