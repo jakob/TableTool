@@ -1,4 +1,4 @@
-<img style='margin: 0 auto' src="https://github.com/jakob/TableTool/raw/master/Artwork/Table%20Tool%20App%20Icon%20256pt.png" width=128 height=128>
+<img style='margin: 0 auto' src="https://github.com/jakob/TableTool/raw/master/Table%20Tool/Images.xcassets/AppIcon.appiconset/icon_128x128@2x.png" width=128 height=128>
 
 # Table Tool 
 
