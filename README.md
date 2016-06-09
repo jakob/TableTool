@@ -1,25 +1,25 @@
-# TableTool
-![alt text](https://github.com/jakob/TableTool/raw/master/Artwork/Table%20Tool%20App%20Icon%2064pt.png "App Icon")
+# Table Tool 
+
+<img src="https://github.com/jakob/TableTool/raw/master/Artwork/Table%20Tool%20App%20Icon%20128pt.png" width=64 height=64>
 
 
 A simple CSV editor for OS X.
 
+Table Tool is available [on the Mac App Store](https://itunes.apple.com/app/table-tool/id1122008420?mt=12).
+
 The CSV format is a common used file format to store and exchange tabular data. 
 Almost all spreadsheet and database apps (e.g. Excel and Numbers) support it.
 Unfortunately, not all CSV files are made equal.
-There are differences either in record delimiter, character encoding, decimal separator or quote style.
-These differences can lead to serious errors. 
+CSV files use different record delimiters (comma or semicolon), character encodings, decimal separators or quoting styles.
 
 TableTool handles these issues automatically.
 It detects the specification of a CSV file for you and displays its contents in a table view.
 Using TableTool is the easy way to create, edit and convert CSV files.
 
-Download the most recent build in the [releases section](https://github.com/jakob/TableTool/releases).
-
 ## Usage
 
 **Open Files:**
-When opening a CSV file, TableTool detects the format specifications 
+When opening a CSV file, Table Tool detects the format specifications 
 (record delimiter, character encoding, etc.) automatically.
 You can also set the specifications manually.
 
@@ -31,10 +31,10 @@ Convert an existing CSV file to a different format.
 
 ## Credits
 
-TableTool was made by [Sandro Peham](https://github.com/SandroPeham), 
+Table Tool was made by [Sandro Peham](https://github.com/SandroPeham), 
 [Andreas Aigner](https://github.com/aigi) and 
 [Jakob Egger](https://github.com/jakob).
 
 ## Licence
 
-TableTool is distributed under the [MIT Licence](https://github.com/jakob/TableTool/blob/master/LICENSE).
+Table Tool is distributed under the [MIT Licence](https://github.com/jakob/TableTool/blob/master/LICENSE).
