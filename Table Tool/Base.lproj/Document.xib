@@ -26,7 +26,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
             <rect key="contentRect" x="100" y="355" width="837" height="523"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <value key="minSize" type="size" width="94" height="200"/>
             <view key="contentView" id="gIp-Ho-8D9">
                 <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
@@ -46,7 +46,7 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" columnSelection="YES" autosaveColumns="NO" headerView="81d-2U-CFl" id="bLT-tG-Zln">
-                                                    <rect key="frame" x="0.0" y="0.0" width="837" height="500"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="677" height="18"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="1" height="1"/>
                                                     <color key="backgroundColor" red="0.96014835858585856" green="0.96014835858585856" blue="0.96014835858585856" alpha="1" colorSpace="calibratedRGB"/>
@@ -92,13 +92,11 @@
                                 <constraints>
                                     <constraint firstItem="HMT-zz-891" firstAttribute="leading" secondItem="xRP-0k-CDp" secondAttribute="leading" id="jXD-ca-Lbv"/>
                                     <constraint firstItem="HMT-zz-891" firstAttribute="top" secondItem="xRP-0k-CDp" secondAttribute="top" id="w4v-8C-n2e"/>
+                                    <constraint firstAttribute="bottom" secondItem="HMT-zz-891" secondAttribute="bottom" id="yPy-2o-0WD"/>
                                     <constraint firstAttribute="trailing" secondItem="HMT-zz-891" secondAttribute="trailing" id="ydK-Zw-60F"/>
                                 </constraints>
                             </customView>
                         </subviews>
-                        <constraints>
-                            <constraint firstAttribute="bottom" secondItem="HMT-zz-891" secondAttribute="bottom" id="PoU-kg-2AY"/>
-                        </constraints>
                         <holdingPriorities>
                             <real value="250"/>
                         </holdingPriorities>
@@ -154,7 +152,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="71" height="28"/>
                         <size key="maxSize" width="71" height="28"/>
-                        <segmentedControl key="view" verticalHuggingPriority="750" misplaced="YES" id="ufp-YO-QNk">
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="ufp-YO-QNk">
                             <rect key="frame" x="0.0" y="14" width="71" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="KPy-FB-oij">
