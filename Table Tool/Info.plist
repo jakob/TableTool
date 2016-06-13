@@ -9,6 +9,7 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>*</string>
 				<string>csv</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
