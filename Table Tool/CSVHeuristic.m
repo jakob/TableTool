@@ -126,7 +126,7 @@
         
         if(error.code == 1) return NO;
         if(error) continue;
-        scores[i] = [NSNumber numberWithInt:([scores[i] intValue] + readLines.count)];
+        scores[i] = [NSNumber numberWithInteger:([scores[i] integerValue] + readLines.count)];
         [self checkForRowLengthsFromReader:i];
         [self checkForNumbersFromReader:i];
     }
