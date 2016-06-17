@@ -11,7 +11,8 @@
 @interface CSVReader () {
     NSScanner *dataScanner;
     NSString *dataString;
-    NSMutableCharacterSet *quoteEndedCharacterSet;
+	NSMutableCharacterSet *newlineCharacterSet;
+	NSMutableCharacterSet *quoteEndedCharacterSet;
     NSMutableCharacterSet *quoteAndEscapeSet;
     BOOL unquoted;
     NSRegularExpression *regex;
@@ -75,7 +76,9 @@
         dataScanner.caseSensitive = YES;
         dataScanner.charactersToBeSkipped = nil;
         
-        quoteEndedCharacterSet = [NSCharacterSet newlineCharacterSet].mutableCopy;
+		newlineCharacterSet = [NSCharacterSet newlineCharacterSet].mutableCopy;
+		[newlineCharacterSet removeCharactersInString:@"\x0b\x0c"];
+        quoteEndedCharacterSet = newlineCharacterSet.mutableCopy;
         [quoteEndedCharacterSet addCharactersInString:_config.columnSeparator];
         quoteAndEscapeSet = [[NSMutableCharacterSet alloc]init];
         [quoteAndEscapeSet addCharactersInString:_config.quoteCharacter];
@@ -131,7 +134,7 @@
             break;
         }
         
-        if([[NSCharacterSet newlineCharacterSet] characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
+        if([newlineCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
             dataScanner.scanLocation++;
 			if(dataScanner.isAtEnd) _atEnd = YES;
             break;
@@ -184,7 +187,7 @@
             break;
         }
         
-        if([[NSCharacterSet newlineCharacterSet] characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
+        if([newlineCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
             dataScanner.scanLocation++;
             break;
         }
