@@ -232,6 +232,20 @@
     XCTAssert(YES, @"Pass");
 }
 
+- (void)testReadCSVFileWithBlankLines {
+	NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"Reading Test Documents/blank-lines" withExtension:@"csv"];
+	NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileURL];
+	CSVReader *reader = [[CSVReader alloc]initWithData:testData configuration:config];
+	NSError *error = nil;
+	NSUInteger numLines = 0;
+	while([reader readLineWithError:&error]) {
+		numLines++;
+	}
+	XCTAssertEqual(numLines, 6, "File should contain 6 rows.");
+}
+
+
+
 - (void)testHeuristicError1 {
     NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/heuristic-comma-separated-people-1" withExtension:@"csv"];
     NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileUrl];
