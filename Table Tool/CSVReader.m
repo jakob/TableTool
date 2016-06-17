@@ -133,6 +133,7 @@
         
         if([[NSCharacterSet newlineCharacterSet] characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
             dataScanner.scanLocation++;
+			if(dataScanner.isAtEnd) _atEnd = YES;
             break;
         }
         
@@ -140,7 +141,7 @@
         dataScanner.scanLocation++;
     }
     
-    if ([self isRowEmpty:rowArray]) {
+    if (_atEnd && !rowArray.count) {
         return nil;
     }
     
@@ -193,19 +194,6 @@
     }
     
     return rowArray;
-}
-
--(BOOL)isRowEmpty:(NSArray *)row {
-    if (row.count == 0) return YES;
-    else if (row.count == 1) {
-        if ([row[0] isKindOfClass:[NSString class]]) {
-            if ([((NSString *)row[0]) isEqualToString:@""]) {
-                return YES;
-            }
-        }
-    }
-    
-    return NO;
 }
 
 -(BOOL)scanQuotedValueIntoString:(NSString **)scannedString error:(NSError**)outError {
