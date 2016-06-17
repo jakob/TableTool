@@ -456,6 +456,16 @@
     XCTAssertEqual(config.encoding, NSWindowsCP1252StringEncoding, "Encoding should be Western");
 }
 
+- (void)testHeuristicIssue4Sample {
+	NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/issue-4-sample" withExtension:@"csv"];
+	NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileUrl];
+	CSVHeuristic *heuristic = [[CSVHeuristic alloc] initWithData:testData];
+	config = [heuristic calculatePossibleFormat];
+	XCTAssertEqual(config.encoding, NSMacOSRomanStringEncoding);
+	XCTAssertEqualObjects(config.columnSeparator, @"\t");
+	XCTAssertTrue(config.firstRowAsHeader);
+}
+
 - (void)testPerformanceReaderUnquotedValues {
     NSURL *testFileURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"test-doc-unquoted" withExtension:@"csv"];
     config.quoteCharacter = @"";
