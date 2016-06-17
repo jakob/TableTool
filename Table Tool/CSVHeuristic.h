@@ -26,5 +26,6 @@
 
 -(instancetype)initWithData:(NSData *)data;
 -(CSVConfiguration *)calculatePossibleFormat;
+-(void)setEncoding:(NSStringEncoding)encoding;
 
 @end

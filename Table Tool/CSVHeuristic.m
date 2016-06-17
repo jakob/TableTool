@@ -100,14 +100,21 @@
     readLines = [[NSMutableArray alloc]init];
 }
 
+-(void)setEncoding:(NSStringEncoding)encoding {
+	for(CSVReader *reader in readerArray){
+		[reader reset];
+		reader.config.encoding = encoding;
+	}
+}
+
 -(CSVConfiguration *)calculatePossibleFormat{
     [self initializeArrays];
     if(![self useSimpleHeuristic]){
-        for(CSVReader *reader in readerArray){
-            [reader reset];
-            reader.config.encoding = NSWindowsCP1252StringEncoding;
-        }
-        [self useSimpleHeuristic];
+		self.encoding = NSWindowsCP1252StringEncoding;
+		if (![self useSimpleHeuristic]) {
+			self.encoding = NSMacOSRomanStringEncoding;
+			[self useSimpleHeuristic];
+		}
     }
     
     return [self getBestConfiguration];
