@@ -164,11 +164,18 @@
     return finalData;
 }
 
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
-    
+-(BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError {
     [self.undoManager removeAllActions];
+	NSData *data = [NSData dataWithContentsOfURL:url options:0 error:outError];
+	if (!data) {
+		return NO;
+	}
+	CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
+	NSStringEncoding usedEncoding;
+	if ([[NSString alloc] initWithContentsOfURL:url usedEncoding:&usedEncoding error:outError]) {
+		formatHeuristic.encoding = usedEncoding;
+	}
     newFile = NO;
-    CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
     _inputConfig = [formatHeuristic calculatePossibleFormat];
     
     savedData = data;
