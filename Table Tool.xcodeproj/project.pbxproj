@@ -29,6 +29,14 @@
 		E1CEF88C1B79E5360083B957 /* Reading Test Documents in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF88B1B79E5360083B957 /* Reading Test Documents */; };
 		E1CEF8921B7B4E5E0083B957 /* test-doc-quoted.csv in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */; };
 		E1CEF89A1B7CC4250083B957 /* Heuristic Test Documents in Resources */ = {isa = PBXBuildFile; fileRef = E1CEF8991B7CC4250083B957 /* Heuristic Test Documents */; };
+		F8928B341E08ED3F002C5C77 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8928B281E08ED3F002C5C77 /* AFHTTPSessionManager.m */; };
+		F8928B351E08ED3F002C5C77 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8928B2B1E08ED3F002C5C77 /* AFNetworkReachabilityManager.m */; };
+		F8928B361E08ED3F002C5C77 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = F8928B2D1E08ED3F002C5C77 /* AFSecurityPolicy.m */; };
+		F8928B371E08ED3F002C5C77 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = F8928B2F1E08ED3F002C5C77 /* AFURLRequestSerialization.m */; };
+		F8928B381E08ED3F002C5C77 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = F8928B311E08ED3F002C5C77 /* AFURLResponseSerialization.m */; };
+		F8928B391E08ED3F002C5C77 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8928B331E08ED3F002C5C77 /* AFURLSessionManager.m */; };
+		F8F910A01E07D29C00C6FE08 /* OpenFromUrlWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F9109E1E07D29C00C6FE08 /* OpenFromUrlWindowController.m */; };
+		F8F910A11E07D29C00C6FE08 /* OpenFromUrlWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8F9109F1E07D29C00C6FE08 /* OpenFromUrlWindowController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +87,22 @@
 		E1CEF88B1B79E5360083B957 /* Reading Test Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Reading Test Documents"; sourceTree = "<group>"; };
 		E1CEF8911B7B4E5E0083B957 /* test-doc-quoted.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-doc-quoted.csv"; sourceTree = "<group>"; };
 		E1CEF8991B7CC4250083B957 /* Heuristic Test Documents */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Heuristic Test Documents"; sourceTree = "<group>"; };
+		F8928B271E08ED3F002C5C77 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
+		F8928B281E08ED3F002C5C77 /* AFHTTPSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPSessionManager.m; sourceTree = "<group>"; };
+		F8928B291E08ED3F002C5C77 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
+		F8928B2A1E08ED3F002C5C77 /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
+		F8928B2B1E08ED3F002C5C77 /* AFNetworkReachabilityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkReachabilityManager.m; sourceTree = "<group>"; };
+		F8928B2C1E08ED3F002C5C77 /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
+		F8928B2D1E08ED3F002C5C77 /* AFSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFSecurityPolicy.m; sourceTree = "<group>"; };
+		F8928B2E1E08ED3F002C5C77 /* AFURLRequestSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLRequestSerialization.h; sourceTree = "<group>"; };
+		F8928B2F1E08ED3F002C5C77 /* AFURLRequestSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLRequestSerialization.m; sourceTree = "<group>"; };
+		F8928B301E08ED3F002C5C77 /* AFURLResponseSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLResponseSerialization.h; sourceTree = "<group>"; };
+		F8928B311E08ED3F002C5C77 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLResponseSerialization.m; sourceTree = "<group>"; };
+		F8928B321E08ED3F002C5C77 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
+		F8928B331E08ED3F002C5C77 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
+		F8F9109D1E07D29C00C6FE08 /* OpenFromUrlWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenFromUrlWindowController.h; sourceTree = "<group>"; };
+		F8F9109E1E07D29C00C6FE08 /* OpenFromUrlWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenFromUrlWindowController.m; sourceTree = "<group>"; };
+		F8F9109F1E07D29C00C6FE08 /* OpenFromUrlWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OpenFromUrlWindowController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +144,7 @@
 		E1CC84DD1B4A5F2A00ED8314 /* Table Tool */ = {
 			isa = PBXGroup;
 			children = (
+				F8928B261E08ED3F002C5C77 /* AFNetworking */,
 				36007A091D083BA000898043 /* Table Tool.entitlements */,
 				E1CEF8811B6B63380083B957 /* ToolbarIcons.h */,
 				E1CEF8821B6B63380083B957 /* ToolbarIcons.m */,
@@ -128,6 +153,9 @@
 				E1CC84E51B4A5F2A00ED8314 /* Document.h */,
 				E1CC84E61B4A5F2A00ED8314 /* Document.m */,
 				E1CC84E81B4A5F2A00ED8314 /* Document.xib */,
+				F8F9109D1E07D29C00C6FE08 /* OpenFromUrlWindowController.h */,
+				F8F9109E1E07D29C00C6FE08 /* OpenFromUrlWindowController.m */,
+				F8F9109F1E07D29C00C6FE08 /* OpenFromUrlWindowController.xib */,
 				E1CC84EB1B4A5F2A00ED8314 /* Images.xcassets */,
 				E1CC84ED1B4A5F2A00ED8314 /* MainMenu.xib */,
 				E1CC84DE1B4A5F2A00ED8314 /* Supporting Files */,
@@ -182,6 +210,26 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F8928B261E08ED3F002C5C77 /* AFNetworking */ = {
+			isa = PBXGroup;
+			children = (
+				F8928B271E08ED3F002C5C77 /* AFHTTPSessionManager.h */,
+				F8928B281E08ED3F002C5C77 /* AFHTTPSessionManager.m */,
+				F8928B291E08ED3F002C5C77 /* AFNetworking.h */,
+				F8928B2A1E08ED3F002C5C77 /* AFNetworkReachabilityManager.h */,
+				F8928B2B1E08ED3F002C5C77 /* AFNetworkReachabilityManager.m */,
+				F8928B2C1E08ED3F002C5C77 /* AFSecurityPolicy.h */,
+				F8928B2D1E08ED3F002C5C77 /* AFSecurityPolicy.m */,
+				F8928B2E1E08ED3F002C5C77 /* AFURLRequestSerialization.h */,
+				F8928B2F1E08ED3F002C5C77 /* AFURLRequestSerialization.m */,
+				F8928B301E08ED3F002C5C77 /* AFURLResponseSerialization.h */,
+				F8928B311E08ED3F002C5C77 /* AFURLResponseSerialization.m */,
+				F8928B321E08ED3F002C5C77 /* AFURLSessionManager.h */,
+				F8928B331E08ED3F002C5C77 /* AFURLSessionManager.m */,
+			);
+			path = AFNetworking;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -232,6 +280,8 @@
 				TargetAttributes = {
 					E1CC84DA1B4A5F2A00ED8314 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = 43QK79B8DU;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -273,6 +323,7 @@
 				AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */,
 				E1CC84EC1B4A5F2A00ED8314 /* Images.xcassets in Resources */,
 				E1CC84EF1B4A5F2A00ED8314 /* MainMenu.xib in Resources */,
+				F8F910A11E07D29C00C6FE08 /* OpenFromUrlWindowController.xib in Resources */,
 				AAB016721D057426005E3F7A /* Credits.rtf in Resources */,
 				E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */,
 			);
@@ -296,15 +347,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8928B391E08ED3F002C5C77 /* AFURLSessionManager.m in Sources */,
+				F8928B361E08ED3F002C5C77 /* AFSecurityPolicy.m in Sources */,
 				E1CEF8831B6B63380083B957 /* ToolbarIcons.m in Sources */,
+				F8928B351E08ED3F002C5C77 /* AFNetworkReachabilityManager.m in Sources */,
 				E1CC84E71B4A5F2A00ED8314 /* Document.m in Sources */,
 				E16BDFCE1B4E74960024F0BD /* CSVReader.m in Sources */,
+				F8928B341E08ED3F002C5C77 /* AFHTTPSessionManager.m in Sources */,
 				E1CEF8861B7097280083B957 /* CSVHeuristic.m in Sources */,
 				E1CC84E41B4A5F2A00ED8314 /* main.m in Sources */,
 				E1CEF87F1B6A23860083B957 /* TTErrorViewController.m in Sources */,
 				E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */,
 				E1CC84E21B4A5F2A00ED8314 /* AppDelegate.m in Sources */,
+				F8F910A01E07D29C00C6FE08 /* OpenFromUrlWindowController.m in Sources */,
+				F8928B371E08ED3F002C5C77 /* AFURLRequestSerialization.m in Sources */,
 				E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */,
+				F8928B381E08ED3F002C5C77 /* AFURLResponseSerialization.m in Sources */,
 				E16BDFD11B4FA1B90024F0BD /* CSVWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -437,7 +495,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Table Tool/Table Tool.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 43QK79B8DU;
 				INFOPLIST_FILE = "Table Tool/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = at.eggerapps.tabletool;
@@ -453,7 +513,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "Table Tool/Table Tool.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Table Tool/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = at.eggerapps.tabletool;
