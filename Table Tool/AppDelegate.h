@@ -7,9 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "OpenFromUrlWindowController.h"
+#import "Document.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
+@property (nonatomic,strong) OpenFromUrlWindowController *windowContoller;
+
+- (IBAction)openFromUrl:(NSMenuItem *)sender;
 
 @end
 

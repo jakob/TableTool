@@ -14,12 +14,20 @@
 
 @implementation AppDelegate
 
+@synthesize windowContoller;
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
+  // Insert code here to initialize your application
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
+  // Insert code here to tear down your application
 }
 
+- (IBAction)openFromUrl:(NSMenuItem *)sender {
+  self.windowContoller = [[OpenFromUrlWindowController alloc] initWithWindowNibName:@"OpenFromUrlWindowController"];
+  [[NSDocumentController sharedDocumentController] newDocument:self];
+  self.windowContoller.doc = [[[[NSApplication sharedApplication] mainWindow] windowController] document];
+  [self.windowContoller showWindow:self];
+}
 @end
