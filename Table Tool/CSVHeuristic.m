@@ -109,12 +109,20 @@
 
 -(CSVConfiguration *)calculatePossibleFormat{
     [self initializeArrays];
-    if(![self useSimpleHeuristic]){
-		self.encoding = NSWindowsCP1252StringEncoding;
-		if (![self useSimpleHeuristic]) {
-			self.encoding = NSMacOSRomanStringEncoding;
-			[self useSimpleHeuristic];
-		}
+
+    NSArray *encodingTestList = @[
+            @(NSUTF8StringEncoding), // UTF-8
+            @(CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000)), // GBK
+            @(NSWindowsCP1252StringEncoding),
+            @(NSMacOSRomanStringEncoding),
+    ];
+
+    for (int i = 0; i < encodingTestList.count; ++i) {
+        int encoding = [encodingTestList[(NSUInteger) i] intValue];
+        self.encoding = (NSStringEncoding) encoding;
+        if([self useSimpleHeuristic]){
+            break;
+        }
     }
     
     return [self getBestConfiguration];
