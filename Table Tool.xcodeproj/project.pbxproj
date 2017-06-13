@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B338F741EF03D8000D40406 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B338F731EF03D8000D40406 /* Constants.m */; };
 		AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */; };
 		AAB016721D057426005E3F7A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = AAB016711D057426005E3F7A /* Credits.rtf */; };
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
@@ -43,6 +44,8 @@
 
 /* Begin PBXFileReference section */
 		36007A091D083BA000898043 /* Table Tool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Table Tool.entitlements"; sourceTree = "<group>"; };
+		5B338F721EF03D8000D40406 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		5B338F731EF03D8000D40406 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Table Tool-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewControllerAccessory.xib; sourceTree = "<group>"; };
 		AAB016711D057426005E3F7A /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
@@ -120,6 +123,8 @@
 		E1CC84DD1B4A5F2A00ED8314 /* Table Tool */ = {
 			isa = PBXGroup;
 			children = (
+				5B338F721EF03D8000D40406 /* Constants.h */,
+				5B338F731EF03D8000D40406 /* Constants.m */,
 				36007A091D083BA000898043 /* Table Tool.entitlements */,
 				E1CEF8811B6B63380083B957 /* ToolbarIcons.h */,
 				E1CEF8821B6B63380083B957 /* ToolbarIcons.m */,
@@ -296,6 +301,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B338F741EF03D8000D40406 /* Constants.m in Sources */,
 				E1CEF8831B6B63380083B957 /* ToolbarIcons.m in Sources */,
 				E1CC84E71B4A5F2A00ED8314 /* Document.m in Sources */,
 				E16BDFCE1B4E74960024F0BD /* CSVReader.m in Sources */,
