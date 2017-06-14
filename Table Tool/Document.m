@@ -28,7 +28,6 @@
     BOOL enableEditing;
     
     NSArray *validPBoardTypes;
-    NSIndexSet *draggedRowIndexes;
     
     TTFormatViewController *inputController;
     TTErrorViewController *errorController;
@@ -331,6 +330,7 @@
 -(void)initValidPBoardTypes
 {
     validPBoardTypes = [NSArray arrayWithObjects:TTRowInternalPboardType,
+                                                 NSPasteboardTypeTabularText,
                                                  NSStringPboardType,
                                                  nil];
 }
@@ -342,21 +342,24 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     if (rowIndexes == nil)
         return NO;
     
-    draggedRowIndexes = rowIndexes; // internally store dragged row indexes
-    
     [pboard declareTypes:validPBoardTypes owner: nil];
     
     // TTRowInternalPboardType is used for app internal movement of rows
-    [pboard setData:[NSData data] forType:TTRowInternalPboardType];
-    
-    // textual dragging support, for example supporting drag & drop from Table Tool to other apps such as TextEdit etc.
+    NSData *serializedRowIndexes = [NSKeyedArchiver archivedDataWithRootObject:rowIndexes];
+    [pboard setData:serializedRowIndexes forType:TTRowInternalPboardType];
+
     NSArray *rowDataAtIndexes = [_data objectsAtIndexes:rowIndexes];
-    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:rowDataAtIndexes columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
-    NSError *error = nil;
-    NSData *csvAsText = [writer writeDataWithError:&error];
-    if (error == nil) {
-        [pboard setData:csvAsText forType:NSPasteboardTypeString];
-    }
+    
+    // tab-separated text, for supporting drag & drop from Table Tool to table based apps like Numbers or TextEdit
+    CSVConfiguration *tabSeparatedCSVConfiguration = [_outputConfig copy];
+    tabSeparatedCSVConfiguration.columnSeparator = @"\t";
+    tabSeparatedCSVConfiguration.quoteCharacter = @"";
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:rowDataAtIndexes
+                                                columnsOrder:[self getColumnsOrder]
+                                               configuration:tabSeparatedCSVConfiguration];
+    NSString *tabSeparatedCSV = [writer writeString];
+    [pboard setString:tabSeparatedCSV forType:NSPasteboardTypeTabularText];
+    [pboard setString:tabSeparatedCSV forType:NSPasteboardTypeString];
     
     return YES;
 }
@@ -392,6 +395,9 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         if ([info draggingSource] == self.tableView &&
             tableView == self.tableView)
         { // NOTE: for now, only drag & drop within the same tableView is supported
+            NSData *serializedDraggedRowIndexes = [pboard dataForType:TTRowInternalPboardType];
+            NSIndexSet *draggedRowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:serializedDraggedRowIndexes];
+            
             const NSUInteger draggedRowCount = [draggedRowIndexes count];
             
             NSUInteger countOfIndicesBeforeDestinationRow = [draggedRowIndexes countOfIndexesInRange:NSMakeRange(0, rowBeforeRemoval)];
@@ -403,7 +409,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
             
             NSUndoManager *undoManager = [self undoManager];
             if (![undoManager isUndoing]) {
-                [undoManager setActionName:(draggedRowCount >= 2) ? @"Moving Rows" : @"Moving Row"];
+                [undoManager setActionName:(draggedRowCount >= 2) ? @"Move Rows" : @"Move Row"];
             }
             [[self.undoManager prepareWithInvocationTarget:self] restoreRowsWithContent:[draggedRowData copy] atIndexes:[draggedRowIndexes copy]];
             [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:postInsertReselectionSet];
@@ -412,12 +418,14 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
                 [self.tableView beginUpdates];
                 
                 [_data removeObjectsAtIndexes:draggedRowIndexes];
+                [self.tableView removeRowsAtIndexes:draggedRowIndexes withAnimation:NSTableViewAnimationSlideUp];
                 
                 NSEnumerator *reverseEnumerator = [draggedRowData reverseObjectEnumerator];
                 id nextRowToInsert = nil;
                 while (nextRowToInsert = [reverseEnumerator nextObject]) {
                     [_data insertObject:nextRowToInsert atIndex:destinationRow];
                 }
+                [self.tableView insertRowsAtIndexes:postInsertReselectionSet withAnimation:NSTableViewAnimationSlideDown];
                 
                 [self.tableView endUpdates];
             } completionHandler:^{
