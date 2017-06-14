@@ -17,6 +17,7 @@
 
 -(instancetype)initWithDataArray:(NSArray *) dataArray columnsOrder:(NSArray *)columnsOrder configuration:(CSVConfiguration *)config;
 
+-(NSString *)writeString;
 -(NSData *)writeDataWithError:(NSError **) outError;
 
 @end

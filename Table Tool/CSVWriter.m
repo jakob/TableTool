@@ -25,7 +25,7 @@
     return self;
 }
 
--(NSData *)writeDataWithError:(NSError *__autoreleasing *)outError {
+-(NSString *)writeString {
     
     NSMutableString *dataString = [[NSMutableString alloc]init];
     
@@ -69,6 +69,12 @@
     }else{
         [dataString appendString:@""];
     }
+    
+    return dataString;
+}
+
+-(NSData *)writeDataWithError:(NSError *__autoreleasing *)outError {
+    NSString *dataString = [self writeString];
     
     NSData *finalData = [dataString dataUsingEncoding:_config.encoding];
     if(finalData == nil){
