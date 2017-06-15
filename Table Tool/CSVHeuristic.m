@@ -142,11 +142,12 @@
 
 -(void)checkForRowLengthsFromReader:(int)index{
     if(readLines.count == 0) return;
-    long count = ((NSArray *)readLines[0]).count;
+    long cellCountOfFirstRow = ((NSArray *)readLines[0]).count;
     BOOL sameLength = YES;
     for(int i = 1; i < readLines.count; i++){
-        sameLength &= (((NSArray *)readLines[i]).count == count);
-        if(((NSArray *)readLines[i]).count <= count) scores[index] = [NSNumber numberWithInt:([scores[index] intValue] + 1)];
+        NSUInteger cellCount = ((NSArray *)readLines[i]).count;
+        sameLength &= (cellCount == cellCountOfFirstRow);
+        if (cellCount <= cellCountOfFirstRow) scores[index] = [NSNumber numberWithUnsignedInteger:([scores[index] intValue] + cellCount)];
     }
     if(sameLength){
         scores[index] = [NSNumber numberWithInt:([scores[index] intValue] + 5)];
