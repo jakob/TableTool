@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B338F741EF03D8000D40406 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B338F731EF03D8000D40406 /* Constants.m */; };
+		5BBE9AF01EF676D100FB2806 /* Document_UI_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBE9AEF1EF676D100FB2806 /* Document_UI_Tests.m */; };
+		5BCD58251EF67D0F00A7382C /* NSFileHandle+TempFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BCD58241EF67D0F00A7382C /* NSFileHandle+TempFile.m */; };
 		AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */; };
 		AAB016721D057426005E3F7A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = AAB016711D057426005E3F7A /* Credits.rtf */; };
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
@@ -32,6 +35,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5BBE9AF21EF676D100FB2806 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E1CC84D31B4A5F2A00ED8314 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1CC84DA1B4A5F2A00ED8314;
+			remoteInfo = "Table Tool";
+		};
 		E1CC84F51B4A5F2A00ED8314 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E1CC84D31B4A5F2A00ED8314 /* Project object */;
@@ -43,6 +53,13 @@
 
 /* Begin PBXFileReference section */
 		36007A091D083BA000898043 /* Table Tool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Table Tool.entitlements"; sourceTree = "<group>"; };
+		5B338F721EF03D8000D40406 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		5B338F731EF03D8000D40406 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		5BBE9AED1EF676D100FB2806 /* Table Tool UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Table Tool UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BBE9AEF1EF676D100FB2806 /* Document_UI_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Document_UI_Tests.m; sourceTree = "<group>"; };
+		5BBE9AF11EF676D100FB2806 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BCD58231EF67D0F00A7382C /* NSFileHandle+TempFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+TempFile.h"; sourceTree = "<group>"; };
+		5BCD58241EF67D0F00A7382C /* NSFileHandle+TempFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+TempFile.m"; sourceTree = "<group>"; };
 		AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Table Tool-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewControllerAccessory.xib; sourceTree = "<group>"; };
 		AAB016711D057426005E3F7A /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
@@ -82,6 +99,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5BBE9AEA1EF676D100FB2806 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1CC84D81B4A5F2A00ED8314 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -99,11 +123,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5BBE9AEE1EF676D100FB2806 /* Table Tool UI Tests */ = {
+			isa = PBXGroup;
+			children = (
+				5BCD58231EF67D0F00A7382C /* NSFileHandle+TempFile.h */,
+				5BCD58241EF67D0F00A7382C /* NSFileHandle+TempFile.m */,
+				5BBE9AEF1EF676D100FB2806 /* Document_UI_Tests.m */,
+				5BBE9AF11EF676D100FB2806 /* Info.plist */,
+			);
+			path = "Table Tool UI Tests";
+			sourceTree = "<group>";
+		};
 		E1CC84D21B4A5F2A00ED8314 = {
 			isa = PBXGroup;
 			children = (
 				E1CC84DD1B4A5F2A00ED8314 /* Table Tool */,
 				E1CC84F71B4A5F2A00ED8314 /* Table ToolTests */,
+				5BBE9AEE1EF676D100FB2806 /* Table Tool UI Tests */,
 				E1CC84DC1B4A5F2A00ED8314 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +149,7 @@
 			children = (
 				E1CC84DB1B4A5F2A00ED8314 /* Table Tool.app */,
 				E1CC84F41B4A5F2A00ED8314 /* Table ToolTests.xctest */,
+				5BBE9AED1EF676D100FB2806 /* Table Tool UI Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,6 +157,8 @@
 		E1CC84DD1B4A5F2A00ED8314 /* Table Tool */ = {
 			isa = PBXGroup;
 			children = (
+				5B338F721EF03D8000D40406 /* Constants.h */,
+				5B338F731EF03D8000D40406 /* Constants.m */,
 				36007A091D083BA000898043 /* Table Tool.entitlements */,
 				E1CEF8811B6B63380083B957 /* ToolbarIcons.h */,
 				E1CEF8821B6B63380083B957 /* ToolbarIcons.m */,
@@ -185,6 +224,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5BBE9AEC1EF676D100FB2806 /* Table Tool UI Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BBE9AF61EF676D100FB2806 /* Build configuration list for PBXNativeTarget "Table Tool UI Tests" */;
+			buildPhases = (
+				5BBE9AE91EF676D100FB2806 /* Sources */,
+				5BBE9AEA1EF676D100FB2806 /* Frameworks */,
+				5BBE9AEB1EF676D100FB2806 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BBE9AF31EF676D100FB2806 /* PBXTargetDependency */,
+			);
+			name = "Table Tool UI Tests";
+			productName = "Table Tool UI Tests";
+			productReference = 5BBE9AED1EF676D100FB2806 /* Table Tool UI Tests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		E1CC84DA1B4A5F2A00ED8314 /* Table Tool */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E1CC84FE1B4A5F2A00ED8314 /* Build configuration list for PBXNativeTarget "Table Tool" */;
@@ -230,6 +287,11 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Egger Apps";
 				TargetAttributes = {
+					5BBE9AEC1EF676D100FB2806 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = E1CC84DA1B4A5F2A00ED8314;
+					};
 					E1CC84DA1B4A5F2A00ED8314 = {
 						CreatedOnToolsVersion = 6.4;
 						SystemCapabilities = {
@@ -259,11 +321,19 @@
 			targets = (
 				E1CC84DA1B4A5F2A00ED8314 /* Table Tool */,
 				E1CC84F31B4A5F2A00ED8314 /* Table ToolTests */,
+				5BBE9AEC1EF676D100FB2806 /* Table Tool UI Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5BBE9AEB1EF676D100FB2806 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1CC84D91B4A5F2A00ED8314 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -292,10 +362,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5BBE9AE91EF676D100FB2806 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BCD58251EF67D0F00A7382C /* NSFileHandle+TempFile.m in Sources */,
+				5BBE9AF01EF676D100FB2806 /* Document_UI_Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1CC84D71B4A5F2A00ED8314 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B338F741EF03D8000D40406 /* Constants.m in Sources */,
 				E1CEF8831B6B63380083B957 /* ToolbarIcons.m in Sources */,
 				E1CC84E71B4A5F2A00ED8314 /* Document.m in Sources */,
 				E16BDFCE1B4E74960024F0BD /* CSVReader.m in Sources */,
@@ -320,6 +400,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5BBE9AF31EF676D100FB2806 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1CC84DA1B4A5F2A00ED8314 /* Table Tool */;
+			targetProxy = 5BBE9AF21EF676D100FB2806 /* PBXContainerItemProxy */;
+		};
 		E1CC84F61B4A5F2A00ED8314 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E1CC84DA1B4A5F2A00ED8314 /* Table Tool */;
@@ -347,6 +432,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5BBE9AF41EF676D100FB2806 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Table Tool UI Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "at.eggerapps.Table-Tool-UI-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Table Tool";
+			};
+			name = Debug;
+		};
+		5BBE9AF51EF676D100FB2806 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Table Tool UI Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = "at.eggerapps.Table-Tool-UI-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Table Tool";
+			};
+			name = Release;
+		};
 		E1CC84FC1B4A5F2A00ED8314 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -503,6 +618,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5BBE9AF61EF676D100FB2806 /* Build configuration list for PBXNativeTarget "Table Tool UI Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BBE9AF41EF676D100FB2806 /* Debug */,
+				5BBE9AF51EF676D100FB2806 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E1CC84D61B4A5F2A00ED8314 /* Build configuration list for PBXProject "Table Tool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
