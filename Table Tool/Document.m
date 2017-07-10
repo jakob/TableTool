@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Egger Apps. All rights reserved.
 //
 
+#import "Constants.h"
 #import "Document.h"
 #import "CSVReader.h"
 #import "CSVWriter.h"
@@ -17,12 +18,17 @@
     NSCell *dataCell;
     NSData *savedData;
     NSMutableArray *firstRow;
+    
     NSError *readingError;
     NSView *errorControllerView;
     NSString *errorCode5;
+    
     BOOL didNotMoveColumn;
     BOOL newFile;
     BOOL enableEditing;
+    
+    NSArray *validPBoardTypes;
+    
     TTFormatViewController *inputController;
     TTErrorViewController *errorController;
     TTFormatViewController *popoverViewController;
@@ -46,6 +52,9 @@
         newFile = YES;
         errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
         _didSave = NO;
+        
+        [self initValidPBoardTypes];
+        
         [self addObserver:self forKeyPath:@"fileURL" options:0 context:nil];
         [self addObserver:self forKeyPath:@"didSave" options:0 context:nil];
     }
@@ -61,6 +70,10 @@
         statusBarFormatViewController = [[TTFormatViewController alloc] initAsInputController:NO];
         statusBarFormatViewController.delegate = self;
     }
+    
+    [self.tableView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
+    [self.tableView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
+    [self.tableView registerForDraggedTypes:[NSArray arrayWithObject:TTRowInternalPboardType]];
     
     if(newFile){
         _maxColumnNumber = 3;
@@ -310,6 +323,242 @@
         [columnsOrder addObject:col.identifier];
     }
     return columnsOrder.copy;
+}
+
+#pragma mark - tableViewDataSource (optional methods) - drag & drop
+
+-(void)initValidPBoardTypes
+{
+    validPBoardTypes = [NSArray arrayWithObjects:TTRowInternalPboardType,
+                                                 NSPasteboardTypeTabularText,
+                                                 NSStringPboardType,
+                                                 nil];
+}
+
+- (BOOL)tableView:(NSTableView *)tableView
+writeRowsWithIndexes:(NSIndexSet *)rowIndexes
+     toPasteboard:(NSPasteboard *)pboard
+{
+    if (rowIndexes == nil)
+        return NO;
+    
+    [pboard declareTypes:validPBoardTypes owner: nil];
+    
+    // TTRowInternalPboardType is used for app internal movement of rows
+    NSData *serializedRowIndexes = [NSKeyedArchiver archivedDataWithRootObject:rowIndexes];
+    [pboard setData:serializedRowIndexes forType:TTRowInternalPboardType];
+
+    NSArray *rowDataAtIndexes = [_data objectsAtIndexes:rowIndexes];
+    
+    // tab-separated text, for supporting drag & drop from Table Tool to table based apps like Numbers or TextEdit
+    CSVConfiguration *tabSeparatedCSVConfiguration = [_outputConfig copy];
+    tabSeparatedCSVConfiguration.columnSeparator = @"\t";
+    tabSeparatedCSVConfiguration.quoteCharacter = @"";
+    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:rowDataAtIndexes
+                                                columnsOrder:[self getColumnsOrder]
+                                               configuration:tabSeparatedCSVConfiguration];
+    NSString *tabSeparatedCSV = [writer writeString];
+    [pboard setString:tabSeparatedCSV forType:NSPasteboardTypeTabularText];
+    [pboard setString:tabSeparatedCSV forType:NSPasteboardTypeString];
+    
+    return YES;
+}
+
+- (NSDragOperation)tableView:(NSTableView *)tableView
+                validateDrop:(id<NSDraggingInfo>)info
+                 proposedRow:(NSInteger)row
+       proposedDropOperation:(NSTableViewDropOperation)dropOperation
+{
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSString *type = [pboard availableTypeFromArray:validPBoardTypes];
+    if ([type isEqualToString:TTRowInternalPboardType] &&
+        [info draggingSource] == self.tableView &&
+        tableView == self.tableView)
+    { // NOTE: for now, only drag & drop within the same tableView is supported
+        switch (dropOperation) {
+            case NSTableViewDropAbove: return NSDragOperationMove;
+            case NSTableViewDropOn:    return NSDragOperationNone;
+        }
+    }
+    
+    return NSDragOperationNone;
+}
+
+- (BOOL)tableView:(NSTableView *)tableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)destinationRow
+    dropOperation:(NSTableViewDropOperation)dropOperation
+{
+    NSPasteboard *pboard = [info draggingPasteboard];
+
+    NSString *type = [pboard availableTypeFromArray:validPBoardTypes];
+    if ([type isEqualToString:TTRowInternalPboardType]) {
+        if ([info draggingSource] == self.tableView &&
+            tableView == self.tableView)
+        { // NOTE: for now, only drag & drop within the same tableView is supported
+            NSData *serializedDraggedRowIndexes = [pboard dataForType:TTRowInternalPboardType];
+            NSIndexSet *draggedRowIndexes = [NSKeyedUnarchiver unarchiveObjectWithData:serializedDraggedRowIndexes];
+            
+            return [self moveRowsAtIndexes:draggedRowIndexes toIndex:destinationRow];
+        }
+    }
+    
+    return NO;
+}
+
+- (void)addRedoStackOperationForMovingRowsAtIndexes:(NSIndexSet *)rowIndexes
+                                            toIndex:(NSInteger)row
+{
+    [[self.undoManager prepareWithInvocationTarget:self] moveRowsAtIndexes:rowIndexes toIndex:row];
+}
+
+- (void)findLowerDropDestination:(NSInteger *)lowerDropDestination
+            upperDropDestination:(NSInteger *)upperDropDestination
+            forDraggedRowIndexes:(NSIndexSet *)draggedRowIndexes
+               droppedAtLocation:(NSInteger)dropLocation
+{
+    *lowerDropDestination = dropLocation;
+    *upperDropDestination = dropLocation;
+    
+    BOOL isRowAtDropLocationDragged = [draggedRowIndexes containsIndex:dropLocation];
+    BOOL isRowBeforeDropLocationDragged = [draggedRowIndexes containsIndex:dropLocation-1];
+    if (isRowAtDropLocationDragged || isRowBeforeDropLocationDragged)
+    {
+        NSUInteger lastIndex = (isRowAtDropLocationDragged ? dropLocation : dropLocation-1);
+        NSUInteger nextIndex = dropLocation;
+        while ((nextIndex = [draggedRowIndexes indexGreaterThanIndex:nextIndex]) != NSNotFound) {
+            if (nextIndex > lastIndex+1)
+                break;
+            
+            lastIndex = nextIndex;
+            *upperDropDestination = nextIndex+1;
+        }
+        
+        nextIndex = dropLocation;
+        while ((nextIndex = [draggedRowIndexes indexLessThanIndex:nextIndex]) != NSNotFound) {
+            if (nextIndex < (*lowerDropDestination)-1)
+                break;
+            
+            *lowerDropDestination = nextIndex;
+        }
+    }
+}
+
+
+
+- (BOOL)moveRowsAtIndexes:(NSIndexSet *)draggedRowIndexes
+                  toIndex:(NSInteger)dropLocation
+{
+    // NOTE: no need to move the destination row to itself, as it lands at the same place anyway
+    //       no need also for contiguous multi-selections at and around the destination row
+    
+    NSInteger lowerDropDestination = dropLocation;
+    NSInteger upperDropDestination = dropLocation;
+    [self findLowerDropDestination:&lowerDropDestination
+              upperDropDestination:&upperDropDestination
+              forDraggedRowIndexes:draggedRowIndexes
+                 droppedAtLocation:dropLocation];
+    
+    NSRange rangeOfUnmovedIndexes = NSMakeRange(lowerDropDestination, upperDropDestination-lowerDropDestination+1);
+
+    const NSUInteger draggedRowCount = [draggedRowIndexes count];
+    
+    NSUInteger countOfRowsBeforeDropLocation = [draggedRowIndexes countOfIndexesInRange:NSMakeRange(0, dropLocation)];
+    
+    NSInteger destinationRow = dropLocation - countOfRowsBeforeDropLocation;
+    
+    NSIndexSet *finalIndexesAfterDropping = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(destinationRow, draggedRowCount)];
+    
+    NSArray *draggedRowData = [_data objectsAtIndexes:draggedRowIndexes];
+    
+    NSIndexSet *lowerDraggedIndexes;
+    if (lowerDropDestination == 0) {
+        lowerDraggedIndexes = [NSIndexSet indexSet];
+    } else {
+        lowerDraggedIndexes = [draggedRowIndexes indexesInRange:NSMakeRange(0, dropLocation-1)
+                                                        options:NSEnumerationConcurrent
+                                                    passingTest:^BOOL(NSUInteger idx, BOOL * _Nonnull stop) { return YES; }];
+    }
+    
+    NSIndexSet *upperDraggedIndexes = [draggedRowIndexes indexesInRange:NSMakeRange(dropLocation, [_data count])
+                                                                       options:NSEnumerationConcurrent
+                                                                   passingTest:^BOOL(NSUInteger idx, BOOL * _Nonnull stop) { return YES; }];
+    
+    if ([lowerDraggedIndexes count] == 0 && [upperDraggedIndexes count] == 0) {
+        // NOTE: nothing to do
+        return NO;
+    }
+    
+    if (![self.undoManager isUndoing]) {
+        [self.undoManager setActionName:(draggedRowCount >= 2) ? @"Move Rows" : @"Move Row"];
+    }
+    
+    [[self.undoManager prepareWithInvocationTarget:self] addRedoStackOperationForMovingRowsAtIndexes:draggedRowIndexes toIndex:dropLocation];
+    
+    [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
+        [self.tableView beginUpdates];
+        
+        [[self.undoManager prepareWithInvocationTarget:self] dataGotEdited];
+        
+        [[self.undoManager prepareWithInvocationTarget:NSAnimationContext.self] endGrouping];
+        [[self.undoManager prepareWithInvocationTarget:self.tableView] endUpdates];
+        
+        //
+        // update model
+        //
+        
+        [_data removeObjectsAtIndexes:draggedRowIndexes];
+        
+        NSEnumerator *reverseEnumerator = [draggedRowData reverseObjectEnumerator];
+        id nextRowToInsert = nil;
+        while (nextRowToInsert = [reverseEnumerator nextObject]) {
+            NSUInteger insertionIndex = (dropLocation - countOfRowsBeforeDropLocation);
+            [_data insertObject:nextRowToInsert atIndex:insertionIndex];
+        }
+        
+        //
+        // update view
+        //
+        
+        NSUInteger draggedIndex = [lowerDraggedIndexes firstIndex];
+        NSUInteger numberOfRowsMoved = 0;
+        while (draggedIndex != NSNotFound) {
+            if (!NSLocationInRange(draggedIndex, rangeOfUnmovedIndexes))
+            {
+                NSUInteger translatedOldIndex = (draggedIndex - numberOfRowsMoved);
+                [self.tableView moveRowAtIndex:translatedOldIndex toIndex:lowerDropDestination-1];
+                [[self.undoManager prepareWithInvocationTarget:self.tableView] moveRowAtIndex:lowerDropDestination-1 toIndex:translatedOldIndex];
+            }
+            
+            numberOfRowsMoved++;
+            draggedIndex = [lowerDraggedIndexes indexGreaterThanIndex:draggedIndex];
+        }
+        
+        NSUInteger destinationRow = upperDropDestination;
+        draggedIndex = [upperDraggedIndexes firstIndex];
+        while (draggedIndex != NSNotFound) {
+            if (!NSLocationInRange(draggedIndex, rangeOfUnmovedIndexes))
+            {
+                [self.tableView moveRowAtIndex:draggedIndex toIndex:destinationRow];
+                [[self.undoManager prepareWithInvocationTarget:self.tableView] moveRowAtIndex:destinationRow toIndex:draggedIndex];
+            }
+            
+            destinationRow++;
+            draggedIndex = [upperDraggedIndexes indexGreaterThanIndex:draggedIndex];
+        }
+        
+        [[self.undoManager prepareWithInvocationTarget:_data] insertObjects:[draggedRowData copy] atIndexes:[draggedRowIndexes copy]];
+        [[self.undoManager prepareWithInvocationTarget:_data] removeObjectsAtIndexes:finalIndexesAfterDropping];
+        
+        [self.tableView endUpdates];
+        
+        [[self.undoManager prepareWithInvocationTarget:self.tableView] beginUpdates];
+        [[self.undoManager prepareWithInvocationTarget:NSAnimationContext.self] beginGrouping];
+    } completionHandler:^{
+        [self dataGotEdited];
+    }];
+    
+    return YES;
 }
 
 #pragma mark - updateTableView
@@ -571,7 +820,7 @@
     }];
 }
 
--(void)restoreRowsWithContent:(NSMutableArray *)rowContents atIndexes:(NSIndexSet *)rowIndexes {
+-(void)restoreRowsWithContent:(NSArray *)rowContents atIndexes:(NSIndexSet *)rowIndexes {
     
     [[self.undoManager prepareWithInvocationTarget:self] deleteRowsAtIndexes:rowIndexes];
     
