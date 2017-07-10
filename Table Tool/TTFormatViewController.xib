@@ -28,6 +28,7 @@
                         <menu key="menu" id="gXz-Dr-gC4">
                             <items>
                                 <menuItem title="Unicode (UTF-8)" tag="4" id="azY-g1-sDt"/>
+                                <menuItem title="Chinese (GBK)" tag="-2147482062" id="CgQ-67-VfQ"/>
                                 <menuItem title="Western (Mac OS Roman)" tag="30" id="jbj-mB-RkV"/>
                                 <menuItem title="Western (Windows Latin 1)" tag="12" id="DLX-c9-gUH"/>
                                 <menuItem title="Central European (ISO Latin 2)" tag="9" id="Hu2-Kn-ppA"/>
