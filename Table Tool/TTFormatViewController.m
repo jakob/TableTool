@@ -82,23 +82,9 @@
     [self.delegate useFirstRowAsHeader:self];
 }
 
--(IBAction)confirmConfiguration:(id)sender{
-    [self.delegate confirmFormat:self];
-}
-
 -(void)uncheckCheckbox{
     [[_useFirstRowAsHeaderCheckbox cell] setState:0];
     [self useFirstRowAsHeader];
-}
-
--(void)useLocale{
-    _config.decimalMark = [[NSLocale currentLocale] objectForKey:NSLocaleDecimalSeparator];
-    if([_config.decimalMark isEqualToString:@"."]){
-        _config.columnSeparator = @",";
-    }else{
-        _config.columnSeparator = @";";
-    }
-    [self selectFormatByConfig];
 }
 
 -(void)awakeFromNib {

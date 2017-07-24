@@ -993,12 +993,6 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [self.tableView reloadData];
 }
 
--(void)confirmFormat:(TTFormatViewController *)formatViewController {
-    self.tableView.enabled = YES;
-    _outputConfig = _inputConfig.copy;
-    [self enableToolbarButtons];
-}
-
 -(BOOL)reloadDataWithError:(NSError**)error {
     _maxColumnNumber = 1;
     [_data removeAllObjects];

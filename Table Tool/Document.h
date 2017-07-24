@@ -39,7 +39,6 @@
 -(IBAction)exportFile:(id)sender;
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
--(void)confirmFormat:(TTFormatViewController *)formatViewController;
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
 
 @end

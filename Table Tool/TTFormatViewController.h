@@ -14,7 +14,6 @@
 @protocol TTFormatViewControllerDelegate
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
 -(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
--(void)confirmFormat:(TTFormatViewController *)formatViewController;
 @end
 
 @interface TTFormatViewController : NSViewController
@@ -36,7 +35,6 @@
 - (instancetype)initAsInputController:(BOOL)inputController withNibName:(NSString *)nibName;
 - (void)selectFormatByConfig;
 - (void)uncheckCheckbox;
-- (void)useLocale;
 - (void)setEnabled:(BOOL)enabled;
 
 @end
