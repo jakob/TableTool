@@ -23,7 +23,7 @@
     NSView *errorControllerView;
     NSString *errorCode5;
     
-    BOOL didNotMoveColumn;
+    BOOL ignoreColumnDidMoveNotifications;
     BOOL newFile;
     BOOL enableEditing;
     
@@ -296,8 +296,7 @@
 }
 
 -(void)tableViewColumnDidMove:(NSNotification *)aNotification {
-    
-    if(!didNotMoveColumn){
+    if(!ignoreColumnDidMoveNotifications){
         [self.undoManager setActionName:@"Move Column"];
         NSNumber *oldIndex = [aNotification.userInfo valueForKey:@"NSOldColumn"];
         NSNumber *newIndex = [aNotification.userInfo valueForKey:@"NSNewColumn"];
@@ -841,7 +840,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 -(void)addColumnAtIndex:(long) columnIndex {
     
-    didNotMoveColumn = YES;
+    ignoreColumnDidMoveNotifications = YES;
     long columnIdentifier = _maxColumnNumber;
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
     col.dataCell = dataCell;
@@ -858,7 +857,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [self.tableView selectColumnIndexes:[NSIndexSet indexSetWithIndex:columnIndex] byExtendingSelection:NO];
     [self updateTableColumnsNames];
     [self.tableView scrollColumnToVisible:columnIndex];
-    didNotMoveColumn = NO;
+    ignoreColumnDidMoveNotifications = NO;
     
     [self dataGotEdited];
     [[self.undoManager prepareWithInvocationTarget:self] deleteColumnsAtIndexes:[NSIndexSet indexSetWithIndex:columnIndex]];
@@ -866,7 +865,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 -(void)deleteColumnsAtIndexes:(NSIndexSet *) columnIndexes{
     
-    didNotMoveColumn = YES;
+    ignoreColumnDidMoveNotifications = YES;
     NSMutableArray *columnIds = [[NSMutableArray alloc]init];
     NSArray *tableColumns = self.tableView.tableColumns.copy;
     [columnIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -874,7 +873,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         [columnIds addObject:col.identifier];
         [self.tableView removeTableColumn:col];
     }];
-    didNotMoveColumn = NO;
+    ignoreColumnDidMoveNotifications = NO;
     [self updateTableColumnsNames];
     
     long selectedIndex = [columnIndexes firstIndex] > [columnIndexes lastIndex] ? [columnIndexes lastIndex] : [columnIndexes firstIndex];
@@ -892,7 +891,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 -(void)restoreColumns:(NSMutableArray *)columnIds atIndexes:(NSIndexSet *)columnIndexes{
     
-    didNotMoveColumn = YES;
+    ignoreColumnDidMoveNotifications = YES;
     for(int i = 0; i < columnIds.count; i++){
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
         col.dataCell = dataCell;
@@ -903,7 +902,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         [self.tableView addTableColumn:col];
         [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:[columnIndexes firstIndex]+i];
     }
-    didNotMoveColumn = NO;
+    ignoreColumnDidMoveNotifications = NO;
     
     [self updateTableColumnsNames];
     [self.tableView selectColumnIndexes:columnIndexes byExtendingSelection:NO];
