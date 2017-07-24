@@ -793,12 +793,6 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         [self.tableView removeRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideUp];
         [self.tableView endUpdates];
     } completionHandler:^{
-        long selectedIndex = [rowIndexes firstIndex] > [rowIndexes lastIndex] ? [rowIndexes lastIndex] : [rowIndexes firstIndex];
-        if(selectedIndex == [self.tableView numberOfRows]){
-            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex: [self.tableView numberOfRows]-1] byExtendingSelection:NO];
-        } else {
-            [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedIndex] byExtendingSelection:NO];
-        }
         [self dataGotEdited];
     }];
 }
@@ -811,10 +805,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         [self.tableView scrollRowToVisible:[rowIndexes firstIndex]];
         [self.tableView beginUpdates];
         [_data insertObjects:rowContents atIndexes:rowIndexes];
-        [self.tableView insertRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideDown];
+		[self.tableView insertRowsAtIndexes:rowIndexes withAnimation:NSTableViewAnimationSlideDown];
+		[self.tableView selectRowIndexes:rowIndexes byExtendingSelection:NO];
         [self.tableView endUpdates];
     } completionHandler:^{
-        [self.tableView selectRowIndexes:rowIndexes byExtendingSelection:NO];
     }];
 }
 
@@ -832,10 +826,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
         [self.tableView beginUpdates];
         [_data insertObject:toInsertArray atIndex:rowIndex];
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+		[self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:rowIndex] withAnimation:NSTableViewAnimationSlideDown];
+		[self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
         [self.tableView endUpdates];
     } completionHandler:^{
-        [self.tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:rowIndex] byExtendingSelection:NO];
         [self dataGotEdited];
     }];
     
