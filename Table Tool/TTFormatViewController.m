@@ -7,6 +7,7 @@
 //
 
 #import "TTFormatViewController.h"
+#import "CSVConfiguration.h"
 
 @interface TTFormatViewController ()
 @end
@@ -98,6 +99,15 @@
         _config.columnSeparator = @";";
     }
     [self selectFormatByConfig];
+}
+
+-(void)awakeFromNib {
+	[_encodingMenu removeAllItems];
+	for (NSArray *encoding in [CSVConfiguration supportedEncodings]) {
+		NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:encoding[0] action:NULL keyEquivalent:@""];
+		item.tag = [encoding[1] integerValue];
+		[_encodingMenu.menu addItem:item];
+	}
 }
 
 -(void)selectFormatByConfig{

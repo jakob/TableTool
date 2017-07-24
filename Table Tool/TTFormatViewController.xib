@@ -23,30 +23,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="m7v-7K-NRZ">
-                    <rect key="frame" x="74" y="5" width="223" height="22"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vmc-PX-Znv">
+                    <rect key="frame" x="74" y="5" width="203" height="22"/>
+                    <popUpButtonCell key="cell" type="push" title="No String Encodings Configured" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="4" imageScaling="proportionallyDown" inset="2" selectedItem="azY-g1-sDt" id="vmc-PX-Znv">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
                         <menu key="menu" id="gXz-Dr-gC4">
                             <items>
-                                <menuItem title="Unicode (UTF-8)" tag="4" id="azY-g1-sDt"/>
-                                <menuItem title="Chinese (GBK)" tag="2147485234" id="CgQ-67-VfQ"/>
-                                <menuItem title="Western (Mac OS Roman)" tag="30" id="jbj-mB-RkV"/>
-                                <menuItem title="Western (Windows Latin 1)" tag="12" id="DLX-c9-gUH"/>
-                                <menuItem title="Central European (ISO Latin 2)" tag="9" id="Hu2-Kn-ppA"/>
-                                <menuItem title="Central European (Windows Latin 2)" tag="15" id="6XG-7J-kgl"/>
-                                <menuItem title="Cyrillic (Windows)" tag="11" id="PeO-Vn-jPX"/>
-                                <menuItem title="Greek (Windows)" tag="13" id="ZHy-zR-VCT"/>
-                                <menuItem title="Turkish (Windows)" tag="14" id="h0y-ay-BLR"/>
-                                <menuItem title="Japanese (EUC)" tag="3" id="oNe-MQ-mb1"/>
-                                <menuItem title="Japanese (Shift_JIS)" tag="8" id="0k4-2w-JSa"/>
-                                <menuItem title="Japanese (ISO 2022-JP)" tag="21" id="fhs-yD-NJU"/>
-                                <menuItem title="Unicode (UTF-16)" tag="10" id="OeZ-dM-bDo"/>
-                                <menuItem title="Unicode (UTF-16, Big Endian)" tag="2415919360" id="ctu-Hy-i95"/>
-                                <menuItem title="Unicode (UTF-16, Little Endian)" tag="2483028224" id="NIL-uw-fg7"/>
-                                <menuItem title="Unicode (UTF-32)" tag="2348810496" id="RVq-ew-BwC"/>
-                                <menuItem title="Unicode (UTF-32, Big Endian)" tag="2550137088" id="g0g-l0-pnW"/>
-                                <menuItem title="Unicode (UTF-32, Little Endian)" tag="2617245952" id="Xci-UZ-GH5"/>
+                                <menuItem title="No String Encodings Configured" tag="4" id="azY-g1-sDt"/>
                             </items>
                         </menu>
                     </popUpButtonCell>
@@ -64,7 +47,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R0k-y0-B2K">
-                    <rect key="frame" x="300" y="10" width="56" height="14"/>
+                    <rect key="frame" x="280" y="10" width="56" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Separator" id="g3k-Et-CPk">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -72,7 +55,7 @@
                     </textFieldCell>
                 </textField>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Iq-Qh-egS">
-                    <rect key="frame" x="360" y="6" width="96" height="20"/>
+                    <rect key="frame" x="340" y="6" width="96" height="20"/>
                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="C2o-jP-EF2">
                         <font key="font" metaFont="smallSystem"/>
                         <segments>
@@ -88,7 +71,7 @@
                     </connections>
                 </segmentedControl>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="8QF-zx-ee2">
-                    <rect key="frame" x="561" y="10" width="36" height="14"/>
+                    <rect key="frame" x="541" y="10" width="36" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Quote" id="A2l-Uw-arU">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -96,7 +79,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SRM-hM-oK9">
-                    <rect key="frame" x="460" y="10" width="46" height="14"/>
+                    <rect key="frame" x="440" y="10" width="46" height="14"/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Decimal" id="rhn-U5-DWG">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -104,7 +87,7 @@
                     </textFieldCell>
                 </textField>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ex4-c5-GWU">
-                    <rect key="frame" x="510" y="6" width="47" height="20"/>
+                    <rect key="frame" x="490" y="6" width="47" height="20"/>
                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="d4a-n0-Zii">
                         <font key="font" metaFont="smallSystem"/>
                         <segments>
@@ -118,7 +101,7 @@
                     </connections>
                 </segmentedControl>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yrD-55-LxA">
-                    <rect key="frame" x="601" y="6" width="101" height="20"/>
+                    <rect key="frame" x="581" y="6" width="101" height="20"/>
                     <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="XAD-11-Jjs">
                         <font key="font" metaFont="smallSystem"/>
                         <segments>
@@ -133,7 +116,7 @@
                     </connections>
                 </segmentedControl>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n5T-kl-CuM">
-                    <rect key="frame" x="705" y="8" width="61" height="18"/>
+                    <rect key="frame" x="685" y="8" width="61" height="18"/>
                     <buttonCell key="cell" type="check" title="Header" bezelStyle="regularSquare" imagePosition="left" alignment="left" controlSize="small" inset="2" id="cgT-F0-Q53">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="smallSystem"/>
