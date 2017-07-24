@@ -738,6 +738,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 }
 
 -(void)updateToolbarIcons {
+	if (NSAppKitVersionNumber >= NSAppKitVersionNumber10_10) {
+		self.toolBarButtonsAddColumn.segmentStyle = NSSegmentStyleSeparated;
+		self.toolBarButtonsAddRow.segmentStyle = NSSegmentStyleSeparated;
+	}
     [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddLeftColumnIcon] forSegment:0];
     [self.toolBarButtonsAddColumn setImage:[ToolbarIcons imageOfAddRightColumnIcon] forSegment:1];
     NSSize addColumnSize = self.toolBarButtonsAddColumn.intrinsicContentSize;

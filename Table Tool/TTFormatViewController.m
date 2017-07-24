@@ -22,10 +22,6 @@
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-}
-
 - (void)setEnabled:(BOOL)enabled {
     self.encodingMenu.enabled = enabled;
     self.escapeControl.enabled = enabled;

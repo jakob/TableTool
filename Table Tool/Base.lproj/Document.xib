@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <development version="5100" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Document">
@@ -42,11 +43,11 @@
                                     <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="18" horizontalPageScroll="10" verticalLineScroll="18" verticalPageScroll="10" translatesAutoresizingMaskIntoConstraints="NO" id="HMT-zz-891">
                                         <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
                                         <clipView key="contentView" id="GkF-y6-0qi">
-                                            <rect key="frame" x="0.0" y="17" width="837" height="506"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="837" height="523"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" columnSelection="YES" autosaveColumns="NO" headerView="81d-2U-CFl" id="bLT-tG-Zln">
-                                                    <rect key="frame" x="0.0" y="0.0" width="677" height="18"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="837" height="500"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="1" height="1"/>
                                                     <color key="backgroundColor" red="0.96014835858585856" green="0.96014835858585856" blue="0.96014835858585856" alpha="1" colorSpace="calibratedRGB"/>
@@ -73,7 +74,6 @@
                                                     </connections>
                                                 </tableView>
                                             </subviews>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="OPb-Ko-dkb">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
@@ -150,12 +150,12 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="0565C83F-5794-4021-81D9-15078D3B45FB" label="Add Column" paletteLabel="Add Column" id="L16-81-E18">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="71" height="28"/>
-                        <size key="maxSize" width="71" height="28"/>
+                        <size key="minSize" width="67" height="22"/>
+                        <size key="maxSize" width="75" height="28"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="ufp-YO-QNk">
                             <rect key="frame" x="0.0" y="14" width="71" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="KPy-FB-oij">
+                            <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="momentary" id="KPy-FB-oij">
                                 <font key="font" metaFont="system"/>
                                 <segments>
                                     <segment width="32">
@@ -173,12 +173,12 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="9CB9291B-E94F-4515-BDAE-2FC350E1CF35" label="Add Row" paletteLabel="Add Row" id="uIc-SS-WZD">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="71" height="28"/>
-                        <size key="maxSize" width="71" height="28"/>
+                        <size key="minSize" width="71" height="27"/>
+                        <size key="maxSize" width="75" height="28"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="FID-WH-eOP">
                             <rect key="frame" x="0.0" y="14" width="71" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="separated" trackingMode="momentary" id="h3f-jd-RHe">
+                            <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="momentary" id="h3f-jd-RHe">
                                 <font key="font" metaFont="system"/>
                                 <segments>
                                     <segment width="32">
