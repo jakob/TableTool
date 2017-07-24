@@ -399,6 +399,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
                                             toIndex:(NSInteger)row
 {
     [[self.undoManager prepareWithInvocationTarget:self] moveRowsAtIndexes:rowIndexes toIndex:row];
+	[[self.undoManager prepareWithInvocationTarget:self.tableView] selectRowIndexes:rowIndexes byExtendingSelection:NO];
 }
 
 - (void)findLowerDropDestination:(NSInteger *)lowerDropDestination
@@ -481,7 +482,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     if (![self.undoManager isUndoing]) {
         [self.undoManager setActionName:(draggedRowCount >= 2) ? @"Move Rows" : @"Move Row"];
     }
-    
+	[[self.undoManager prepareWithInvocationTarget:self.tableView] selectRowIndexes:draggedRowIndexes byExtendingSelection:NO];
     [[self.undoManager prepareWithInvocationTarget:self] addRedoStackOperationForMovingRowsAtIndexes:draggedRowIndexes toIndex:dropLocation];
     
     [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
