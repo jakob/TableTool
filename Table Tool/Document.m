@@ -82,6 +82,11 @@
         [self.tableView reloadData];
     }else{
         CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:savedData];
+		for (NSString *language in [[NSUserDefaults standardUserDefaults] arrayForKey:@"AppleLanguages"]) {
+			if ([language isKindOfClass:[NSString class]] && [language hasPrefix:@"zh"]) {
+				formatHeuristic.preferChineseEncoding = YES;
+			}
+		}
         _inputConfig = [formatHeuristic calculatePossibleFormat];
         
         inputController = [[TTFormatViewController alloc]initAsInputController:YES];
@@ -184,6 +189,11 @@
 		return NO;
 	}
 	CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:data];
+	for (NSString *language in [[NSUserDefaults standardUserDefaults] arrayForKey:@"AppleLanguages"]) {
+		if ([language isKindOfClass:[NSString class]] && [language hasPrefix:@"zh"]) {
+			formatHeuristic.preferChineseEncoding = YES;
+		}
+	}
 	NSStringEncoding usedEncoding;
 	if ([[NSString alloc] initWithContentsOfURL:url usedEncoding:&usedEncoding error:outError]) {
 		formatHeuristic.encoding = usedEncoding;

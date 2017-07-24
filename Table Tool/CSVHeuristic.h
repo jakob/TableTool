@@ -23,6 +23,7 @@
 @property CSVConfiguration *config10;
 @property CSVConfiguration *config11;
 @property NSData *data;
+@property BOOL preferChineseEncoding;
 
 -(instancetype)initWithData:(NSData *)data;
 -(CSVConfiguration *)calculatePossibleFormat;

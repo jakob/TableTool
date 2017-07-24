@@ -456,6 +456,15 @@
     XCTAssertEqual(config.encoding, NSWindowsCP1252StringEncoding, "Encoding should be Western");
 }
 
+- (void)testHeuristicGBK {
+	NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/heuristic-gbk" withExtension:@"csv"];
+	NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileUrl];
+	CSVHeuristic *heuristic = [[CSVHeuristic alloc] initWithData:testData];
+	heuristic.preferChineseEncoding = YES;
+	config = [heuristic calculatePossibleFormat];
+	XCTAssertEqual(config.encoding, CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000), "Encoding should be GBK");
+}
+
 - (void)testHeuristicIssue4Sample {
 	NSURL *testFileUrl = [[NSBundle bundleForClass:[self class]] URLForResource:@"Heuristic Test Documents/issue-4-sample" withExtension:@"csv"];
 	NSData *testData = [[NSData alloc] initWithContentsOfURL:testFileUrl];
