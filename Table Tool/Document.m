@@ -17,7 +17,7 @@
 @interface Document () {
     NSCell *dataCell;
     NSData *savedData;
-    NSMutableArray *firstRow;
+    NSArray *columnNames;
     
     NSError *readingError;
     NSView *errorControllerView;
@@ -29,10 +29,7 @@
     
     NSArray *validPBoardTypes;
     
-    TTFormatViewController *inputController;
     TTErrorViewController *errorController;
-    TTFormatViewController *popoverViewController;
-    NSPopover *popover;
     TTFormatViewController *statusBarFormatViewController;
     TTFormatViewController* accessoryViewController;
 }
@@ -47,8 +44,7 @@
     if (self) {
         _data = [[NSMutableArray alloc]init];
         _maxColumnNumber = 1;
-        _inputConfig = [[CSVConfiguration alloc]init];
-        _outputConfig = _inputConfig;
+        _csvConfig = [[CSVConfiguration alloc]init];
         newFile = YES;
         errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
         _didSave = NO;
@@ -61,14 +57,20 @@
     return self;
 }
 
+-(void)dealloc {
+	[self removeObserver:self forKeyPath:@"fileURL"];
+	[self removeObserver:self forKeyPath:@"didSave"];
+}
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
     
     if (!statusBarFormatViewController) {
-        statusBarFormatViewController = [[TTFormatViewController alloc] initAsInputController:NO];
+        statusBarFormatViewController = [[TTFormatViewController alloc] initWithNibName:@"TTFormatViewController" bundle:nil];
         statusBarFormatViewController.delegate = self;
+		statusBarFormatViewController.config = self.csvConfig;
     }
     
     [self.tableView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
@@ -80,24 +82,6 @@
         [self updateTableColumns];
         [_data addObject:[[NSMutableArray alloc]init]];
         [self.tableView reloadData];
-    }else{
-        CSVHeuristic *formatHeuristic = [[CSVHeuristic alloc]initWithData:savedData];
-		for (NSString *language in [[NSUserDefaults standardUserDefaults] arrayForKey:@"AppleLanguages"]) {
-			if ([language isKindOfClass:[NSString class]] && [language hasPrefix:@"zh"]) {
-				formatHeuristic.preferChineseEncoding = YES;
-			}
-		}
-        _inputConfig = [formatHeuristic calculatePossibleFormat];
-        
-        inputController = [[TTFormatViewController alloc]initAsInputController:YES];
-        inputController.delegate = self;
-        inputController.config = _inputConfig;
-        
-        statusBarFormatViewController = [[TTFormatViewController alloc] initAsInputController:YES];
-        statusBarFormatViewController.delegate = self;
-        statusBarFormatViewController.config = _inputConfig;
-        
-        _outputConfig = _inputConfig;
     }
     
     [self enableToolbarButtons];
@@ -113,8 +97,6 @@
 }
 
 - (void)close {
-    [self removeObserver:self forKeyPath:@"fileURL"];
-    [self removeObserver:self forKeyPath:@"didSave"];
     [super close];
 }
 
@@ -134,52 +116,42 @@
     [super updateChangeCountWithToken:changeCountToken forSaveOperation:saveOperation];
 }
 
-
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
-    
-    if(readingError){
-        NSError *error = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:5 userInfo:@{NSLocalizedDescriptionKey: @"Could not save", NSLocalizedRecoverySuggestionErrorKey:errorCode5}];
-        [self displayError:error];
-        return nil;
-    }
-    
-    if(inputController && inputController.firstRowAsHeader){
-        NSMutableArray *dataFirstRow = [[NSMutableArray alloc]init];
-        for(int i = 0; i < _maxColumnNumber; i++){
-            [dataFirstRow addObject:@""];
-        }
-        for(NSTableColumn * col in self.tableView.tableColumns){
-            [dataFirstRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.title];
-        }
-        [_data insertObject:dataFirstRow atIndex:0];
-    }
-    
-    NSError *error;
-    
-    if (_outputConfig.firstRowAsHeader) {
-        [_data insertObject:firstRow atIndex:0];
-    }
-    
-    CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:_data columnsOrder:[self getColumnsOrder] configuration:_outputConfig];
-    NSData *finalData = [writer writeDataWithError:&error];
-    self.inputConfig = self.outputConfig;
-    if(finalData == nil){
-        if(error) {
-            *outError = error;
-            [self displayError:error];
-        }
-    }
-    
-    if(inputController && inputController.firstRowAsHeader){
-        [_data removeObjectAtIndex:0];
-    }
-    
-    if (_outputConfig.firstRowAsHeader) {
-        [_data removeObjectAtIndex:0];
-    }
-    
-    savedData = finalData; // if the file gets saved, private variable is resetet.
-    return finalData;
+	return [self dataWithCSVConfig:self.csvConfig error:outError];
+}
+
+-(NSData*)dataWithCSVConfig:(CSVConfiguration*)config error:(NSError**)outError {
+	if(readingError){
+		NSError *error = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:5 userInfo:@{NSLocalizedDescriptionKey: @"Could not save", NSLocalizedRecoverySuggestionErrorKey:errorCode5}];
+		[self displayError:error];
+		return nil;
+	}
+	
+	NSArray *exportData = _data;
+	
+	if(self.csvConfig.firstRowAsHeader){
+		NSMutableArray *headerRow = [[NSMutableArray alloc]init];
+		for(int i = 0; i < _maxColumnNumber; i++){
+			[headerRow addObject:@""];
+		}
+		for(NSTableColumn * col in self.tableView.tableColumns){
+			[headerRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.title];
+		}
+		exportData = [@[headerRow] arrayByAddingObjectsFromArray:exportData];
+	}
+	
+	NSError *error;
+	
+	CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:exportData columnsOrder:[self getColumnsOrder] configuration:config];
+	NSData *finalData = [writer writeDataWithError:&error];
+	if(finalData == nil){
+		if(error) {
+			*outError = error;
+			[self displayError:error];
+		}
+	}
+	
+	return finalData;
 }
 
 -(BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError {
@@ -199,35 +171,43 @@
 		formatHeuristic.encoding = usedEncoding;
 	}
     newFile = NO;
-    _inputConfig = [formatHeuristic calculatePossibleFormat];
+    self.csvConfig = [formatHeuristic calculatePossibleFormat];
     
     savedData = data;
-    _maxColumnNumber = 1;
-    [_data removeAllObjects];
-    
-    CSVReader *reader = [[CSVReader alloc ]initWithData:data configuration: _inputConfig];
-    while(!reader.isAtEnd) {
-        NSError *error = nil;
-        NSArray *oneReadLine = [reader readLineWithError:&error];
-        if(oneReadLine == nil) {
-            if(error){
-                *outError = error;
-                readingError = error;
-                break;
-            }
-        }
-        if (oneReadLine != nil) [_data addObject:oneReadLine];
-        
-        if(_maxColumnNumber < [[_data lastObject] count]){
-            _maxColumnNumber = [[_data lastObject] count];
-        }
-    }
-    
-    [self updateTableColumns];
-    [self initFirstRow];
-    [self.tableView reloadData];
-    return YES;
+	BOOL success = [self reloadDataWithError:outError];
+	return success;
 }
+
+-(BOOL)reloadDataWithError:(NSError**)error {
+	[self.undoManager removeAllActions];
+	
+	_maxColumnNumber = 1;
+	[_data removeAllObjects];
+	
+	NSError *outError;
+	CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: self.csvConfig];
+	columnNames = nil;
+	while(!reader.isAtEnd) {
+		NSArray *line = [reader readLineWithError:&outError];
+		if (!line) {
+			if (error) *error = outError;
+			[self updateTableColumns];
+			[self.tableView reloadData];
+			return NO;
+		}
+		_maxColumnNumber = MAX(_maxColumnNumber, line.count);
+		if (self.csvConfig.firstRowAsHeader && !columnNames) {
+			columnNames = line;
+		} else {
+			[_data addObject:line];
+		}
+	}
+	
+	[self updateTableColumns];
+	[self.tableView reloadData];
+	return YES;
+}
+
 
 -(void)displayError:(NSError *)error {
     
@@ -260,7 +240,7 @@
         NSArray *rowArray = _data[rowIndex];
         if(rowArray.count >= tableColumn.identifier.integerValue+1){
             if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]) {
-                return [(NSDecimalNumber *)rowArray[tableColumn.identifier.integerValue] descriptionWithLocale:@{NSLocaleDecimalSeparator:_outputConfig.decimalMark}];
+                return [(NSDecimalNumber *)rowArray[tableColumn.identifier.integerValue] descriptionWithLocale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
             }
             return rowArray[tableColumn.identifier.integerValue];
         }
@@ -303,10 +283,10 @@
         [self dataGotEdited];
     }
     
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",_outputConfig.decimalMark,_outputConfig.decimalMark] options:0 error:NULL];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",self.csvConfig.decimalMark,self.csvConfig.decimalMark] options:0 error:NULL];
     NSString *userInputValue = (NSString *)object;
     if([regex numberOfMatchesInString:userInputValue options:0 range:NSMakeRange(0, [userInputValue length])] == 1){
-        rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:_outputConfig.decimalMark}];
+        rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
     }else{
         rowArray[tableColumn.identifier.integerValue] = userInputValue;
     }
@@ -361,7 +341,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     NSArray *rowDataAtIndexes = [_data objectsAtIndexes:rowIndexes];
     
     // tab-separated text, for supporting drag & drop from Table Tool to table based apps like Numbers or TextEdit
-    CSVConfiguration *tabSeparatedCSVConfiguration = [_outputConfig copy];
+    CSVConfiguration *tabSeparatedCSVConfiguration = [self.csvConfig copy];
     tabSeparatedCSVConfiguration.columnSeparator = @"\t";
     tabSeparatedCSVConfiguration.quoteCharacter = @"";
     CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:rowDataAtIndexes
@@ -582,14 +562,14 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     for(int i = 0; i < _maxColumnNumber; ++i) {
         NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]];
         tableColumn.dataCell = dataCell;
-        tableColumn.title = [self generateColumnName:i];
+		tableColumn.title = i < columnNames.count ? columnNames[i] : [self generateColumnName:i];
         ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn: tableColumn];
     }
 }
 
 -(void)updateTableColumnsNames {
-    if(!inputController || !inputController.firstRowAsHeader){
+    if(!self.csvConfig.firstRowAsHeader){
         for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
             NSTableColumn *tableColumn = self.tableView.tableColumns[i];
             tableColumn.title = [self generateColumnName:i];
@@ -620,17 +600,6 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     }
     
     return [columnName componentsJoinedByString:@""];
-}
-
--(void)initFirstRow{
-    firstRow = [[NSMutableArray alloc]init];
-    for(int i = 0; i < _maxColumnNumber; i++){
-        firstRow[i] = @"";
-    }
-    NSArray *dataFirstRow = [_data firstObject];
-    for(int i = 0; i < dataFirstRow.count; i++){
-        firstRow[i] = dataFirstRow[i];
-    }
 }
 
 #pragma mark - buttonActions
@@ -927,8 +896,8 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     for(int i = 0; i < columnIds.count; i++){
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
         col.dataCell = dataCell;
-        if(inputController && inputController.firstRowAsHeader){
-            col.title = [firstRow objectAtIndex:((NSString *)columnIds[i]).integerValue];
+        if(self.csvConfig.firstRowAsHeader){
+            col.title = [columnNames objectAtIndex:((NSString *)columnIds[i]).integerValue];
         }
         ((NSCell *)col.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn:col];
@@ -950,72 +919,19 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 #pragma mark - configuration
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController*)formatViewController {
-    if (formatViewController.firstRowAsHeader) {
-        _inputConfig.firstRowAsHeader = NO;
-        [formatViewController uncheckCheckbox];
-    }
-    
-    if(formatViewController.isInputController) {
-        _inputConfig = formatViewController.config;
-        NSError *outError;
-        if(inputController.firstRowAsHeader){
-            [inputController uncheckCheckbox];
-        }
-        BOOL didReload = [self reloadDataWithError:&outError];
-        if (!didReload) {
-            readingError = outError;
-            [self displayError:outError];
-        } else {
-            readingError = nil;
-            [errorControllerView removeFromSuperview];
-            errorControllerView = nil;
-        }
-    }
-    _outputConfig = formatViewController.config;
-    [self.tableView reloadData];
-}
-
--(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController {
-    if(formatViewController.firstRowAsHeader){
-        if (firstRow == nil || newFile) {
-            [self initFirstRow];
-        }
-        int i = 0;
-        for(NSTableColumn *col in self.tableView.tableColumns){
-            col.title = firstRow[i++];
-        }
-        [_data removeObjectAtIndex:0];
-    }else{
-        [self updateTableColumnsNames];
-        [_data insertObject:firstRow.mutableCopy atIndex:0];
-    }
-    _outputConfig.firstRowAsHeader = formatViewController.firstRowAsHeader;
-    [self.tableView reloadData];
-}
-
--(BOOL)reloadDataWithError:(NSError**)error {
-    _maxColumnNumber = 1;
-    [_data removeAllObjects];
-    
-    NSError *outError;
-    CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: _inputConfig];
-    while(!reader.isAtEnd) {
-        NSArray *oneReadLine = [reader readLineWithError:&outError];
-        if(oneReadLine == nil) {
-            if (error) *error = outError;
-            [self updateTableColumns];
-            [self.tableView reloadData];
-            return NO;
-        }
-        if (oneReadLine != nil) [_data addObject:oneReadLine];
-        if(_maxColumnNumber < [[_data lastObject] count]){
-            _maxColumnNumber = [[_data lastObject] count];
-        }
-    }
-    
-    [self updateTableColumns];
-    [self initFirstRow];
-    return YES;
+	self.csvConfig = formatViewController.config;
+	if (!newFile) {
+		NSError *outError;
+		BOOL didReload = [self reloadDataWithError:&outError];
+		if (!didReload) {
+			readingError = outError;
+			[self displayError:outError];
+		} else {
+			readingError = nil;
+			[errorControllerView removeFromSuperview];
+			errorControllerView = nil;
+		}
+	}
 }
 
 -(void)dataGotEdited {
@@ -1135,7 +1051,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     NSDictionary *options = [NSDictionary dictionary];
     NSPasteboard *generalPasteboard = [NSPasteboard generalPasteboard];
     NSArray *toInsert = [generalPasteboard readObjectsForClasses:classes options:options];
-    CSVReader *reader = [[CSVReader alloc]initWithString:[toInsert lastObject] configuration:_inputConfig];
+    CSVReader *reader = [[CSVReader alloc]initWithString:[toInsert lastObject] configuration:self.csvConfig];
     
     while(!reader.isAtEnd) {
         NSArray *oneReadLine = [reader readLineForPastingTo:[self getColumnsOrder] maxColumnIndex:_maxColumnNumber];
@@ -1175,35 +1091,6 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [self dataGotEdited];
 }
 
-- (IBAction)reopenUsingEncoding:(NSButton *)sender {
-    
-    popover = [[NSPopover alloc] init];
-    popover.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-    popover.behavior = NSPopoverBehaviorTransient;
-    
-    if (self.documentEdited) {  // If the document is edited it isn't possible to reopen the data!
-        TTErrorViewController *errorPopoverVC = [[TTErrorViewController alloc]
-                                                 initWithMessage:@"ERROR: Reopen"
-                                                 information:@"File have to be unchanged to be reopened."];
-        
-        popover.contentViewController = errorPopoverVC;
-        [popover showRelativeToRect:sender.bounds ofView:sender preferredEdge:NSRectEdgeMinY];
-        
-    } else {
-        
-        [self readFromData:savedData ofType:@"csv" error:NULL];
-        
-        popoverViewController = [[TTFormatViewController alloc] initAsInputController:YES];
-        popoverViewController.delegate = self;
-        
-        popover.contentViewController = popoverViewController;
-        [popover showRelativeToRect:sender.bounds ofView:sender preferredEdge:NSRectEdgeMinY];
-        
-        popoverViewController.config = self.outputConfig;
-        [popoverViewController selectFormatByConfig];
-    }
-}
-
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     [self updateStatusBar];
 }
@@ -1233,34 +1120,29 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 -(IBAction)exportFile:(id)sender {
     
-    accessoryViewController = [[TTFormatViewController alloc] initAsInputController:NO withNibName:@"TTFormatViewControllerAccessory"];
+    accessoryViewController = [[TTFormatViewController alloc] initWithNibName:@"TTFormatViewControllerAccessory" bundle:nil];
     
     
     NSWindow *window = [[[self windowControllers] objectAtIndex: 0] window];
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     savePanel.accessoryView = accessoryViewController.view;
-    accessoryViewController.config.firstRowAsHeader = self.outputConfig.firstRowAsHeader;
+    accessoryViewController.config.firstRowAsHeader = self.csvConfig.firstRowAsHeader;
     [accessoryViewController selectFormatByConfig];
     savePanel.allowedFileTypes = [NSArray arrayWithObject:@"csv"];
     [savePanel beginSheetModalForWindow:window completionHandler:^(NSInteger result){
         if (result == NSFileHandlingPanelOKButton)
         {
-            NSURL*  theFile = [savePanel URL];
-            [self writeToURL:theFile ofType:@"csv" error:nil withConfiguration:accessoryViewController.config];
+			NSError *error = nil;
+			NSData *data = [self dataWithCSVConfig:accessoryViewController.config error:&error];
+			if (!data) {
+				[self presentError:error modalForWindow:window delegate:nil didPresentSelector:NULL contextInfo:NULL];
+			}
+			BOOL success = [data writeToURL:[savePanel URL] options:NSDataWritingAtomic error:&error];
+			if (!success) {
+				[self presentError:error modalForWindow:window delegate:nil didPresentSelector:NULL contextInfo:NULL];
+			}
         }
     }];
-}
-
--(BOOL)writeToURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError withConfiguration:(CSVConfiguration *)config {
-    
-    CSVConfiguration *temporaryOutputConfig = self.outputConfig;
-    self.outputConfig = config;
-    
-    [self writeToURL:url ofType:typeName error:outError];
-    
-    self.outputConfig = temporaryOutputConfig;
-    
-    return YES;
 }
 
 -(IBAction)openReadme:(id)sender {

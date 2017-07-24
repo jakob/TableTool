@@ -14,8 +14,7 @@
 
 @property NSMutableArray *data;
 @property long maxColumnNumber;
-@property CSVConfiguration *inputConfig;
-@property CSVConfiguration *outputConfig;
+@property CSVConfiguration *csvConfig;
 
 @property IBOutlet NSTableView *tableView;
 @property IBOutlet NSSplitView *splitView;
@@ -39,7 +38,6 @@
 -(IBAction)exportFile:(id)sender;
 
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
--(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
 
 @end
 

@@ -122,7 +122,7 @@
                         <font key="font" metaFont="smallSystem"/>
                     </buttonCell>
                     <connections>
-                        <action selector="useFirstRowAsHeaderClicked:" target="-2" id="Lba-LS-BvB"/>
+                        <action selector="updateConfiguration:" target="-2" id="cku-7B-nZU"/>
                     </connections>
                 </button>
             </subviews>

@@ -13,12 +13,10 @@
 
 @protocol TTFormatViewControllerDelegate
 -(void)configurationChangedForFormatViewController:(TTFormatViewController *)formatViewController;
--(void)useFirstRowAsHeader:(TTFormatViewController *)formatViewController;
 @end
 
 @interface TTFormatViewController : NSViewController
 
-@property (readonly) BOOL isInputController;
 @property (readonly) BOOL firstRowAsHeader;
 @property CSVConfiguration *config;
 @property id<TTFormatViewControllerDelegate> delegate;
@@ -29,12 +27,8 @@
 @property IBOutlet NSButton *useFirstRowAsHeaderCheckbox;
 
 - (IBAction)updateConfiguration:(id)sender;
-- (IBAction)useFirstRowAsHeaderClicked:(id)sender;
 
-- (instancetype)initAsInputController:(BOOL)inputController;
-- (instancetype)initAsInputController:(BOOL)inputController withNibName:(NSString *)nibName;
 - (void)selectFormatByConfig;
-- (void)uncheckCheckbox;
 - (void)setEnabled:(BOOL)enabled;
 
 @end
