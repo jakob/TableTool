@@ -167,15 +167,21 @@
 		}
 	}
 	NSStringEncoding usedEncoding;
-	if ([[NSString alloc] initWithContentsOfURL:url usedEncoding:&usedEncoding error:outError]) {
+	if ([[NSString alloc] initWithContentsOfURL:url usedEncoding:&usedEncoding error:nil]) {
 		formatHeuristic.encoding = usedEncoding;
 	}
     newFile = NO;
     self.csvConfig = [formatHeuristic calculatePossibleFormat];
     
     savedData = data;
-	BOOL success = [self reloadDataWithError:outError];
-	return success;
+	
+	NSError *error = nil;
+	if (![self reloadDataWithError:&error]) {
+		readingError = error;
+		if (dataCell) [self displayError:error];
+	}
+	
+	return YES;
 }
 
 -(BOOL)reloadDataWithError:(NSError**)error {
