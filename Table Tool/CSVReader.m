@@ -15,10 +15,7 @@
 	NSMutableCharacterSet *quoteEndedCharacterSet;
     NSMutableCharacterSet *quoteAndEscapeSet;
     BOOL unquoted;
-    NSRegularExpression *regex;
-    NSString *errorCode1;
-    NSString *errorCode2;
-    NSString *errorCode3;
+	NSRegularExpression *numberRegex;
 }
 
 @end
@@ -48,9 +45,6 @@
     _config = config.copy;
     if([_config.quoteCharacter isEqualToString:@""]) unquoted = YES;
     _atEnd = NO;
-    errorCode1 = @"Try specifying a different encoding.";
-    errorCode2 = @"Try specifying a different separator or quote.";
-    errorCode3 = errorCode2;
 }
 
 
@@ -68,7 +62,7 @@
         
         if(!dataString) {
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode1}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different encoding."}];
             }
             return NO;
         }
@@ -84,7 +78,7 @@
         [quoteAndEscapeSet addCharactersInString:_config.quoteCharacter];
         [quoteAndEscapeSet addCharactersInString:_config.escapeCharacter];
         
-        regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",_config.decimalMark,_config.decimalMark] options:0 error:NULL];
+        numberRegex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",_config.decimalMark,_config.decimalMark] options:0 error:NULL];
     }
     
     return YES;
@@ -123,7 +117,7 @@
             return nil;
         }
         
-        if(scannedString.length > 0 && [regex numberOfMatchesInString:scannedString options:0 range:NSMakeRange(0, [scannedString length])] == 1){
+        if(scannedString.length > 0 && [numberRegex numberOfMatchesInString:scannedString options:0 range:NSMakeRange(0, [scannedString length])] == 1){
             [rowArray addObject:[NSDecimalNumber decimalNumberWithString:scannedString locale:@{NSLocaleDecimalSeparator:_config.decimalMark}]];
         }else{
             [rowArray addObject:scannedString];
@@ -164,7 +158,7 @@
         BOOL scannedValueIsNumber = NO;
         
         [self scanUnquotedValueIntoString:&scannedString error:NULL];
-        if([regex numberOfMatchesInString:scannedString options:0 range:NSMakeRange(0, [scannedString length])] == 1){
+        if([numberRegex numberOfMatchesInString:scannedString options:0 range:NSMakeRange(0, [scannedString length])] == 1){
             scannedValueIsNumber = YES;
         }
         
@@ -221,7 +215,7 @@
         
         if(dataScanner.isAtEnd){
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different separator or quote."}];
             }
             return NO;
         }
@@ -239,7 +233,7 @@
             dataScanner.scanLocation++;
             if(dataScanner.isAtEnd){
                 if(outError != NULL) {
-                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
+                    *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different separator or quote."}];
                 }
                 return NO;
             }
@@ -256,14 +250,14 @@
                 return YES;
             }
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different separator or quote."}];
             }
             return NO;
         }
         
     }
     if(outError != NULL) {
-        *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode2}];
+        *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different separator or quote."}];
     }
     return NO;
 }
@@ -274,7 +268,7 @@
     while(!dataScanner.isAtEnd && ![quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
         if([dataString characterAtIndex:dataScanner.scanLocation] == '\"' && !unquoted){
             if(outError != NULL) {
-                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:errorCode3}];
+                *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different separator or quote."}];
             }
             return NO;
         }
