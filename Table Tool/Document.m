@@ -135,7 +135,7 @@
 			[headerRow addObject:@""];
 		}
 		for(NSTableColumn * col in self.tableView.tableColumns){
-			[headerRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.title];
+			[headerRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.headerCell.stringValue];
 		}
 		exportData = [@[headerRow] arrayByAddingObjectsFromArray:exportData];
 	}
@@ -568,7 +568,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     for(int i = 0; i < _maxColumnNumber; ++i) {
         NSTableColumn *tableColumn = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%d",i]];
         tableColumn.dataCell = dataCell;
-		tableColumn.title = i < columnNames.count ? columnNames[i] : [self generateColumnName:i];
+		tableColumn.headerCell.stringValue = i < columnNames.count ? columnNames[i] : [self generateColumnName:i];
         ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn: tableColumn];
     }
@@ -578,7 +578,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     if(!self.csvConfig.firstRowAsHeader){
         for(int i = 0; i < [self.tableView.tableColumns count]; i++) {
             NSTableColumn *tableColumn = self.tableView.tableColumns[i];
-            tableColumn.title = [self generateColumnName:i];
+            tableColumn.headerCell.stringValue = [self generateColumnName:i];
             ((NSCell *)tableColumn.headerCell).alignment = NSCenterTextAlignment;
         }
     }
@@ -850,7 +850,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld",columnIdentifier]];
     col.dataCell = dataCell;
     [self.tableView addTableColumn:col];
-    col.title = @"";
+    col.headerCell.stringValue = @"";
     [self.tableView moveColumn:[self.tableView numberOfColumns]-1 toColumn:columnIndex];
     
     for(NSMutableArray *rowArray in _data) {
@@ -901,7 +901,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:columnIds[i]];
         col.dataCell = dataCell;
         if(self.csvConfig.firstRowAsHeader){
-            col.title = [columnNames objectAtIndex:((NSString *)columnIds[i]).integerValue];
+            col.headerCell.stringValue = [columnNames objectAtIndex:((NSString *)columnIds[i]).integerValue];
         }
         ((NSCell *)col.headerCell).alignment = NSCenterTextAlignment;
         [self.tableView addTableColumn:col];
