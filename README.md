@@ -36,6 +36,10 @@ Table Tool was made by [Sandro Peham](https://github.com/SandroPeham),
 [Andreas Aigner](https://github.com/aigi) and 
 [Jakob Egger](https://github.com/jakob).
 
+## Mission / Project Scope / Contributing
+
+TableTool seeks to be a great and simple CSV file editor and nothing more. Any formatting options or features like formulas will be out of scope for the project. Please post an issue if something is broken (bug) or you believe something is missing (feature request) and please be prepared to provide screenshots. We will endeavor to quickly decide if the thing is actually broken or if the new feature belongs in the project ("help-wanted" label). Once the help-wanted label is set, please help to work on implementation for that feature and we are happy to accept a pull request for it. We currently have more side projects than we can handle, so well documented issues and great pull requests will help move this project forward. We are happy to give commit access to consistent contributors.
+
 ## Licence
 
 Table Tool is distributed under the [MIT Licence](https://github.com/jakob/TableTool/blob/master/LICENSE).
