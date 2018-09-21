@@ -1,0 +1,16 @@
+language: objective-c
+env:
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+  - WORKSPACE="Table Tool.xcodeproj/project.xcworkspace"
+  - SCHEME="XXX"
+  - DESTINATION="OS=10.3,name=iPhone 7 Plus"
+script:
+  - xcodebuild -version
+  - xcodebuild -showsdks
+#  - xcodebuild -list
+#  - xcodebuild -workspace "$WORKSPACE" -list
+
+  - xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty
+  - xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" -configuration Release ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty
