@@ -128,18 +128,18 @@
 	}
 	
 	NSArray *exportData = _data;
-	
+
 	if(self.csvConfig.firstRowAsHeader){
-		NSMutableArray *headerRow = [[NSMutableArray alloc]init];
+        NSMutableArray *headerRow = [[NSMutableArray alloc]init];
 		for(int i = 0; i < _maxColumnNumber; i++){
 			[headerRow addObject:@""];
 		}
-		for(NSTableColumn * col in self.tableView.tableColumns){
-			[headerRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.headerCell.stringValue];
-		}
-		exportData = [@[headerRow] arrayByAddingObjectsFromArray:exportData];
-	}
-	
+        for(NSTableColumn * col in self.tableView.tableColumns){
+            [headerRow replaceObjectAtIndex:col.identifier.integerValue withObject:col.headerCell.stringValue];
+        }
+        exportData = [@[headerRow] arrayByAddingObjectsFromArray:exportData];
+    }
+
 	NSError *error;
 	
 	CSVWriter *writer = [[CSVWriter alloc] initWithDataArray:exportData columnsOrder:[self getColumnsOrder] configuration:config];
@@ -1126,6 +1126,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     
     accessoryViewController = [[TTFormatViewController alloc] initWithNibName:@"TTFormatViewControllerAccessory" bundle:nil];
     
+    self.csvConfig = statusBarFormatViewController.config;
     
     NSWindow *window = [[[self windowControllers] objectAtIndex: 0] window];
     NSSavePanel *savePanel = [NSSavePanel savePanel];
@@ -1134,6 +1135,9 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [accessoryViewController selectFormatByConfig];
     savePanel.allowedFileTypes = [NSArray arrayWithObject:@"csv"];
     [savePanel beginSheetModalForWindow:window completionHandler:^(NSInteger result){
+
+        self.csvConfig = accessoryViewController.config;
+        
         if (result == NSFileHandlingPanelOKButton)
         {
 			NSError *error = nil;
