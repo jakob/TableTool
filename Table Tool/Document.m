@@ -26,7 +26,8 @@
     BOOL ignoreColumnDidMoveNotifications;
     BOOL newFile;
     BOOL enableEditing;
-    
+    BOOL addNumberColumn;
+
     NSArray *validPBoardTypes;
     
     TTErrorViewController *errorController;
@@ -48,7 +49,8 @@
         newFile = YES;
         errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
         _didSave = NO;
-        
+        addNumberColumn = NO;
+
         [self initValidPBoardTypes];
         
         [self addObserver:self forKeyPath:@"fileURL" options:0 context:nil];
@@ -208,7 +210,12 @@
 			[_data addObject:line];
 		}
 	}
-	
+    
+    if (addNumberColumn == YES){
+        _maxColumnNumber++;
+        columnNames = [@[@""] arrayByAddingObjectsFromArray:columnNames];
+    }
+
 	[self updateTableColumns];
 	[self.tableView reloadData];
 	return YES;
@@ -244,6 +251,12 @@
     
     if(_data.count >= rowIndex+1) {
         NSArray *rowArray = _data[rowIndex];
+        
+        if (addNumberColumn == YES){
+            NSString *rowIndexString = [NSString stringWithFormat:@"%ld", (long) rowIndex+1];
+            rowArray = [@[rowIndexString] arrayByAddingObjectsFromArray:rowArray];
+        }
+
         if(rowArray.count >= tableColumn.identifier.integerValue+1){
             if([rowArray[tableColumn.identifier.integerValue] isKindOfClass:[NSDecimalNumber class]]) {
                 return [(NSDecimalNumber *)rowArray[tableColumn.identifier.integerValue] descriptionWithLocale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
@@ -1151,5 +1164,30 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 -(IBAction)openReadme:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/jakob/TableTool/blob/master/README.md"]];
+}
+
+-(IBAction)showRowNumber:(id)sender {
+    
+    addNumberColumn = !addNumberColumn;
+    
+    NSError *outError;
+    BOOL didReload = [self reloadDataWithError:&outError];
+    if (!didReload) {
+        readingError = outError;
+        [self displayError:outError];
+    } else {
+        readingError = nil;
+        [errorControllerView removeFromSuperview];
+        errorControllerView = nil;
+    }
+  
+    if (addNumberColumn == YES){
+        [sender setState:NSControlStateValueOn];
+    }else{
+        [sender setState:NSControlStateValueOff];
+    }
+    
+    [self.tableView reloadData];
+    
 }
 @end
