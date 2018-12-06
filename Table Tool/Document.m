@@ -26,7 +26,8 @@
     BOOL ignoreColumnDidMoveNotifications;
     BOOL newFile;
     BOOL enableEditing;
-    
+    BOOL quitOnLastWindowClose;
+
     NSArray *validPBoardTypes;
     
     TTErrorViewController *errorController;
@@ -48,6 +49,7 @@
         newFile = YES;
         errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
         _didSave = NO;
+        quitOnLastWindowClose = NO;
         
         [self initValidPBoardTypes];
         
@@ -98,6 +100,11 @@
 
 - (void)close {
     [super close];
+
+    if (([self.windowControllers count] == 0) && (quitOnLastWindowClose == YES)){
+        [NSApp terminate:self];
+    }
+    
 }
 
 
@@ -1152,4 +1159,18 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 -(IBAction)openReadme:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/jakob/TableTool/blob/master/README.md"]];
 }
+
+-(IBAction)quitApplicationOnLastWindowClose:(id)sender {
+
+    quitOnLastWindowClose = !quitOnLastWindowClose;
+    
+    if (quitOnLastWindowClose == YES){
+        [sender setState:NSControlStateValueOn];
+    }else{
+        [sender setState:NSControlStateValueOff];
+    }
+    
+}
+
+
 @end
