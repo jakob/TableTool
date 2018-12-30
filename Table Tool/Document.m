@@ -291,12 +291,13 @@
     
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",self.csvConfig.decimalMark,self.csvConfig.decimalMark] options:0 error:NULL];
     NSString *userInputValue = (NSString *)object;
-    if([regex numberOfMatchesInString:userInputValue options:0 range:NSMakeRange(0, [userInputValue length])] == 1){
-        rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
-    }else{
-        rowArray[tableColumn.identifier.integerValue] = userInputValue;
+    @autoreleasepool {
+        if([regex numberOfMatchesInString:userInputValue options:0 range:NSMakeRange(0, [userInputValue length])] == 1){
+            rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
+        }else{
+            rowArray[tableColumn.identifier.integerValue] = userInputValue;
+        }
     }
-    
     _data[rowIndex] = rowArray;
     if (shouldReload) [self.tableView reloadData];
 }
