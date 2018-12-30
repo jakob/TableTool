@@ -8,12 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CSVConfiguration.h"
+#import "CSVReader.h"
 #import "TTFormatViewController.h"
 
 @interface Document : NSDocument <NSTableViewDataSource, NSTableViewDelegate, TTFormatViewControllerDelegate>
 
 @property NSMutableArray *data;
 @property long maxColumnNumber;
+@property CSVReader *csvReader;
 @property CSVConfiguration *csvConfig;
 
 @property IBOutlet NSTableView *tableView;

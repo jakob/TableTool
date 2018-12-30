@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CSVConfiguration.h"
+#import "CSVReader.h"
 
 @interface CSVHeuristic : NSObject
 
@@ -26,7 +27,7 @@
 @property BOOL preferChineseEncoding;
 
 -(instancetype)initWithData:(NSData *)data;
--(CSVConfiguration *)calculatePossibleFormat;
+-(CSVReader *)calculatePossibleFormat;
 -(void)setEncoding:(NSStringEncoding)encoding;
 
 @end

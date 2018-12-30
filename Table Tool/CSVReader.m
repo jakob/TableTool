@@ -87,9 +87,8 @@
         
         if(!dataString){
             dataString = [[NSString alloc] initWithData:_data encoding:_config.encoding];
-            CDataString = [dataString cStringUsingEncoding:_config.encoding];
         }
-        
+        CDataString = [dataString cStringUsingEncoding:_config.encoding];
         if(!dataString) {
             if(outError != NULL) {
                 *outError = [NSError errorWithDomain:@"at.eggerapps.Table-Tool" code:1 userInfo: @{NSLocalizedDescriptionKey: @"Could not read data", NSLocalizedRecoverySuggestionErrorKey:@"Try specifying a different encoding."}];

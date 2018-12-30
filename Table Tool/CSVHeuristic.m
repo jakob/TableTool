@@ -107,7 +107,7 @@
 	}
 }
 
--(CSVConfiguration *)calculatePossibleFormat{
+-(CSVReader *)calculatePossibleFormat{
     [self initializeArrays];
 	NSArray *encodingTestList;
 	if (self.preferChineseEncoding) {
@@ -133,7 +133,7 @@
         }
     }
     
-    return [self getBestConfiguration];
+    return [self getBestReader];
 }
 
 -(BOOL)useSimpleHeuristic{
@@ -190,7 +190,7 @@
     scores[index] = [NSNumber numberWithInt:([scores[index] intValue] + numbers)];
 }
 
--(CSVConfiguration *)getBestConfiguration{
+-(CSVReader *)getBestReader{
     NSNumber *highestScore = scores[0];
     int highestScoreIndex = 0;
     for(int i = 1; i < readerArray.count; i++){
@@ -200,10 +200,10 @@
             highestScoreIndex = i;
         }
     }
-    CSVConfiguration *finalConfig = ((CSVReader *)readerArray[highestScoreIndex]).config;
-    finalConfig.firstRowAsHeader = [firstRowArray[highestScoreIndex] boolValue];
-    
-    return finalConfig;
+    CSVReader *bestReader = readerArray[highestScoreIndex];
+    bestReader.config.firstRowAsHeader = [firstRowArray[highestScoreIndex] boolValue];
+
+    return bestReader;
 }
 
 @end
