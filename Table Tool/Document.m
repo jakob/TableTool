@@ -16,7 +16,6 @@
 
 @interface Document () {
     NSCell *dataCell;
-    NSData *savedData;
     NSArray *columnNames;
     
     NSError *readingError;
@@ -156,7 +155,7 @@
 
 -(BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError {
     [self.undoManager removeAllActions];
-	NSData *data = [NSData dataWithContentsOfURL:url options:0 error:outError];
+	NSData *data = [NSData dataWithContentsOfURL:url options:NSDataReadingMappedAlways | NSDataReadingUncached error:outError];
 	if (!data) {
 		return NO;
 	}
@@ -167,15 +166,16 @@
 		}
 	}
 	NSStringEncoding usedEncoding;
-	if ([[NSString alloc] initWithContentsOfURL:url usedEncoding:&usedEncoding error:nil]) {
+    NSString *usedEncodingString = [[NSString alloc] initWithContentsOfURL:url usedEncoding:&usedEncoding error:nil];
+	if (usedEncodingString != nil) {
 		formatHeuristic.encoding = usedEncoding;
 	}
+
     newFile = NO;
-    self.csvConfig = [formatHeuristic calculatePossibleFormat];
-    
-    savedData = data;
-	
-	NSError *error = nil;
+    self.csvReader = [formatHeuristic calculatePossibleFormat];
+    self.csvConfig = self.csvReader.config;
+
+    NSError *error = nil;
 	if (![self reloadDataWithError:&error]) {
 		readingError = error;
 		if (dataCell) [self displayError:error];
@@ -191,8 +191,10 @@
 	[_data removeAllObjects];
 	
 	NSError *outError;
-	CSVReader *reader = [[CSVReader alloc ]initWithData:savedData configuration: self.csvConfig];
-	columnNames = nil;
+    CSVReader *reader = self.csvReader;
+    [reader reset];
+
+    columnNames = nil;
 	while(!reader.isAtEnd) {
 		NSArray *line = [reader readLineWithError:&outError];
 		if (!line) {
@@ -291,12 +293,13 @@
     
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",self.csvConfig.decimalMark,self.csvConfig.decimalMark] options:0 error:NULL];
     NSString *userInputValue = (NSString *)object;
-    if([regex numberOfMatchesInString:userInputValue options:0 range:NSMakeRange(0, [userInputValue length])] == 1){
-        rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
-    }else{
-        rowArray[tableColumn.identifier.integerValue] = userInputValue;
+    @autoreleasepool {
+        if([regex numberOfMatchesInString:userInputValue options:0 range:NSMakeRange(0, [userInputValue length])] == 1){
+            rowArray[tableColumn.identifier.integerValue] = [NSDecimalNumber decimalNumberWithString:userInputValue locale:@{NSLocaleDecimalSeparator:self.csvConfig.decimalMark}];
+        }else{
+            rowArray[tableColumn.identifier.integerValue] = userInputValue;
+        }
     }
-    
     _data[rowIndex] = rowArray;
     if (shouldReload) [self.tableView reloadData];
 }
