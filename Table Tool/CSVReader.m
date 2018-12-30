@@ -12,6 +12,7 @@
 + (instancetype)scannerWithString:(NSString *)string;
 
 @property (nonatomic, copy) NSString *string;
+@property (nonatomic) NSUInteger stringLength;
 @property (nonatomic) NSUInteger scanLocation;
 @property (nonatomic, readonly, getter=isAtEnd) BOOL atEnd;
 
@@ -23,12 +24,13 @@
 {
     CSVScanner *scanner = [[CSVScanner alloc] init];
     scanner.string = string;
+    scanner.stringLength = string.length;
     return scanner;
 }
 
 - (BOOL)isAtEnd
 {
-    return _scanLocation == _string.length;
+    return _scanLocation == _stringLength;
 }
 
 @end
