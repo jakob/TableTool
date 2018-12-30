@@ -11,3 +11,4 @@
 #pragma mark Pasteboard Types
 
 extern NSString *TTRowInternalPboardType;
+extern NSString *TTQuitOnLastWindowClose;

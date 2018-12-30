@@ -26,7 +26,8 @@
     BOOL ignoreColumnDidMoveNotifications;
     BOOL newFile;
     BOOL enableEditing;
-    
+    BOOL quitOnLastWindowClose;
+
     NSArray *validPBoardTypes;
     
     TTErrorViewController *errorController;
@@ -48,6 +49,26 @@
         newFile = YES;
         errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
         _didSave = NO;
+        quitOnLastWindowClose = NO;
+        
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        quitOnLastWindowClose = [userDefaults boolForKey:TTQuitOnLastWindowClose];
+        
+        if (quitOnLastWindowClose == YES){
+            
+            NSMenu *mainMenu = [[NSApplication sharedApplication] mainMenu];
+            NSMenu *appMenu = [[mainMenu itemAtIndex:5] submenu];
+
+            for (NSMenuItem *item in [appMenu itemArray]) {
+
+                NSInteger tag = [item tag];
+
+                if (tag == 1){
+                    [item setState:YES];
+                }
+            }
+            
+        }
         
         [self initValidPBoardTypes];
         
@@ -64,6 +85,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
+    
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
     
@@ -98,6 +120,11 @@
 
 - (void)close {
     [super close];
+
+    if (([self.windowControllers count] == 0) && (quitOnLastWindowClose == YES)){
+        [NSApp terminate:self];
+    }
+    
 }
 
 
@@ -1152,4 +1179,22 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 -(IBAction)openReadme:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/jakob/TableTool/blob/master/README.md"]];
 }
+
+-(IBAction)quitApplicationOnLastWindowClose:(id)sender {
+
+    quitOnLastWindowClose = !quitOnLastWindowClose;
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setBool:quitOnLastWindowClose forKey:TTQuitOnLastWindowClose];
+    [userDefaults synchronize];
+    
+    if (quitOnLastWindowClose == YES){
+        [sender setState:NSControlStateValueOn];
+    }else{
+        [sender setState:NSControlStateValueOff];
+    }
+    
+}
+
+
 @end

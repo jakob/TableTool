@@ -11,3 +11,4 @@
 #pragma mark Initializing Globals for Pasteboard Types
 
 NSString *TTRowInternalPboardType = @"Table Tool Row Internal PasteBoard Type";
+NSString *TTQuitOnLastWindowClose = @"TTQuitOnLastWindowClose";
