@@ -51,6 +51,25 @@
         _didSave = NO;
         quitOnLastWindowClose = NO;
         
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        quitOnLastWindowClose = [userDefaults boolForKey:TTQuitOnLastWindowClose];
+        
+        if (quitOnLastWindowClose == YES){
+            
+            NSMenu *mainMenu = [[NSApplication sharedApplication] mainMenu];
+            NSMenu *appMenu = [[mainMenu itemAtIndex:5] submenu];
+
+            for (NSMenuItem *item in [appMenu itemArray]) {
+
+                NSInteger tag = [item tag];
+
+                if (tag == 1){
+                    [item setState:YES];
+                }
+            }
+            
+        }
+        
         [self initValidPBoardTypes];
         
         [self addObserver:self forKeyPath:@"fileURL" options:0 context:nil];
@@ -66,6 +85,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
+    
     dataCell = [self.tableView.tableColumns.firstObject dataCell];
     [self updateTableColumns];
     
@@ -1163,6 +1183,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 -(IBAction)quitApplicationOnLastWindowClose:(id)sender {
 
     quitOnLastWindowClose = !quitOnLastWindowClose;
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setBool:quitOnLastWindowClose forKey:TTQuitOnLastWindowClose];
+    [userDefaults synchronize];
     
     if (quitOnLastWindowClose == YES){
         [sender setState:NSControlStateValueOn];

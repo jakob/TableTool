@@ -655,7 +655,7 @@ CA
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="m6Z-XH-La9"/>
-                            <menuItem title="Quit application on last window close" id="kl0-ob-XcT">
+                            <menuItem title="Quit application on last window close" tag="1" id="kl0-ob-XcT">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="quitApplicationOnLastWindowClose:" target="-1" id="3rE-LE-IvR"/>
