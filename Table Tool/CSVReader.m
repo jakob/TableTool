@@ -203,13 +203,13 @@
     if([dataString characterAtIndex:dataScanner.scanLocation] != '\"'){
         return NO;
     }
-    
-    NSMutableString *temporaryString = [[NSMutableString alloc] init];
+
     dataScanner.scanLocation++;
-    
+    NSRange stringRange = NSMakeRange(dataScanner.scanLocation, 0);
+
     while(!dataScanner.isAtEnd){
         while(!dataScanner.isAtEnd && ![quoteAndEscapeSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
-            [temporaryString appendString:[dataString substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
+            stringRange.length++;
             dataScanner.scanLocation++;
         }
         
@@ -224,7 +224,7 @@
             if([_config.escapeCharacter isEqualToString:_config.quoteCharacter]){
                 if((dataScanner.scanLocation+2 <= dataString.length && [quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation+1]]) || dataScanner.scanLocation+1 == dataString.length){
                     dataScanner.scanLocation++;
-                    *scannedString = temporaryString;
+                    *scannedString = [dataScanner.string substringWithRange:stringRange];
                     [self checkForCRLF];
                     return YES;
                 }
@@ -237,7 +237,7 @@
                 }
                 return NO;
             }
-            [temporaryString appendString:[dataString substringWithRange:NSMakeRange(dataScanner.scanLocation,1)]];
+            stringRange.length++;
             dataScanner.scanLocation++;
             continue;
         }
@@ -245,7 +245,7 @@
         if([dataString characterAtIndex:dataScanner.scanLocation] == [_config.quoteCharacter characterAtIndex:0]) {
             dataScanner.scanLocation++;
             if(dataScanner.isAtEnd || [quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
-                *scannedString = temporaryString;
+                *scannedString = [dataScanner.string substringWithRange:stringRange];
                 [self checkForCRLF];
                 return YES;
             }
@@ -264,7 +264,7 @@
 
 -(BOOL)scanUnquotedValueIntoString:(NSString **)scannedString error:(NSError **)outError{
     
-    NSMutableString *temporaryString = [[NSMutableString alloc]initWithString:@""];
+    NSRange stringRange = NSMakeRange(dataScanner.scanLocation, 0);
     while(!dataScanner.isAtEnd && ![quoteEndedCharacterSet characterIsMember:[dataString characterAtIndex:dataScanner.scanLocation]]){
         if([dataString characterAtIndex:dataScanner.scanLocation] == '\"' && !unquoted){
             if(outError != NULL) {
@@ -272,10 +272,10 @@
             }
             return NO;
         }
-        [temporaryString appendString:[dataString substringWithRange:NSMakeRange(dataScanner.scanLocation, 1)]];
+        stringRange.length++;
         dataScanner.scanLocation++;
     }
-    *scannedString = temporaryString;
+    *scannedString = [dataScanner.string substringWithRange:stringRange];
     [self checkForCRLF];
     return YES;
 }
