@@ -8,8 +8,34 @@
 
 #import "CSVReader.h"
 
+@interface CSVScanner : NSObject
++ (instancetype)scannerWithString:(NSString *)string;
+
+@property (nonatomic, copy) NSString *string;
+@property (nonatomic) NSUInteger scanLocation;
+@property (nonatomic, readonly, getter=isAtEnd) BOOL atEnd;
+
+@end
+
+@implementation CSVScanner
+
++ (instancetype)scannerWithString:(NSString *)string
+{
+    CSVScanner *scanner = [[CSVScanner alloc] init];
+    scanner.string = string;
+    return scanner;
+}
+
+- (BOOL)isAtEnd
+{
+    return _scanLocation == _string.length;
+}
+
+@end
+
+
 @interface CSVReader () {
-    NSScanner *dataScanner;
+    CSVScanner *dataScanner;
     NSString *dataString;
 	NSMutableCharacterSet *newlineCharacterSet;
 	NSMutableCharacterSet *quoteEndedCharacterSet;
@@ -66,10 +92,8 @@
             }
             return NO;
         }
-        dataScanner = [NSScanner scannerWithString:dataString];
-        dataScanner.caseSensitive = YES;
-        dataScanner.charactersToBeSkipped = nil;
-        
+        dataScanner = [CSVScanner scannerWithString:dataString];
+
 		newlineCharacterSet = [NSCharacterSet newlineCharacterSet].mutableCopy;
 		[newlineCharacterSet removeCharactersInString:@"\x0b\x0c"];
         quoteEndedCharacterSet = newlineCharacterSet.mutableCopy;
