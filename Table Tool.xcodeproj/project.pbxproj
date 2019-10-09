@@ -10,6 +10,7 @@
 		5B338F741EF03D8000D40406 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B338F731EF03D8000D40406 /* Constants.m */; };
 		AA58C3F91CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */; };
 		AAB016721D057426005E3F7A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = AAB016711D057426005E3F7A /* Credits.rtf */; };
+		C7F5DC0A234BD37900892C4E /* TTTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = C7F5DC09234BD37900892C4E /* TTTableView.m */; };
 		E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B48A1B5E4598005B4959 /* CSVConfiguration.m */; };
 		E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E109B4901B623924005B4959 /* TTFormatViewController.m */; };
 		E109B4931B623924005B4959 /* TTFormatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E109B4911B623924005B4959 /* TTFormatViewController.xib */; };
@@ -49,6 +50,8 @@
 		AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Table Tool-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA58C3F81CFC4DC600106C66 /* TTFormatViewControllerAccessory.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTFormatViewControllerAccessory.xib; sourceTree = "<group>"; };
 		AAB016711D057426005E3F7A /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		C7F5DC08234BD37900892C4E /* TTTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TTTableView.h; sourceTree = "<group>"; };
+		C7F5DC09234BD37900892C4E /* TTTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TTTableView.m; sourceTree = "<group>"; };
 		E109B4891B5E4598005B4959 /* CSVConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVConfiguration.h; sourceTree = "<group>"; };
 		E109B48A1B5E4598005B4959 /* CSVConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSVConfiguration.m; sourceTree = "<group>"; };
 		E109B48F1B623924005B4959 /* TTFormatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTFormatViewController.h; sourceTree = "<group>"; };
@@ -152,6 +155,8 @@
 				E1CEF8841B7097280083B957 /* CSVHeuristic.h */,
 				E1CEF8851B7097280083B957 /* CSVHeuristic.m */,
 				AA41D3431CF2E7CE00CB3E7D /* Table Tool-Bridging-Header.h */,
+				C7F5DC08234BD37900892C4E /* TTTableView.h */,
+				C7F5DC09234BD37900892C4E /* TTTableView.m */,
 			);
 			path = "Table Tool";
 			sourceTree = "<group>";
@@ -254,6 +259,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -308,6 +314,7 @@
 				E1CEF8861B7097280083B957 /* CSVHeuristic.m in Sources */,
 				E1CC84E41B4A5F2A00ED8314 /* main.m in Sources */,
 				E1CEF87F1B6A23860083B957 /* TTErrorViewController.m in Sources */,
+				C7F5DC0A234BD37900892C4E /* TTTableView.m in Sources */,
 				E109B48B1B5E4598005B4959 /* CSVConfiguration.m in Sources */,
 				E1CC84E21B4A5F2A00ED8314 /* AppDelegate.m in Sources */,
 				E109B4921B623924005B4959 /* TTFormatViewController.m in Sources */,
