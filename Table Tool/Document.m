@@ -13,6 +13,7 @@
 #import "CSVHeuristic.h"
 #import "TTErrorViewController.h"
 #import "ToolbarIcons.h"
+#import "TTTableView.h"
 
 @interface Document () {
     NSCell *dataCell;
@@ -46,7 +47,7 @@
         _maxColumnNumber = 1;
         _csvConfig = [[CSVConfiguration alloc]init];
         newFile = YES;
-        errorCode5 = @"Your are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
+        errorCode5 = @"You are not allowed to save while the input format has an error. Configure the format manually, until no error occurs.";
         _didSave = NO;
         
         [self initValidPBoardTypes];
@@ -318,6 +319,12 @@
         [columnsOrder addObject:col.identifier];
     }
     return columnsOrder.copy;
+}
+
+-(void)tableView:(NSTableView *)tableView mouseDownInHeaderOfTableColumn:(NSTableColumn *)tableColumn {
+    if ([tableView isKindOfClass:[TTTableView class]]) {
+        [((TTTableView *)tableView) resetAnchor];
+    }
 }
 
 #pragma mark - tableViewDataSource (optional methods) - drag & drop
