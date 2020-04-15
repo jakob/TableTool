@@ -78,7 +78,7 @@
         [quoteAndEscapeSet addCharactersInString:_config.quoteCharacter];
         [quoteAndEscapeSet addCharactersInString:_config.escapeCharacter];
         
-        numberRegex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\\d+\\%@?\\d*|\\d*\\%@?\\d+)([eE][+-]?\\d+)?\\s*$",_config.decimalMark,_config.decimalMark] options:0 error:NULL];
+        numberRegex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"^\\s*[+-]?(\[1-9]+\\%@?\\d*|\\*\\%@?\\d+|\[0]+\\%@+\\d*)([eE][+-]?\\d+)?\\s*$",_config.decimalMark,_config.decimalMark,_config.decimalMark] options:0 error:NULL];
     }
     
     return YES;
